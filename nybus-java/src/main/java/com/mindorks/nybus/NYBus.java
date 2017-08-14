@@ -20,6 +20,7 @@ package com.mindorks.nybus;
  */
 
 import com.mindorks.nybus.Scheduler.SchedulerProvider;
+import com.mindorks.nybus.internal.NYBusHandler;
 
 public class NYBus {
     private static NYBus sNYBusInstance;
