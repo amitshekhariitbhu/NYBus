@@ -16,9 +16,15 @@
 
 package com.mindorks.nybus;
 
+import com.mindorks.nybus.AndroidScheduler.SchedulerProviderImplementation;
+
 /**
  * Created by amitshekhar on 14/08/17.
  */
 
 public class AndroidNYBus {
+
+    public static void initialiseSchedulerProvider(){
+        NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
+    }
 }
