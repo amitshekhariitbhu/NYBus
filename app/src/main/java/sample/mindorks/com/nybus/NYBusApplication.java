@@ -16,17 +16,17 @@
 
 package sample.mindorks.com.nybus;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.app.Application;
 
 import com.mindorks.nybus.AndroidNYBus;
-import com.mindorks.nybus.NYBus;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by Jyoti on 14/08/17.
+ */
 
+public class NYBusApplication extends Application {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void onCreate() {
+        super.onCreate();
     }
 }

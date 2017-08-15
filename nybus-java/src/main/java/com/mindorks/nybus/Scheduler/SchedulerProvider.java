@@ -14,19 +14,18 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus.Scheduler;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
-import com.mindorks.nybus.AndroidNYBus;
-import com.mindorks.nybus.NYBus;
+import io.reactivex.Scheduler;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by Jyoti on 14/08/17.
+ */
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
+public interface SchedulerProvider {
+    Scheduler provideIOScheduler();
+    Scheduler provideMainScheduler();
+    Scheduler provideComputationScheduler();
+    Scheduler provideNewThreadScheduler();
 }

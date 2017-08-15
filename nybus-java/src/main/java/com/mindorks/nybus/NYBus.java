@@ -15,10 +15,34 @@
  */
 
 package com.mindorks.nybus;
-
 /**
  * Created by amitshekhar on 14/08/17.
  */
 
+import com.mindorks.nybus.Scheduler.SchedulerProvider;
+import com.mindorks.nybus.internal.NYBusHandler;
+
 public class NYBus {
+    private static NYBus sNYBusInstance;
+    private NYBusHandler mNYBusHandler;
+
+    public static NYBus get() {
+        if (sNYBusInstance == null) {
+            synchronized (NYBus.class) {
+                if (sNYBusInstance == null) {
+                    sNYBusInstance = new NYBus();
+                }
+            }
+        }
+        return sNYBusInstance;
+    }
+
+
+    private NYBus() {
+        mNYBusHandler = new NYBusHandler();
+    }
+
+    public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
+        mNYBusHandler.setSchedulerProvider(schedulerProvider);
+    }
 }
