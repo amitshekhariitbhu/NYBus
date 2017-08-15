@@ -1,4 +1,10 @@
+<p align="center">
+<img alt="NYBus" src=https://raw.githubusercontent.com/MindorksOpenSource/NYBus/master/assets/nybus.png />
+</p>
+
 # NYBus - Be prepared to catch the bus for the New York City.
+
+## A pub-sub library for Android and Java applications.
 
 [![Mindorks](https://img.shields.io/badge/mindorks-opensource-blue.svg)](https://mindorks.com/open-source-projects)
 [![Mindorks Community](https://img.shields.io/badge/join-community-blue.svg)](https://mindorks.com/join-community)
