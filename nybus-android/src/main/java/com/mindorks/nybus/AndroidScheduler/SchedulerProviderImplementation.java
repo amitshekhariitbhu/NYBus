@@ -16,7 +16,7 @@
 
 package com.mindorks.nybus.AndroidScheduler;
 
-import com.mindorks.nybus.Scheduler.SchedulerProvider;
+import com.mindorks.Scheduler.SchedulerProvider;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;

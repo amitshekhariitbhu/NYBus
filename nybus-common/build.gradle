@@ -14,33 +14,13 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.Scheduler;
+apply plugin: 'java'
 
-import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'io.reactivex.rxjava2:rxjava:2.0.0'
 
-/**
- * Created by Jyoti on 14/08/17.
- */
-
-public class SchedulerProviderImpl implements SchedulerProvider{
-    @Override
-    public Scheduler provideIOScheduler() {
-        return Schedulers.io();
-    }
-
-    @Override
-    public Scheduler provideMainScheduler() {
-        return null;
-    }
-
-    @Override
-    public Scheduler provideComputationScheduler() {
-        return Schedulers.computation();
-    }
-
-    @Override
-    public Scheduler provideNewThreadScheduler() {
-        return Schedulers.newThread();
-    }
 }
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

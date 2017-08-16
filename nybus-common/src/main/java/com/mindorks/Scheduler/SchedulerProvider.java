@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.Scheduler;
+package com.mindorks.Scheduler;
 
 
 import io.reactivex.Scheduler;

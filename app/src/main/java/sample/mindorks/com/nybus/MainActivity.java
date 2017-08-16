@@ -18,8 +18,6 @@ package sample.mindorks.com.nybus;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.mindorks.nybus.AndroidNYBus;
 import com.mindorks.nybus.NYBus;
 
 public class MainActivity extends AppCompatActivity {

@@ -14,18 +14,33 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.Scheduler;
 
-import android.app.Application;
-
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Jyoti on 14/08/17.
  */
 
-public class NYBusApplication extends Application {
+public class SchedulerProviderImpl implements SchedulerProvider{
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public Scheduler provideIOScheduler() {
+        return Schedulers.io();
+    }
+
+    @Override
+    public Scheduler provideMainScheduler() {
+        return null;
+    }
+
+    @Override
+    public Scheduler provideComputationScheduler() {
+        return Schedulers.computation();
+    }
+
+    @Override
+    public Scheduler provideNewThreadScheduler() {
+        return Schedulers.newThread();
     }
 }

@@ -14,18 +14,17 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus;
 
-import android.app.Application;
-
+import com.mindorks.nybus.AndroidScheduler.SchedulerProviderImplementation;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by Jyoti on 16/08/17.
  */
 
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
+public class NYBus {
+
+    static {
+     //   NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
     }
 }

@@ -19,8 +19,8 @@ package com.mindorks.nybus;
  * Created by amitshekhar on 14/08/17.
  */
 
-import com.mindorks.nybus.Scheduler.SchedulerProvider;
-import com.mindorks.nybus.internal.NYBusHandler;
+import com.mindorks.Scheduler.SchedulerProvider;
+import com.mindorks.internal.NYBusHandler;
 
 public class NYBus {
     private static NYBus sNYBusInstance;

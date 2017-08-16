@@ -18,13 +18,7 @@
 
     package="com.mindorks.nybus">
 
-    <application android:allowBackup="true" android:label="@string/app_name"
-        android:supportsRtl="true">
-        <provider
-            android:authorities="${applicationId}.AndroidNYBus"
-            android:exported="false"
-            android:enabled="true"
-            android:name=".AndroidNYBus" />
+    <application android:allowBackup="true" android:label="@string/app_name">
     </application>
 
 </manifest>
