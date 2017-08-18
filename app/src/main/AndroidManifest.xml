@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright (C) 2017 MINDORKS NEXTGEN PRIVATE LIMITED
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +12,16 @@
   ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sample.mindorks.com.nybus">
 
     <application
+        android:name=".NYBusApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:name=".NYBusApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
@@ -33,6 +31,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SecondActivity"
+            android:label="@string/title_activity_second"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

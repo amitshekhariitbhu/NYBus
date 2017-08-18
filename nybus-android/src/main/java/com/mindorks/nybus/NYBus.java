@@ -16,15 +16,66 @@
 
 package com.mindorks.nybus;
 
+
 import com.mindorks.nybus.AndroidScheduler.SchedulerProviderImplementation;
+import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.internal.NYBusHandler;
+import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 /**
  * Created by Jyoti on 16/08/17.
  */
 
 public class NYBus {
+    private static NYBus sNYBusInstance;
+    private NYBusHandler mNYBusHandler;
+
 
     static {
-     //   NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
+        NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
     }
+    private NYBus() {
+        // This class is not publicly instantiable
+        mNYBusHandler = new NYBusHandler();
+    }
+
+    public static NYBus get() {
+        if (sNYBusInstance == null) {
+            synchronized (NYBus.class) {
+                if (sNYBusInstance == null) {
+                    sNYBusInstance = new NYBus();
+                }
+            }
+        }
+        return sNYBusInstance;
+    }
+
+    public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
+        mNYBusHandler.setSchedulerProvider(schedulerProvider);
+    }
+    public void register(Object object) {
+        register(object, EventChannel.DEFAULT);
+    }
+
+    public void register(Object object, String channelId) {
+        mNYBusHandler.register(object, channelId);
+    }
+
+    public void unregister(Object object) {
+        unregister(object, EventChannel.DEFAULT);
+    }
+
+    public void unregister(Object object, String channelId) {
+        mNYBusHandler.unregister(object, channelId);
+    }
+
+    public void post(Object object) {
+        post(object, EventChannel.DEFAULT);
+    }
+
+    public void post(Object object, String channelId) {
+        mNYBusHandler.post(object, channelId);
+    }
+
+
 }

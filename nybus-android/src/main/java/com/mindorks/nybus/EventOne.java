@@ -14,12 +14,26 @@
  *    limitations under the License.
  */
 
-apply plugin: 'java'
+package com.mindorks.nybus;
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
+/**
+ * Created by Jyoti on 16/08/17.
+ */
+
+public class EventOne {
+    private String name;
+    private String dob;
+
+    public EventOne(String name, String dob) {
+        this.name = name;
+        this.dob = dob;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDob() {
+        return dob;
+    }
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"

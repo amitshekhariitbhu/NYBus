@@ -14,18 +14,20 @@
  *    limitations under the License.
  */
 
-package com.mindorks.Scheduler;
-
-
-import io.reactivex.Scheduler;
+package com.mindorks.nybus.event;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by Jyoti on 16/08/17.
  */
 
-public interface SchedulerProvider {
-    Scheduler provideIOScheduler();
-    Scheduler provideMainScheduler();
-    Scheduler provideComputationScheduler();
-    Scheduler provideNewThreadScheduler();
+public class Event {
+
+    public Object object;
+    public String channelId;
+
+
+    public Event(Object object, String channelId) {
+        this.object = object;
+        this.channelId = channelId;
+    }
 }

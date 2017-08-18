@@ -14,33 +14,20 @@
  *    limitations under the License.
  */
 
-package com.mindorks.Scheduler;
+package com.mindorks.nybus.annotation;
 
-import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by Jyoti on 16/08/17.
  */
 
-public class SchedulerProviderImpl implements SchedulerProvider{
-    @Override
-    public Scheduler provideIOScheduler() {
-        return Schedulers.io();
-    }
-
-    @Override
-    public Scheduler provideMainScheduler() {
-        return null;
-    }
-
-    @Override
-    public Scheduler provideComputationScheduler() {
-        return Schedulers.computation();
-    }
-
-    @Override
-    public Scheduler provideNewThreadScheduler() {
-        return Schedulers.newThread();
-    }
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Subscribe {
 }

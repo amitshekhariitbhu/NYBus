@@ -14,12 +14,12 @@
  *    limitations under the License.
  */
 
-apply plugin: 'java'
+package com.mindorks.nybus.event;
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
+/**
+ * Created by Jyoti on 16/08/17.
+ */
+
+public interface EventChannel {
+    String DEFAULT = "default";
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
