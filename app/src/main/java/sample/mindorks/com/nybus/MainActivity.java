@@ -17,17 +17,19 @@
 package sample.mindorks.com.nybus;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.mindorks.nybus.EventOne;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.event.Event;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TestTarget targetOne;
+    private TestTarget targetTwo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,SecondActivity.class);
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 startActivity(intent);
 
             }
@@ -48,21 +50,28 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         NYBus.get().register(this);
         NYBus.get().post(new EventOne("JYOTI", "08/01/1993"));
+
+        targetOne = new TestTarget(TestTarget.CHANNEL_ONE);
+        targetTwo = new TestTarget(TestTarget.CHANNEL_TWO);
+        NYBus.get().post("Message ONE", TestTarget.CHANNEL_ONE);
+        NYBus.get().post("Message TWO", TestTarget.CHANNEL_TWO);
     }
 
     @Override
     protected void onStop() {
         NYBus.get().unregister(this);
         super.onStop();
+        targetOne.destroy();
+        targetTwo.destroy();
     }
 
     @Subscribe
-    public void onEventInA(EventOne e){
+    public void onEventInA(EventOne e) {
         Toast.makeText(this, "in event A", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
-    public void onEventInB(EventOne e){
+    public void onEventInB(EventOne e) {
         Toast.makeText(this, "in event B", Toast.LENGTH_SHORT).show();
     }
 }
