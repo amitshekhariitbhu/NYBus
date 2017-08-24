@@ -14,20 +14,40 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus;
+package com.mindorks.nybus.targets;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import com.mindorks.nybus.NYBus;
+import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.EventOne;
+import com.mindorks.nybus.events.EventTwo;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by amitshekhar on 25/08/17.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+
+public class OverrideTarget implements Target {
+
+    public OverrideTarget() {
+
+    }
+
+    @Subscribe
+    public void onEvent(EventOne eventOne) {
+
+    }
+
+    @Subscribe
+    public void onEvent(EventTwo eventTwo) {
+
+    }
+
+    @Override
+    public void register() {
+        NYBus.get().register(this);
+    }
+
+    @Override
+    public void unregister() {
+        NYBus.get().unregister(this);
     }
 }
