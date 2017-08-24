@@ -37,11 +37,14 @@ public class TestTarget {
 
     @Subscribe //TODO @Channel(CHANNEL_ONE)
     public void onEventForTypeOne(String value) {
+        System.out.println("Event received on first Channel"+value);
         // only the instance of channel one should get this event
     }
 
     @Subscribe //TODO @Channel(CHANNEL_TWO)
     public void onEventForTypeTwo(String value) {
+        System.out.println("Event received on second Channel"+value);
+
         // only the instance of channel two should get this event
     }
 

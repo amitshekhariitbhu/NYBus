@@ -19,13 +19,8 @@ package sample.mindorks.com.nybus;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Toast;
 
-import com.mindorks.nybus.EventOne;
 import com.mindorks.nybus.NYBus;
-import com.mindorks.nybus.annotation.Subscribe;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -39,7 +34,6 @@ public class SecondActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         NYBus.get().register(this);
-        NYBus.get().post(new EventOne("JYOTI", "08/01/1993"));
     }
 
     @Override
@@ -48,14 +42,5 @@ public class SecondActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    @Subscribe
-    public void onEventInA(EventOne e){
-        Toast.makeText(this, "in event A in second activity", Toast.LENGTH_SHORT).show();
-    }
-
-    @Subscribe
-    public void onEventInB(EventOne e){
-        Toast.makeText(this, "in event B in second activity", Toast.LENGTH_SHORT).show();
-    }
 
 }

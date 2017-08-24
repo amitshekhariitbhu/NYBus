@@ -22,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.mindorks.nybus.EventOne;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 
@@ -48,30 +47,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        NYBus.get().register(this);
-        NYBus.get().post(new EventOne("JYOTI", "08/01/1993"));
-
+        NYBus.get().register(this,TestTarget.CHANNEL_ONE);
         targetOne = new TestTarget(TestTarget.CHANNEL_ONE);
         targetTwo = new TestTarget(TestTarget.CHANNEL_TWO);
+        NYBus.get().post("event bus", TestTarget.CHANNEL_TWO);
         NYBus.get().post("Message ONE", TestTarget.CHANNEL_ONE);
-        NYBus.get().post("Message TWO", TestTarget.CHANNEL_TWO);
+        NYBus.get().post("Message TWO", TestTarget.CHANNEL_ONE);
+    }
+
+    @Subscribe //TODO @Channel(CHANNEL_ONE)
+    public void onEventForTypeOne(Integer value) {
+        Toast.makeText(this, "Event received on first Channel in activity", Toast.LENGTH_SHORT).show();
+        // only the instance of channel one should get this event
+    }
+    @Subscribe //TODO @Channel(CHANNEL_ONE)
+    public void onEventForTypeTwo(Integer value) {
+        Toast.makeText(this, "Event received on second Channel in activity", Toast.LENGTH_SHORT).show();
+        // only the instance of channel one should get this event
     }
 
     @Override
     protected void onStop() {
-        NYBus.get().unregister(this);
+      //  NYBus.get().unregister(this);
         super.onStop();
-        targetOne.destroy();
-        targetTwo.destroy();
+      //  targetOne.destroy();
+      //  targetTwo.destroy();
     }
 
-    @Subscribe
-    public void onEventInA(EventOne e) {
-        Toast.makeText(this, "in event A", Toast.LENGTH_SHORT).show();
-    }
 
-    @Subscribe
-    public void onEventInB(EventOne e) {
-        Toast.makeText(this, "in event B", Toast.LENGTH_SHORT).show();
-    }
 }
