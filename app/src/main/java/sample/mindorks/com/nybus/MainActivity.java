@@ -62,14 +62,13 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(channelId = "two")
     public void onEventForTypeOne(Integer value) {
         Toast.makeText(this, "Event received on first Channel in activity", Toast.LENGTH_SHORT).show();
-        // only the instance of channel one should get this event
     }
 
 
 
     @Override
     protected void onStop() {
-      //  NYBus.get().unregister(this,TestTarget.CHANNEL_ONE);
+       // NYBus.get().unregister(this,TestTarget.CHANNEL_ONE);
         super.onStop();
        // targetOne.destroy();
        // targetTwo.destroy();

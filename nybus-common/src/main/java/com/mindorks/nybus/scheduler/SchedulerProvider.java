@@ -25,7 +25,10 @@ import io.reactivex.Scheduler;
 
 public interface SchedulerProvider {
     Scheduler provideIOScheduler();
+
     Scheduler provideMainScheduler();
+
     Scheduler provideComputationScheduler();
+
     Scheduler provideNewThreadScheduler();
 }

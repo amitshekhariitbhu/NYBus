@@ -32,12 +32,11 @@ public class NYBus {
     private static NYBus sNYBusInstance;
     private NYBusHandler mNYBusHandler;
 
-
     static {
         NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
     }
+
     private NYBus() {
-        // This class is not publicly instantiable
         mNYBusHandler = new NYBusHandler();
     }
 
@@ -55,10 +54,11 @@ public class NYBus {
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         mNYBusHandler.setSchedulerProvider(schedulerProvider);
     }
+
     public void register(Object object) {
-        ArrayList<String> defaultArrayList = new ArrayList<>();
-        defaultArrayList.add(EventChannel.DEFAULT);
-        register(object, defaultArrayList);
+        ArrayList<String> defaultChannelListForRegister = new ArrayList<>();
+        defaultChannelListForRegister.add(EventChannel.DEFAULT);
+        register(object, defaultChannelListForRegister);
     }
 
     public void register(Object object, ArrayList<String> channelId) {
@@ -66,10 +66,13 @@ public class NYBus {
     }
 
     public void unregister(Object object) {
-        unregister(object, EventChannel.DEFAULT);
+        ArrayList<String> defaultChannelListForUnregister = new ArrayList<>();
+        defaultChannelListForUnregister.add(EventChannel.DEFAULT);
+        register(object, defaultChannelListForUnregister);
+        unregister(object, defaultChannelListForUnregister);
     }
 
-    public void unregister(Object object, String channelId) {
+    public void unregister(Object object, ArrayList<String> channelId) {
         mNYBusHandler.unregister(object, channelId);
     }
 

@@ -31,12 +31,11 @@ public class ChannelTarget implements Target {
     public static final String CHANNEL_TWO = "two";
     public static final String CHANNEL_DEFAULT = "default";
     ArrayList<String> channelIdForRegistration = new ArrayList<>();
+    ArrayList<String> channelIdForDeRegistration = new ArrayList<>();
 
-
-    private String channel;
-
-    public ChannelTarget(ArrayList<String> channelIdForRegistration) {
+    public ChannelTarget(ArrayList<String> channelIdForRegistration,ArrayList<String> channelIdForDeregistration) {
         this.channelIdForRegistration = channelIdForRegistration;
+        this.channelIdForDeRegistration = channelIdForDeregistration;
     }
 
     @Subscribe(channelId = CHANNEL_ONE)
@@ -60,6 +59,6 @@ public class ChannelTarget implements Target {
 
     @Override
     public void unregister() {
-        NYBus.get().unregister(this, channel);
+        NYBus.get().unregister(this, channelIdForDeRegistration);
     }
 }

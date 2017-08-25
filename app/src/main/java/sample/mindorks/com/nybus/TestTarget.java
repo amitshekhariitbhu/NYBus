@@ -33,19 +33,19 @@ public class TestTarget {
 
     private String channel;
 
-    public TestTarget(ArrayList<String> channelIdForRegistration ) {
+    public TestTarget(ArrayList<String> channelIdForRegistration) {
         this.channelIdForRegistration = channelIdForRegistration;
         NYBus.get().register(this, channelIdForRegistration);
     }
 
-    @Subscribe(channelId=TestTarget.CHANNEL_ONE)
+    @Subscribe(channelId = TestTarget.CHANNEL_ONE)
     public void onEventForTypeOne(String value) {
-        System.out.println("Event received on first Channel"+value);
+        System.out.println("Event received on first Channel" + value);
     }
 
-    @Subscribe(channelId=TestTarget.CHANNEL_TWO)
+    @Subscribe(channelId = TestTarget.CHANNEL_TWO)
     public void onEventForTypeTwo(String value) {
-        System.out.println("Event received on second Channel"+value);
+        System.out.println("Event received on second Channel" + value);
     }
 
     public void destroy() {

@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Jyoti on 14/08/17.
  */
 
-public class SchedulerProviderImpl implements SchedulerProvider{
+public class SchedulerProviderImpl implements SchedulerProvider {
     @Override
     public Scheduler provideIOScheduler() {
         return Schedulers.io();

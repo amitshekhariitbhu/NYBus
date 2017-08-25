@@ -18,7 +18,10 @@ package com.mindorks.nybus;
 
 
 import com.mindorks.nybus.events.Event;
+import com.mindorks.nybus.events.EventOne;
+import com.mindorks.nybus.events.EventTwo;
 import com.mindorks.nybus.targets.ChannelTarget;
+import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
 
 import org.junit.Test;
@@ -36,6 +39,8 @@ public class NYBusTest {
     ArrayList<String> channelIdForRegistration = new ArrayList<>();
 
     ArrayList<String> channelIdForRegistrationTwo = new ArrayList<>();
+    ArrayList<String> channelIdForDeregistration = new ArrayList<>();
+
     @Test
     public void testSimpleTarget() throws Exception {
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
@@ -44,20 +49,35 @@ public class NYBusTest {
         NYBus.get().post(event);
         verify(simpleTarget).onEventOne(event);
         verify(simpleTarget).onEventTwo(event);
-//        simpleTarget.unregister();
+        //simpleTarget.unregister();
     }
 
     @Test
     public void testOverrideTarget() throws Exception {
+        OverrideTarget overrideTarget = Mockito.spy(new OverrideTarget());
+        overrideTarget.register();
+        EventOne eventOne = new EventOne();
+        EventTwo eventTwo = new EventTwo();
+        NYBus.get().post(eventOne);
+        verify(overrideTarget).onEvent(eventOne);
+        verify(overrideTarget, never()).onEvent(eventTwo);
 
+        NYBus.get().post(eventTwo);
+
+        verify(overrideTarget).onEvent(eventTwo);
+        //overrideTarget.unregister();
     }
 
     @Test
     public void testChannelTarget() throws Exception {
         channelIdForRegistration.add(ChannelTarget.CHANNEL_ONE);
-        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget(channelIdForRegistration));
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_ONE);
+        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget(channelIdForRegistration,
+                channelIdForDeregistration));
         channelIdForRegistrationTwo.add(ChannelTarget.CHANNEL_TWO);
-        ChannelTarget channelTargetTwo = Mockito.spy(new ChannelTarget(channelIdForRegistrationTwo));
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_TWO);
+        ChannelTarget channelTargetTwo = Mockito.spy(new ChannelTarget(channelIdForRegistrationTwo,
+                channelIdForDeregistration));
         channelTargetOne.register();
         channelTargetTwo.register();
         NYBus.get().post("Message One", ChannelTarget.CHANNEL_ONE);
@@ -66,8 +86,8 @@ public class NYBusTest {
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
         verify(channelTargetTwo).onEventForTypeTwo("Message two");
         verify(channelTargetTwo, never()).onEventForTypeOne("Message two");
-        channelTargetOne.unregister();
-        channelTargetTwo.unregister();
+       // channelTargetOne.unregister();
+       // channelTargetTwo.unregister();
     }
 
     @Test
@@ -75,21 +95,47 @@ public class NYBusTest {
         channelIdForRegistration.add(ChannelTarget.CHANNEL_ONE);
         channelIdForRegistration.add(ChannelTarget.CHANNEL_TWO);
         channelIdForRegistration.add(ChannelTarget.CHANNEL_DEFAULT);
-        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget(channelIdForRegistration));
+
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_ONE);
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_TWO);
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_DEFAULT);
+        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget(channelIdForRegistration,
+                channelIdForDeregistration));
         channelTargetOne.register();
         NYBus.get().post("Message Default");
         verify(channelTargetOne, never()).onEventForTypeOne("Message Default");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message Default");
         verify(channelTargetOne).onEventForTypeDefault("Message Default");
 
-        NYBus.get().post("Message One" ,ChannelTarget.CHANNEL_ONE);
+        NYBus.get().post("Message One", ChannelTarget.CHANNEL_ONE);
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
 
 
+        //channelTargetOne.unregister();
 
-        channelTargetOne.unregister();
+    }
+
+    @Test
+    public void testChannelTargetUregister() throws Exception {
+        channelIdForRegistration.add(ChannelTarget.CHANNEL_ONE);
+        channelIdForRegistration.add(ChannelTarget.CHANNEL_TWO);
+        channelIdForRegistration.add(ChannelTarget.CHANNEL_DEFAULT);
+        channelIdForDeregistration.add(ChannelTarget.CHANNEL_ONE);
+
+        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget(channelIdForRegistration,
+                channelIdForDeregistration));
+        channelTargetOne.register();
+        NYBus.get().post("Message Default");
+        verify(channelTargetOne, never()).onEventForTypeOne("Message Default");
+        verify(channelTargetOne, never()).onEventForTypeTwo("Message Default");
+        verify(channelTargetOne).onEventForTypeDefault("Message Default");
+       // channelTargetOne.unregister();
+//        NYBus.get().post("Message Two", ChannelTarget.CHANNEL_TWO);
+//        verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
+//        verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
+//        verify(channelTargetOne).onEventForTypeTwo("Message Two");
 
     }
 
