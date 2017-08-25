@@ -19,6 +19,8 @@ package sample.mindorks.com.nybus;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 
+import java.util.ArrayList;
+
 /**
  * Created by amitshekhar on 18/08/17.
  */
@@ -27,29 +29,27 @@ public class TestTarget {
 
     public static final String CHANNEL_ONE = "one";
     public static final String CHANNEL_TWO = "two";
+    ArrayList<String> channelIdForRegistration = new ArrayList<>();
 
     private String channel;
 
-    public TestTarget(String channel) {
-        this.channel = channel;
-        NYBus.get().register(this, channel);
+    public TestTarget(ArrayList<String> channelIdForRegistration ) {
+        this.channelIdForRegistration = channelIdForRegistration;
+        NYBus.get().register(this, channelIdForRegistration);
     }
 
-    @Subscribe //TODO @Channel(CHANNEL_ONE)
+    @Subscribe(channelId=TestTarget.CHANNEL_ONE)
     public void onEventForTypeOne(String value) {
         System.out.println("Event received on first Channel"+value);
-        // only the instance of channel one should get this event
     }
 
-    @Subscribe //TODO @Channel(CHANNEL_TWO)
+    @Subscribe(channelId=TestTarget.CHANNEL_TWO)
     public void onEventForTypeTwo(String value) {
         System.out.println("Event received on second Channel"+value);
-
-        // only the instance of channel two should get this event
     }
 
     public void destroy() {
-        NYBus.get().register(this, channel);
+        NYBus.get().unregister(this, channel);
     }
 
 }

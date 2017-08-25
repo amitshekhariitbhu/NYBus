@@ -19,6 +19,8 @@ package com.mindorks.nybus.targets;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 
+import java.util.ArrayList;
+
 /**
  * Created by amitshekhar on 25/08/17.
  */
@@ -27,26 +29,33 @@ public class ChannelTarget implements Target {
 
     public static final String CHANNEL_ONE = "one";
     public static final String CHANNEL_TWO = "two";
+    public static final String CHANNEL_DEFAULT = "default";
+    ArrayList<String> channelIdForRegistration = new ArrayList<>();
+
 
     private String channel;
 
-    public ChannelTarget(String channel) {
-        this.channel = channel;
+    public ChannelTarget(ArrayList<String> channelIdForRegistration) {
+        this.channelIdForRegistration = channelIdForRegistration;
     }
 
-    @Subscribe //TODO @Channel(CHANNEL_ONE)
+    @Subscribe(channelId = CHANNEL_ONE)
     public void onEventForTypeOne(String value) {
         // only the instance of channel one should get this event
     }
 
-    @Subscribe //TODO @Channel(CHANNEL_TWO)
+    @Subscribe(channelId = CHANNEL_TWO)
     public void onEventForTypeTwo(String value) {
         // only the instance of channel two should get this event
     }
 
+    @Subscribe
+    public void onEventForTypeDefault(String value) {
+        // only the instance of channel two should get this event
+    }
     @Override
     public void register() {
-        NYBus.get().register(this, channel);
+        NYBus.get().register(this, channelIdForRegistration);
     }
 
     @Override
