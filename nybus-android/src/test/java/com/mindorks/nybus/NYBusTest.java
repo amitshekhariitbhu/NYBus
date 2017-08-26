@@ -27,6 +27,10 @@ import com.mindorks.nybus.targets.SimpleTarget;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -38,6 +42,7 @@ public class NYBusTest {
 
     @Test
     public void testSimpleTarget() throws Exception {
+
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
         simpleTarget.register();
         Event event = new Event();
@@ -45,6 +50,11 @@ public class NYBusTest {
         verify(simpleTarget).onEventOne(event);
         verify(simpleTarget).onEventTwo(event);
         simpleTarget.unregister();
+        Event eventOne = new Event();
+        NYBus.get().post(eventOne);
+        verify(simpleTarget, never()).onEventOne(eventOne);
+        verify(simpleTarget, never()).onEventTwo(eventOne);
+
     }
 
     @Test

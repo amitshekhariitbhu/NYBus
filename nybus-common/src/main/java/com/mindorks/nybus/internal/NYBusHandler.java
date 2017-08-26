@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ import io.reactivex.subjects.PublishSubject;
 
 public class NYBusHandler {
     private SchedulerProvider mSchedulerProvider;
-    private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<Method>>> mEventsToTargetsMap;
+    private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<Method>>  > mEventsToTargetsMap;
     private PublishSubject<Event> subject;
 
 
@@ -207,15 +208,18 @@ public class NYBusHandler {
     private void removeMethodFromCurrentMethodSet(ConcurrentHashMap<Object, Set<Method>> mTargetMap,
                                                   Object targetObject,
                                                   List<String> targetChannelId) {
+
         Set<Method> subscribedMethods = mTargetMap.get(targetObject);
-        for (Method subscribedMethod : subscribedMethods) {
-            String methodChannelId = getMethodChannelId(subscribedMethod);
+        Iterator subscribedMethodsIterator = subscribedMethods.iterator();
+        while (subscribedMethodsIterator.hasNext()) {
+            Method method = (Method)subscribedMethodsIterator.next();
+            String methodChannelId = getMethodChannelId(method);
             if (targetChannelId.contains(methodChannelId)) {
-                subscribedMethods.remove(subscribedMethod);
+                subscribedMethodsIterator.remove();
                 removeTargetIfRequired(subscribedMethods, mTargetMap, targetObject);
             }
-
         }
+
     }
 
     private void removeTargetIfRequired(Set<Method> subscribedMethods, ConcurrentHashMap<Object,
@@ -248,7 +252,7 @@ public class NYBusHandler {
     }
 
     private boolean hasSingleParameter(Method method) {
-        return method.getParameterCount() == 0;
+        return method.getParameterCount() == 1;
     }
 }
 
