@@ -98,7 +98,7 @@ public class NYBusHandler {
     }
 
 
-    public void unregister(Object targetObject, ArrayList<String> targetChannelId) {
+    public void unregister(Object targetObject, List<String> targetChannelId) {
         for (Map.Entry<Class<?>, ConcurrentHashMap<Object, Set<Method>>> mEventsToTargetsMapEntry :
                 mEventsToTargetsMap.entrySet()) {
             ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMapEntry.getValue();
@@ -149,7 +149,7 @@ public class NYBusHandler {
 
 
     private void addEntriesInTargetMap(Object targetObject,
-                                       Method subscribeMethod, List<String> targetChannelId)  {
+                                       Method subscribeMethod, List<String> targetChannelId) {
         String subscribedMethodChannelId = getMethodChannelId(subscribeMethod);
         if (targetChannelId.contains(subscribedMethodChannelId)) {
             if (mEventsToTargetsMap.containsKey(subscribeMethod.getParameterTypes()[0])) {
@@ -206,7 +206,7 @@ public class NYBusHandler {
 
     private void removeMethodFromCurrentMethodSet(ConcurrentHashMap<Object, Set<Method>> mTargetMap,
                                                   Object targetObject,
-                                                  ArrayList<String> targetChannelId) {
+                                                  List<String> targetChannelId) {
         Set<Method> subscribedMethods = mTargetMap.get(targetObject);
         for (Method subscribedMethod : subscribedMethods) {
             String methodChannelId = getMethodChannelId(subscribedMethod);
@@ -248,7 +248,7 @@ public class NYBusHandler {
     }
 
     private boolean hasSingleParameter(Method method) {
-        return  true;
+        return method.getParameterCount() == 0;
     }
 }
 

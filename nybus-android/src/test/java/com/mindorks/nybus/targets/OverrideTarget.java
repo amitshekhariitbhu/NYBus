@@ -48,6 +48,6 @@ public class OverrideTarget implements Target {
 
     @Override
     public void unregister(String ... channelID) {
-       // NYBus.get().unregister(this);
+        NYBus.get().unregister(this);
     }
 }

@@ -73,13 +73,18 @@ public class NYBus {
         mNYBusHandler.register(object, channelId);
     }
 
-    public void unregister(Object object) {
-        ArrayList<String> defaultChannelListForUnregister = new ArrayList<>();
-        defaultChannelListForUnregister.add(EventChannel.DEFAULT);
-        unregister(object, defaultChannelListForUnregister);
+    public void unregister(Object object, String... channelIDs) {
+        List<String> channelIDListForUnregister;
+        if (channelIDs.length == 0) {
+            channelIDListForUnregister = new ArrayList<>();
+            channelIDListForUnregister.add(EventChannel.DEFAULT);
+        } else {
+            channelIDListForUnregister = new ArrayList<>(Arrays.asList(channelIDs));
+        }
+        unregister(object, channelIDListForUnregister);
     }
 
-    public void unregister(Object object, ArrayList<String> channelId) {
+    public void unregister(Object object, List<String> channelId) {
         mNYBusHandler.unregister(object, channelId);
     }
 
