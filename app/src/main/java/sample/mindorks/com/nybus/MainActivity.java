@@ -25,13 +25,11 @@ import android.widget.Toast;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private TestTarget targetOne;
     private TestTarget targetTwo;
-    ArrayList<String> channelIdForRegistration = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        channelIdForRegistration.add(TestTarget.CHANNEL_ONE);
-        channelIdForRegistration.add(TestTarget.CHANNEL_TWO);
-        targetOne = new TestTarget(channelIdForRegistration);
-        channelIdForRegistration.remove(TestTarget.CHANNEL_ONE);
-        targetTwo = new TestTarget(channelIdForRegistration);
-        NYBus.get().post("String" ,TestTarget.CHANNEL_TWO);
+        targetOne = new TestTarget(TestTarget.CHANNEL_ONE);
+        targetTwo = new TestTarget(TestTarget.CHANNEL_ONE,TestTarget.CHANNEL_TWO);
+        NYBus.get().post("String to be received in one and two" ,TestTarget.CHANNEL_TWO);
 
     }
 
@@ -68,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-       // NYBus.get().unregister(this,TestTarget.CHANNEL_ONE);
+       //
+        // NYBus.get().unregister(this,TestTarget.CHANNEL_ONE);
         super.onStop();
        // targetOne.destroy();
        // targetTwo.destroy();

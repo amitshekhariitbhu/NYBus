@@ -29,12 +29,10 @@ public class TestTarget {
 
     public static final String CHANNEL_ONE = "one";
     public static final String CHANNEL_TWO = "two";
-    ArrayList<String> channelIdForRegistration = new ArrayList<>();
 
     private String channel;
 
-    public TestTarget(ArrayList<String> channelIdForRegistration) {
-        this.channelIdForRegistration = channelIdForRegistration;
+    public TestTarget(String ... channelIdForRegistration) {
         NYBus.get().register(this, channelIdForRegistration);
     }
 
@@ -49,7 +47,8 @@ public class TestTarget {
     }
 
     public void destroy() {
-        NYBus.get().unregister(this, channel);
+
+        //NYBus.get().unregister(this, channel);
     }
 
 }

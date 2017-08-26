@@ -19,8 +19,6 @@ package com.mindorks.nybus.targets;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 
-import java.util.ArrayList;
-
 /**
  * Created by amitshekhar on 25/08/17.
  */
@@ -30,12 +28,9 @@ public class ChannelTarget implements Target {
     public static final String CHANNEL_ONE = "one";
     public static final String CHANNEL_TWO = "two";
     public static final String CHANNEL_DEFAULT = "default";
-    ArrayList<String> channelIdForRegistration = new ArrayList<>();
-    ArrayList<String> channelIdForDeRegistration = new ArrayList<>();
 
-    public ChannelTarget(ArrayList<String> channelIdForRegistration,ArrayList<String> channelIdForDeregistration) {
-        this.channelIdForRegistration = channelIdForRegistration;
-        this.channelIdForDeRegistration = channelIdForDeregistration;
+
+    public ChannelTarget() {
     }
 
     @Subscribe(channelId = CHANNEL_ONE)
@@ -52,13 +47,14 @@ public class ChannelTarget implements Target {
     public void onEventForTypeDefault(String value) {
         // only the instance of channel two should get this event
     }
+
     @Override
-    public void register() {
-        NYBus.get().register(this, channelIdForRegistration);
+    public void register(String... channelID) {
+        NYBus.get().register(this, channelID);
     }
 
     @Override
-    public void unregister() {
-        NYBus.get().unregister(this, channelIdForDeRegistration);
+    public void unregister(String... channelID) {
+        // NYBus.get().unregister(this, channelIdForDeRegistration);
     }
 }

@@ -22,8 +22,8 @@ package com.mindorks.nybus.targets;
 
 public interface Target {
 
-    void register();
+    void register(String ... channelID);
 
-    void unregister();
+    void unregister(String ... channelID);
 
 }

@@ -82,7 +82,7 @@ public class NYBusHandler {
         this.mSchedulerProvider = mSchedulerProvider;
     }
 
-    public void register(Object object, ArrayList<String> channelId) {
+    public void register(Object object, List<String> channelId) {
         List<Method> subscribeMethods =
                 provideMethodsWithSubscribeAnnotation(object.getClass());
         if (subscribeMethods.size() != 0) {
@@ -149,7 +149,7 @@ public class NYBusHandler {
 
 
     private void addEntriesInTargetMap(Object targetObject,
-                                       Method subscribeMethod, ArrayList<String> targetChannelId) {
+                                       Method subscribeMethod, List<String> targetChannelId)  {
         String subscribedMethodChannelId = getMethodChannelId(subscribeMethod);
         if (targetChannelId.contains(subscribedMethodChannelId)) {
             if (mEventsToTargetsMap.containsKey(subscribeMethod.getParameterTypes()[0])) {
@@ -248,7 +248,7 @@ public class NYBusHandler {
     }
 
     private boolean hasSingleParameter(Method method) {
-        return method.getParameterCount() == 1;
+        return  true;
     }
 }
 

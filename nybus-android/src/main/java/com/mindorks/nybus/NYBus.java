@@ -23,6 +23,8 @@ import com.mindorks.nybus.internal.NYBusHandler;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Jyoti on 16/08/17.
@@ -55,20 +57,25 @@ public class NYBus {
         mNYBusHandler.setSchedulerProvider(schedulerProvider);
     }
 
-    public void register(Object object) {
-        ArrayList<String> defaultChannelListForRegister = new ArrayList<>();
-        defaultChannelListForRegister.add(EventChannel.DEFAULT);
-        register(object, defaultChannelListForRegister);
+    public void register(Object object, String... channelIDs) {
+        List<String> channelIDListForRegister;
+        if (channelIDs.length == 0) {
+            channelIDListForRegister = new ArrayList<>();
+            channelIDListForRegister.add(EventChannel.DEFAULT);
+        } else {
+            channelIDListForRegister = new ArrayList<>(Arrays.asList(channelIDs));
+        }
+        register(object, channelIDListForRegister);
+
     }
 
-    public void register(Object object, ArrayList<String> channelId) {
+    public void register(Object object, List<String> channelId) {
         mNYBusHandler.register(object, channelId);
     }
 
     public void unregister(Object object) {
         ArrayList<String> defaultChannelListForUnregister = new ArrayList<>();
         defaultChannelListForUnregister.add(EventChannel.DEFAULT);
-        register(object, defaultChannelListForUnregister);
         unregister(object, defaultChannelListForUnregister);
     }
 

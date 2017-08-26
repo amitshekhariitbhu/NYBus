@@ -41,12 +41,12 @@ public class SimpleTarget implements Target {
     }
 
     @Override
-    public void register() {
+    public void register(String... channelID) {
         NYBus.get().register(this);
     }
 
     @Override
-    public void unregister() {
+    public void unregister(String... channelID) {
         NYBus.get().unregister(this);
     }
 }
