@@ -16,6 +16,8 @@
 
 package com.mindorks.nybus.annotation;
 
+import com.mindorks.nybus.thread.NYThread;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,5 +33,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface Subscribe {
     String channelId() default "default";
+    NYThread getThreadType() default  NYThread.POSTING;
 
 }

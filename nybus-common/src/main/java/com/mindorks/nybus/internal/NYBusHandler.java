@@ -92,26 +92,23 @@ public class NYBusHandler {
         return new Consumer<Event>() {
             @Override
             public void accept(@NonNull Event event) throws Exception {
-                findTargetsAndDeliver(event);
+                deliverEventToTargetMethod(event.targetObject,event.subscribedMethod,event);
             }
+
         };
     }
 
-    private void findTargetsAndDeliver(Event event) {
-        ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
-                get(event.object.getClass());
-        if (mTargetMap != null) {
-            for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
-                    mTargetMap.entrySet()) {
-                Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
-                for (Method subscribedMethod : mSubscribedMethods) {
-                    String methodChannelId = getMethodChannelId(subscribedMethod);
-                    if (methodChannelId.equals(event.channelId)) {
-                        deliverEventToTargetMethod(mTargetMapEntry.getKey(),
-                                subscribedMethod, event.object);
-                    }
-
+    private void findTargetsAndDeliver(ConcurrentHashMap<Object, Set<Method>> mTargetMap,Object eventObject, String channelId) {
+        for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
+                mTargetMap.entrySet()) {
+            Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
+            for (Method subscribedMethod : mSubscribedMethods) {
+                String methodChannelId = getMethodChannelId(subscribedMethod);
+                if (methodChannelId.equals(channelId)) {
+                    Event event = new Event(eventObject,mTargetMapEntry.getKey(),subscribedMethod);
+                    determineThreadAndDeliverEvent(event);
                 }
+
             }
         }
     }
@@ -133,32 +130,41 @@ public class NYBusHandler {
     }
 
     public void post(Object eventObject, String channelId) {
-        //TODO assign thread from method
-        final NYThread thread = NYThread.POSTING;
+        ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
+                get(eventObject.getClass());
+        if (mTargetMap != null) {
+            findTargetsAndDeliver(mTargetMap,eventObject,channelId);
+        }
+
+
+    }
+
+    private void determineThreadAndDeliverEvent(Event event) {
+        final NYThread thread = event.subscribedMethod.getAnnotation(Subscribe.class).getThreadType();
         switch (thread) {
             case POSTING:
-                postingThreadSubject.onNext(new Event(eventObject, channelId));
+                postingThreadSubject.onNext(event);
                 break;
             case MAIN:
-                mainThreadSubject.onNext(new Event(eventObject, channelId));
+                mainThreadSubject.onNext(event);
                 break;
             case IO:
-                iOThreadSubject.onNext(new Event(eventObject, channelId));
+                iOThreadSubject.onNext(event);
                 break;
             case NEW:
-                newThreadSubject.onNext(new Event(eventObject, channelId));
+                newThreadSubject.onNext(event);
                 break;
             case COMPUTATION:
-                computationThreadSubject.onNext(new Event(eventObject, channelId));
+                computationThreadSubject.onNext(event);
                 break;
             case TRAMPOLINE:
-                trampolineThreadSubject.onNext(new Event(eventObject, channelId));
+                trampolineThreadSubject.onNext(event);
                 break;
             case EXECUTOR:
-                executorThreadSubject.onNext(new Event(eventObject, channelId));
+                executorThreadSubject.onNext(event);
                 break;
             default:
-                postingThreadSubject.onNext(new Event(eventObject, channelId));
+                postingThreadSubject.onNext(event);
                 break;
         }
     }

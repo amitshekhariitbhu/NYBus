@@ -16,6 +16,8 @@
 
 package com.mindorks.nybus.event;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by Jyoti on 16/08/17.
  */
@@ -23,11 +25,14 @@ package com.mindorks.nybus.event;
 public class Event {
 
     public Object object;
-    public String channelId;
+    public Object targetObject;
+    public Method subscribedMethod;
 
 
-    public Event(Object object, String channelId) {
+    public Event(Object object,Object targetObject,Method subscribedMethod) {
         this.object = object;
-        this.channelId = channelId;
+        this.targetObject = targetObject;
+        this.subscribedMethod = subscribedMethod;
     }
+
 }
