@@ -14,27 +14,25 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus.subscriber;
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
+import com.mindorks.nybus.thread.NYThread;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by Jyoti on 27/08/17.
  */
 
-public class Event {
+public class SubscriberHolder {
+    public Method subscribedMethod;
+    public List<String> subscribedChannelID;
+    public NYThread subscribedThreadType;
 
-    public Object object;
-    public Object targetObject;
-    public SubscriberHolder subscribedMethod;
-
-
-    public Event(Object object,Object targetObject,SubscriberHolder subscribedMethod) {
-        this.object = object;
-        this.targetObject = targetObject;
+    public SubscriberHolder(Method subscribedMethod, List<String> subscribedChannelID, NYThread subscribedThreadType) {
         this.subscribedMethod = subscribedMethod;
+        this.subscribedChannelID = subscribedChannelID;
+        this.subscribedThreadType = subscribedThreadType;
     }
-
 }

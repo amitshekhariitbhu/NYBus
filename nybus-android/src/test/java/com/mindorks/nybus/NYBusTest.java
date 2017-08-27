@@ -22,6 +22,7 @@ import com.mindorks.nybus.events.EventOne;
 import com.mindorks.nybus.events.EventTwo;
 import com.mindorks.nybus.targets.ChannelTarget;
 import com.mindorks.nybus.targets.FailSuperSimpleTarget;
+import com.mindorks.nybus.targets.MultipleChannelIDMethod;
 import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
@@ -93,7 +94,7 @@ public class NYBusTest {
         NYBus.get().post(event);
         verify(failSuperSimpleTarget).onEventOne(event);
         verify(failSuperSimpleTarget).onEventTwo(event);
-        verify(failSuperSimpleTarget, never()).onEventThree(event);
+        verify(failSuperSimpleTarget).onEventThree(event);
         failSuperSimpleTarget.unregister();
         Event eventOne = new Event();
         NYBus.get().post(eventOne);
@@ -169,6 +170,21 @@ public class NYBusTest {
         verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
+
+    }
+
+    @Test
+    public void testChannelMultipleChannelMethod() throws Exception {
+        MultipleChannelIDMethod multipleChannelIDMethod = Mockito.spy(new MultipleChannelIDMethod());
+        multipleChannelIDMethod.register(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
+        NYBus.get().post("Message on One","one");
+        verify(multipleChannelIDMethod).onEventForTypeString("Message on One");
+        NYBus.get().post("Message on two","two");
+        verify(multipleChannelIDMethod).onEventForTypeString("Message on two");
+        NYBus.get().post("Message on default");
+        verify(multipleChannelIDMethod, never()).onEventForTypeString("Message on default");
+
 
     }
 

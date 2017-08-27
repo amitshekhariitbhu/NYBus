@@ -14,27 +14,30 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
-
-import java.lang.reflect.Method;
+import com.mindorks.nybus.NYBus;
+import com.mindorks.nybus.annotation.Subscribe;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by Jyoti on 27/08/17.
  */
 
-public class Event {
-
-    public Object object;
-    public Object targetObject;
-    public SubscriberHolder subscribedMethod;
+public class MultipleChannelIDMethod implements Target {
 
 
-    public Event(Object object,Object targetObject,SubscriberHolder subscribedMethod) {
-        this.object = object;
-        this.targetObject = targetObject;
-        this.subscribedMethod = subscribedMethod;
+    @Subscribe(channelId = {"one","two","default"})
+    public void onEventForTypeString(String value) {
+
     }
 
+    @Override
+    public void register(String... channelID) {
+        NYBus.get().register(this,channelID);
+    }
+
+    @Override
+    public void unregister(String... channelID) {
+        NYBus.get().register(this,channelID);
+    }
 }
