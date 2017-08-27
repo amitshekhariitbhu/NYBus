@@ -17,9 +17,10 @@
 package com.mindorks.nybus.targets;
 
 import com.mindorks.nybus.NYBus;
-import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.events.EventOne;
+import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.events.EventTwo;
+
 
 /**
  * Created by amitshekhar on 25/08/17.

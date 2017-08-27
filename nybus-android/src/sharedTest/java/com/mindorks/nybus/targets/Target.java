@@ -16,37 +16,14 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
-import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.Event;
-
 /**
  * Created by amitshekhar on 25/08/17.
  */
 
-public class SimpleTarget implements Target {
+public interface Target {
 
-    public SimpleTarget() {
+    void register(String... channelID);
 
-    }
+    void unregister(String... channelID);
 
-    @Subscribe
-    public void onEventOne(Event event) {
-        System.out.print("onEventOne");
-    }
-
-    @Subscribe
-    public void onEventTwo(Event event) {
-        System.out.print("onEventTwo");
-    }
-
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this);
-    }
 }

@@ -16,6 +16,7 @@
 
 package com.mindorks.nybus;
 
+import android.support.test.runner.AndroidJUnit4;
 
 import com.mindorks.nybus.events.Event;
 import com.mindorks.nybus.events.EventOne;
@@ -25,6 +26,7 @@ import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
@@ -35,10 +37,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created by amitshekhar on 25/08/17.
- */
-public class NYBusTest {
+@RunWith(AndroidJUnit4.class)
+public class NYBusAndroidTest {
 
     @Test
     public void testSimpleTarget() throws Exception {
@@ -170,5 +170,6 @@ public class NYBusTest {
         verify(simpleTarget, times(30000)).onEventOne(event);
         verify(simpleTarget, times(30000)).onEventTwo(event);
     }
+
 
 }

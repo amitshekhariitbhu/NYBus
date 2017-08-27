@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
@@ -43,40 +42,33 @@ import io.reactivex.subjects.PublishSubject;
 
 public class NYBusHandler {
     private SchedulerProvider mSchedulerProvider;
-    private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<Method>>  > mEventsToTargetsMap;
+    private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<Method>>> mEventsToTargetsMap;
     private PublishSubject<Event> subject;
-
 
     public NYBusHandler() {
         mEventsToTargetsMap = new ConcurrentHashMap<>();
         subject = PublishSubject.create();
-        subject.toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(new Consumer<Event>() {
-                    @Override
-                    public void accept(@NonNull Event event) throws Exception {
-                        ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
-                                get(event.object.getClass());
-                        if (mTargetMap != null) {
-                            for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
-                                    mTargetMap.entrySet()) {
-                                Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
-                                for (Method subscribedMethod : mSubscribedMethods) {
-                                    String methodChannelId = getMethodChannelId(subscribedMethod);
-                                    if (methodChannelId.equals(event.channelId)) {
-                                        deliverEventToTargetMethod(mTargetMapEntry.getKey(),
-                                                subscribedMethod, event.object);
-                                    }
-
-                                }
+        subject.subscribe(new Consumer<Event>() {
+            @Override
+            public void accept(@NonNull Event event) throws Exception {
+                ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
+                        get(event.object.getClass());
+                if (mTargetMap != null) {
+                    for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
+                            mTargetMap.entrySet()) {
+                        Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
+                        for (Method subscribedMethod : mSubscribedMethods) {
+                            String methodChannelId = getMethodChannelId(subscribedMethod);
+                            if (methodChannelId.equals(event.channelId)) {
+                                deliverEventToTargetMethod(mTargetMapEntry.getKey(),
+                                        subscribedMethod, event.object);
                             }
+
                         }
-
-
                     }
-
-
-                });
-
+                }
+            }
+        });
     }
 
     public void setSchedulerProvider(SchedulerProvider mSchedulerProvider) {
@@ -212,7 +204,7 @@ public class NYBusHandler {
         Set<Method> subscribedMethods = mTargetMap.get(targetObject);
         Iterator subscribedMethodsIterator = subscribedMethods.iterator();
         while (subscribedMethodsIterator.hasNext()) {
-            Method method = (Method)subscribedMethodsIterator.next();
+            Method method = (Method) subscribedMethodsIterator.next();
             String methodChannelId = getMethodChannelId(method);
             if (targetChannelId.contains(methodChannelId)) {
                 subscribedMethodsIterator.remove();
@@ -252,7 +244,7 @@ public class NYBusHandler {
     }
 
     private boolean hasSingleParameter(Method method) {
-        return method.getParameterCount() == 1;
+        return method.getParameterTypes().length == 1;
     }
 }
 
