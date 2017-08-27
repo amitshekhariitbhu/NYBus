@@ -21,8 +21,10 @@ import com.mindorks.nybus.events.Event;
 import com.mindorks.nybus.events.EventOne;
 import com.mindorks.nybus.events.EventTwo;
 import com.mindorks.nybus.targets.ChannelTarget;
+import com.mindorks.nybus.targets.FailSuperSimpleTarget;
 import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
+import com.mindorks.nybus.targets.SuperSimpleTarget;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -54,6 +56,44 @@ public class NYBusTest {
         NYBus.get().post(eventOne);
         verify(simpleTarget, never()).onEventOne(eventOne);
         verify(simpleTarget, never()).onEventTwo(eventOne);
+
+    }
+
+    @Test
+    public void testSuperSimpleTarget() throws Exception {
+
+        SuperSimpleTarget superSimpleTarget = Mockito.spy(new SuperSimpleTarget());
+        superSimpleTarget.register();
+        Event event = new Event();
+        NYBus.get().post(event);
+        verify(superSimpleTarget).onEventOne(event);
+        verify(superSimpleTarget).onEventTwo(event);
+        verify(superSimpleTarget).onEventThree(event);
+        superSimpleTarget.unregister();
+        Event eventOne = new Event();
+        NYBus.get().post(eventOne);
+        verify(superSimpleTarget, never()).onEventOne(eventOne);
+        verify(superSimpleTarget, never()).onEventTwo(eventOne);
+        verify(superSimpleTarget, never()).onEventThree(eventOne);
+
+    }
+
+    @Test
+    public void testFailSuperSimpleTarget() throws Exception {
+
+        FailSuperSimpleTarget failSuperSimpleTarget = Mockito.spy(new FailSuperSimpleTarget());
+        failSuperSimpleTarget.register();
+        Event event = new Event();
+        NYBus.get().post(event);
+        verify(failSuperSimpleTarget).onEventOne(event);
+        verify(failSuperSimpleTarget).onEventTwo(event);
+        verify(failSuperSimpleTarget, never()).onEventThree(event);
+        failSuperSimpleTarget.unregister();
+        Event eventOne = new Event();
+        NYBus.get().post(eventOne);
+        verify(failSuperSimpleTarget, never()).onEventOne(eventOne);
+        verify(failSuperSimpleTarget, never()).onEventTwo(eventOne);
+        verify(failSuperSimpleTarget, never()).onEventThree(eventOne);
 
     }
 
