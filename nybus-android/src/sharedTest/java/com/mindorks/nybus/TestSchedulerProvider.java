@@ -14,50 +14,48 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.AndroidScheduler;
-
+package com.mindorks.nybus;
 
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
-import java.util.concurrent.Executors;
-
 import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.schedulers.TestScheduler;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by amitshekhar on 27/08/17.
  */
 
-public class SchedulerProviderImplementation implements SchedulerProvider {
+public class TestSchedulerProvider implements SchedulerProvider {
+
+    private TestScheduler testScheduler = new TestScheduler();
 
     @Override
     public Scheduler provideMainThreadScheduler() {
-        return Schedulers.io();
+        return testScheduler;
     }
 
     @Override
     public Scheduler provideIOScheduler() {
-        return Schedulers.io();
+        return testScheduler;
     }
 
     @Override
     public Scheduler provideComputationScheduler() {
-        return Schedulers.computation();
+        return testScheduler;
     }
 
     @Override
     public Scheduler provideTrampolineScheduler() {
-        return Schedulers.trampoline();
+        return testScheduler;
     }
 
     @Override
     public Scheduler provideExecutorScheduler() {
-        return Schedulers.from(Executors.newCachedThreadPool());
+        return testScheduler;
     }
 
     @Override
     public Scheduler provideNewThreadScheduler() {
-        return Schedulers.newThread();
+        return testScheduler;
     }
-
 }

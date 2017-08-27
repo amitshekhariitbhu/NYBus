@@ -43,36 +43,81 @@ import io.reactivex.subjects.PublishSubject;
 public class NYBusHandler {
     private SchedulerProvider mSchedulerProvider;
     private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<Method>>> mEventsToTargetsMap;
-    private PublishSubject<Event> subject;
+    private PublishSubject<Event> postingThreadSubject, mainThreadSubject, iOThreadSubject,
+            computationThreadSubject, trampolineThreadSubject, executorThreadSubject,
+            newThreadSubject;
 
     public NYBusHandler() {
         mEventsToTargetsMap = new ConcurrentHashMap<>();
-        subject = PublishSubject.create();
-        subject.subscribe(new Consumer<Event>() {
+    }
+
+    private void initSubjects() {
+        postingThreadSubject = PublishSubject.create();
+        mainThreadSubject = PublishSubject.create();
+        iOThreadSubject = PublishSubject.create();
+        computationThreadSubject = PublishSubject.create();
+        trampolineThreadSubject = PublishSubject.create();
+        executorThreadSubject = PublishSubject.create();
+        newThreadSubject = PublishSubject.create();
+
+        postingThreadSubject.subscribe(getConsumer());
+
+        mainThreadSubject
+                .observeOn(mSchedulerProvider.provideMainThreadScheduler())
+                .subscribe(getConsumer());
+
+        iOThreadSubject
+                .observeOn(mSchedulerProvider.provideIOScheduler())
+                .subscribe(getConsumer());
+
+        computationThreadSubject
+                .observeOn(mSchedulerProvider.provideComputationScheduler())
+                .subscribe(getConsumer());
+
+        trampolineThreadSubject
+                .observeOn(mSchedulerProvider.provideTrampolineScheduler())
+                .subscribe(getConsumer());
+
+        executorThreadSubject
+                .observeOn(mSchedulerProvider.provideExecutorScheduler())
+                .subscribe(getConsumer());
+
+        newThreadSubject
+                .observeOn(mSchedulerProvider.provideNewThreadScheduler())
+                .subscribe(getConsumer());
+    }
+
+    private Consumer<Event> getConsumer() {
+        return new Consumer<Event>() {
             @Override
             public void accept(@NonNull Event event) throws Exception {
-                ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
-                        get(event.object.getClass());
-                if (mTargetMap != null) {
-                    for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
-                            mTargetMap.entrySet()) {
-                        Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
-                        for (Method subscribedMethod : mSubscribedMethods) {
-                            String methodChannelId = getMethodChannelId(subscribedMethod);
-                            if (methodChannelId.equals(event.channelId)) {
-                                deliverEventToTargetMethod(mTargetMapEntry.getKey(),
-                                        subscribedMethod, event.object);
-                            }
+                findTargetsAndDeliver(event);
+            }
+        };
+    }
 
-                        }
+    private void findTargetsAndDeliver(Event event) {
+        ConcurrentHashMap<Object, Set<Method>> mTargetMap = mEventsToTargetsMap.
+                get(event.object.getClass());
+        if (mTargetMap != null) {
+            for (Map.Entry<Object, Set<Method>> mTargetMapEntry :
+                    mTargetMap.entrySet()) {
+                Set<Method> mSubscribedMethods = mTargetMapEntry.getValue();
+                for (Method subscribedMethod : mSubscribedMethods) {
+                    String methodChannelId = getMethodChannelId(subscribedMethod);
+                    if (methodChannelId.equals(event.channelId)) {
+                        deliverEventToTargetMethod(mTargetMapEntry.getKey(),
+                                subscribedMethod, event.object);
                     }
+
                 }
             }
-        });
+        }
     }
 
     public void setSchedulerProvider(SchedulerProvider mSchedulerProvider) {
         this.mSchedulerProvider = mSchedulerProvider;
+        initSubjects();
     }
 
     public void register(Object object, List<String> channelId) {
@@ -87,9 +132,8 @@ public class NYBusHandler {
     }
 
     public void post(Object eventObject, String channelId) {
-        subject.onNext(new Event(eventObject, channelId));
+        postingThreadSubject.onNext(new Event(eventObject, channelId));
     }
-
 
     public void unregister(Object targetObject, List<String> targetChannelId) {
         for (Map.Entry<Class<?>, ConcurrentHashMap<Object, Set<Method>>> mEventsToTargetsMapEntry :
@@ -100,16 +144,11 @@ public class NYBusHandler {
                     if (mTargetMapEntry.getKey().equals(targetObject)) {
                         removeMethodFromCurrentMethodSet(mTargetMap, targetObject, targetChannelId);
                         removeEventIfRequired(mTargetMap, mEventsToTargetsMapEntry);
-
                     }
                 }
-
             }
-
-
         }
     }
-
 
     private List<Method> provideMethodsWithSubscribeAnnotation(Class<?> subscriber) {
         List<Method> subscribeAnnotatedMethods = new ArrayList<>();
@@ -122,10 +161,10 @@ public class NYBusHandler {
             }
         }
         return subscribeAnnotatedMethods;
-
     }
 
-    private void deliverEventToTargetMethod(Object targetObject, Method subscribeMethod,
+    private void deliverEventToTargetMethod(Object targetObject,
+                                            Method subscribeMethod,
                                             Object eventObject) {
         try {
             Method method = subscribeMethod;
@@ -137,7 +176,6 @@ public class NYBusHandler {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -150,7 +188,6 @@ public class NYBusHandler {
             } else {
                 createNewEventInEventsToTargetsMap(targetObject, subscribeMethod);
             }
-
         }
     }
 
@@ -179,7 +216,6 @@ public class NYBusHandler {
         } else {
             addEntryInTargetMap(targetObject, subscribeMethod, mTargetMap);
         }
-
     }
 
     private void updateMethodInSet(Object targetObject,
@@ -200,7 +236,6 @@ public class NYBusHandler {
     private void removeMethodFromCurrentMethodSet(ConcurrentHashMap<Object, Set<Method>> mTargetMap,
                                                   Object targetObject,
                                                   List<String> targetChannelId) {
-
         Set<Method> subscribedMethods = mTargetMap.get(targetObject);
         Iterator subscribedMethodsIterator = subscribedMethods.iterator();
         while (subscribedMethodsIterator.hasNext()) {
@@ -211,7 +246,6 @@ public class NYBusHandler {
                 removeTargetIfRequired(subscribedMethods, mTargetMap, targetObject);
             }
         }
-
     }
 
     private void removeTargetIfRequired(Set<Method> subscribedMethods, ConcurrentHashMap<Object,
@@ -232,7 +266,6 @@ public class NYBusHandler {
     private boolean hasSubscribeAnnotation(Method method) {
         Subscribe subscribeAnnotation = method.getAnnotation(Subscribe.class);
         return subscribeAnnotation != null;
-
     }
 
     private boolean isAccessModifierPublic(Method method) {

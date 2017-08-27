@@ -16,6 +16,8 @@
 
 package com.mindorks.nybus.scheduler;
 
+import java.util.concurrent.Executors;
+
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,14 +26,15 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class SchedulerProviderImpl implements SchedulerProvider {
+
     @Override
-    public Scheduler provideIOScheduler() {
-        return Schedulers.io();
+    public Scheduler provideMainThreadScheduler() {
+        return null;
     }
 
     @Override
-    public Scheduler provideMainScheduler() {
-        return null;
+    public Scheduler provideIOScheduler() {
+        return Schedulers.io();
     }
 
     @Override
@@ -40,7 +43,18 @@ public class SchedulerProviderImpl implements SchedulerProvider {
     }
 
     @Override
+    public Scheduler provideTrampolineScheduler() {
+        return Schedulers.trampoline();
+    }
+
+    @Override
+    public Scheduler provideExecutorScheduler() {
+        return Schedulers.from(Executors.newCachedThreadPool());
+    }
+
+    @Override
     public Scheduler provideNewThreadScheduler() {
         return Schedulers.newThread();
     }
+
 }

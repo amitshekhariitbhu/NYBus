@@ -26,6 +26,7 @@ import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -41,6 +42,11 @@ import static org.mockito.Mockito.verify;
  * Created by amitshekhar on 25/08/17.
  */
 public class NYBusTest {
+
+    @Before
+    public void before() throws Exception {
+        NYBus.get().setSchedulerProvider(new TestSchedulerProvider());
+    }
 
     @Test
     public void testSimpleTarget() throws Exception {
