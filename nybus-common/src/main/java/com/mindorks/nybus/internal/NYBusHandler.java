@@ -19,6 +19,7 @@ package com.mindorks.nybus.internal;
 import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.event.Event;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
+import com.mindorks.nybus.thread.NYThread;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -132,7 +133,34 @@ public class NYBusHandler {
     }
 
     public void post(Object eventObject, String channelId) {
-        postingThreadSubject.onNext(new Event(eventObject, channelId));
+        //TODO assign thread from method
+        final NYThread thread = NYThread.POSTING;
+        switch (thread) {
+            case POSTING:
+                postingThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case MAIN:
+                mainThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case IO:
+                iOThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case NEW:
+                newThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case COMPUTATION:
+                computationThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case TRAMPOLINE:
+                trampolineThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            case EXECUTOR:
+                executorThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+            default:
+                postingThreadSubject.onNext(new Event(eventObject, channelId));
+                break;
+        }
     }
 
     public void unregister(Object targetObject, List<String> targetChannelId) {
