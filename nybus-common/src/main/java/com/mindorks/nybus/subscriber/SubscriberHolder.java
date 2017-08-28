@@ -26,13 +26,17 @@ import java.util.List;
  */
 
 public class SubscriberHolder {
+
     public Method subscribedMethod;
     public List<String> subscribedChannelID;
     public NYThread subscribedThreadType;
 
-    public SubscriberHolder(Method subscribedMethod, List<String> subscribedChannelID, NYThread subscribedThreadType) {
+    public SubscriberHolder(Method subscribedMethod,
+                            List<String> subscribedChannelID,
+                            NYThread subscribedThreadType) {
         this.subscribedMethod = subscribedMethod;
         this.subscribedChannelID = subscribedChannelID;
         this.subscribedThreadType = subscribedThreadType;
     }
+
 }
