@@ -14,10 +14,12 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.internal;
+package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.consumer.ConsumerProvider;
 import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 import com.mindorks.nybus.thread.NYThread;
@@ -36,58 +38,27 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import io.reactivex.subjects.PublishSubject;
-
 
 /**
  * Created by Jyoti on 14/08/17.
  */
 
-public class NYBusHandler {
-    private SchedulerProvider mSchedulerProvider;
-    private ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<SubscriberHolder>>> mEventsToTargetsMap;
-    private PublishSubject<Event> postingThreadSubject, mainThreadSubject, iOThreadSubject,
-            computationThreadSubject, trampolineThreadSubject, executorThreadSubject,
-            newThreadSubject;
+public class NYBusDriver extends BusDriver {
 
-    public NYBusHandler() {
-        mEventsToTargetsMap = new ConcurrentHashMap<>();
+    public NYBusDriver(Publisher publisher) {
+        super(publisher);
     }
 
-    private void initSubjects() {
-        postingThreadSubject = PublishSubject.create();
-        mainThreadSubject = PublishSubject.create();
-        iOThreadSubject = PublishSubject.create();
-        computationThreadSubject = PublishSubject.create();
-        trampolineThreadSubject = PublishSubject.create();
-        executorThreadSubject = PublishSubject.create();
-        newThreadSubject = PublishSubject.create();
-
-        postingThreadSubject.subscribe(getConsumer());
-
-        mainThreadSubject
-                .observeOn(mSchedulerProvider.provideMainThreadScheduler())
-                .subscribe(getConsumer());
-
-        iOThreadSubject
-                .observeOn(mSchedulerProvider.provideIOScheduler())
-                .subscribe(getConsumer());
-
-        computationThreadSubject
-                .observeOn(mSchedulerProvider.provideComputationScheduler())
-                .subscribe(getConsumer());
-
-        trampolineThreadSubject
-                .observeOn(mSchedulerProvider.provideTrampolineScheduler())
-                .subscribe(getConsumer());
-
-        executorThreadSubject
-                .observeOn(mSchedulerProvider.provideExecutorScheduler())
-                .subscribe(getConsumer());
-
-        newThreadSubject
-                .observeOn(mSchedulerProvider.provideNewThreadScheduler())
-                .subscribe(getConsumer());
+    public void initPublishers(SchedulerProvider schedulerProvider) {
+        ConsumerProvider consumerProvider = new ConsumerProvider();
+        consumerProvider.setPostingThreadConsumer(getConsumer());
+        consumerProvider.setMainThreadConsumer(getConsumer());
+        consumerProvider.setIOThreadConsumer(getConsumer());
+        consumerProvider.setComputationThreadConsumer(getConsumer());
+        consumerProvider.setTrampolineThreadConsumer(getConsumer());
+        consumerProvider.setExecutorThreadConsumer(getConsumer());
+        consumerProvider.setNewThreadConsumer(getConsumer());
+        mPublisher.initPublishers(schedulerProvider, consumerProvider);
     }
 
     private Consumer<Event> getConsumer() {
@@ -96,7 +67,6 @@ public class NYBusHandler {
             public void accept(@NonNull Event event) throws Exception {
                 deliverEventToTargetMethod(event.targetObject, event.subscribedMethod, event.object);
             }
-
         };
     }
 
@@ -111,16 +81,9 @@ public class NYBusHandler {
                     Event event = new Event(eventObject, mTargetMapEntry.getKey(),
                             subscribedMethodHolder);
                     determineThreadAndDeliverEvent(event);
-
                 }
-
             }
         }
-    }
-
-    public void setSchedulerProvider(SchedulerProvider mSchedulerProvider) {
-        this.mSchedulerProvider = mSchedulerProvider;
-        initSubjects();
     }
 
     public void register(Object object, List<String> channelId) {
@@ -130,7 +93,6 @@ public class NYBusHandler {
             for (SubscriberHolder subscribedMethod : subscribeMethods) {
                 addEntriesInTargetMap(object, subscribedMethod);
             }
-
         }
     }
 
@@ -140,36 +102,34 @@ public class NYBusHandler {
         if (mTargetMap != null) {
             findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
-
-
     }
 
     private void determineThreadAndDeliverEvent(Event event) {
         final NYThread thread = event.subscribedMethod.subscribedThreadType;
         switch (thread) {
             case POSTING:
-                postingThreadSubject.onNext(event);
+                getPostingThreadPublisher().onNext(event);
                 break;
             case MAIN:
-                mainThreadSubject.onNext(event);
+                getMainThreadPublisher().onNext(event);
                 break;
             case IO:
-                iOThreadSubject.onNext(event);
+                getIOThreadPublisher().onNext(event);
                 break;
             case NEW:
-                newThreadSubject.onNext(event);
+                getNewThreadPublisher().onNext(event);
                 break;
             case COMPUTATION:
-                computationThreadSubject.onNext(event);
+                getComputationThreadPublisher().onNext(event);
                 break;
             case TRAMPOLINE:
-                trampolineThreadSubject.onNext(event);
+                getTrampolineThreadPublisher().onNext(event);
                 break;
             case EXECUTOR:
-                executorThreadSubject.onNext(event);
+                getExecutorThreadPublisher().onNext(event);
                 break;
             default:
-                postingThreadSubject.onNext(event);
+                getPostingThreadPublisher().onNext(event);
                 break;
         }
     }
@@ -191,7 +151,6 @@ public class NYBusHandler {
         }
     }
 
-
     private List<SubscriberHolder> provideMethodsWithSubscribeAnnotation(Class<?> subscriber,
                                                                          List<String> channelId) {
         List<SubscriberHolder> subscribeAnnotatedMethods = new ArrayList<>();
@@ -210,7 +169,7 @@ public class NYBusHandler {
 
     private void deliverEventToTargetMethod(Object targetObject,
                                             SubscriberHolder subscribeMethodHolder,
-                                            Object eventObject) {
+                                            Object eventObject) throws InvocationTargetException {
         try {
             Method method = subscribeMethodHolder.subscribedMethod;
             method.setAccessible(true);
@@ -218,11 +177,8 @@ public class NYBusHandler {
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
     }
-
 
     private void addEntriesInTargetMap(Object targetObject,
                                        SubscriberHolder subscribeMethodHolder) {
@@ -232,8 +188,6 @@ public class NYBusHandler {
         } else {
             createNewEventInEventsToTargetsMap(targetObject, subscribeMethodHolder);
         }
-
-
     }
 
     private List<String> getMethodChannelId(Method subscribeMethod) {
@@ -333,10 +287,9 @@ public class NYBusHandler {
 
     private SubscriberHolder generateSubscribedMethodHolder(Method method,
                                                             List<String> targetChannelId) {
-        List<String> methodChannelIds = new ArrayList<String>(getMethodChannelId(method));
+        List<String> methodChannelIds = new ArrayList<>(getMethodChannelId(method));
         NYThread subscribedThreadType = getMethodThread(method);
         methodChannelIds.retainAll(targetChannelId);
-
         return new SubscriberHolder(method, methodChannelIds, subscribedThreadType);
     }
 

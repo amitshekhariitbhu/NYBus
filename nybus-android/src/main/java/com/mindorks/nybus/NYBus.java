@@ -18,8 +18,9 @@ package com.mindorks.nybus;
 
 
 import com.mindorks.nybus.AndroidScheduler.SchedulerProviderImplementation;
+import com.mindorks.nybus.driver.NYBusDriver;
 import com.mindorks.nybus.event.EventChannel;
-import com.mindorks.nybus.internal.NYBusHandler;
+import com.mindorks.nybus.publisher.NYPublisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 import java.util.ArrayList;
@@ -32,14 +33,14 @@ import java.util.List;
 
 public class NYBus {
     private static NYBus sNYBusInstance;
-    private NYBusHandler mNYBusHandler;
+    private NYBusDriver mNYBusDriver;
 
     static {
         NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
     }
 
     private NYBus() {
-        mNYBusHandler = new NYBusHandler();
+        mNYBusDriver = new NYBusDriver(new NYPublisher());
     }
 
     public static NYBus get() {
@@ -54,7 +55,7 @@ public class NYBus {
     }
 
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
-        mNYBusHandler.setSchedulerProvider(schedulerProvider);
+        mNYBusDriver.initPublishers(schedulerProvider);
     }
 
     public void register(Object object, String... channelIDs) {
@@ -70,7 +71,7 @@ public class NYBus {
     }
 
     public void register(Object object, List<String> channelId) {
-        mNYBusHandler.register(object, channelId);
+        mNYBusDriver.register(object, channelId);
     }
 
     public void unregister(Object object, String... channelIDs) {
@@ -85,7 +86,7 @@ public class NYBus {
     }
 
     public void unregister(Object object, List<String> channelId) {
-        mNYBusHandler.unregister(object, channelId);
+        mNYBusDriver.unregister(object, channelId);
     }
 
     public void post(Object object) {
@@ -93,7 +94,7 @@ public class NYBus {
     }
 
     public void post(Object object, String channelId) {
-        mNYBusHandler.post(object, channelId);
+        mNYBusDriver.post(object, channelId);
     }
 
 
