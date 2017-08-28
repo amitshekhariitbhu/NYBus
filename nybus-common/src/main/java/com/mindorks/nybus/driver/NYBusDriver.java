@@ -29,8 +29,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,12 +89,22 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void register(Object object, List<String> channelId) {
-        List<SubscriberHolder> subscribeMethods =
-                provideMethodsWithSubscribeAnnotation(object.getClass(), channelId);
-        if (subscribeMethods.size() != 0) {
-            for (SubscriberHolder subscribedMethod : subscribeMethods) {
-                addEntriesInTargetMap(object, subscribedMethod);
+        HashMap<String, SubscriberHolder> uniqueMethodToSubscriberHolderMap = new HashMap<>();
+        Set<Class<?>> classes = getAllClasses(object.getClass());
+        for (Class<?> clazz : classes) {
+            List<SubscriberHolder> subscriberHolders =
+                    provideMethodsWithSubscribeAnnotation(clazz, channelId);
+            if (subscriberHolders != null && subscriberHolders.size() != 0) {
+                for (SubscriberHolder subscriberHolder : subscriberHolders) {
+                    final String key = subscriberHolder.subscribedMethod.getName() + "_" +
+                            subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
+                    uniqueMethodToSubscriberHolderMap.put(key, subscriberHolder);
+                }
             }
+        }
+        for (Map.Entry<String, SubscriberHolder> methodNameToSubscriberHolder :
+                uniqueMethodToSubscriberHolderMap.entrySet()) {
+            addEntriesInTargetMap(object, methodNameToSubscriberHolder.getValue());
         }
     }
 
@@ -102,6 +114,21 @@ public class NYBusDriver extends BusDriver {
         if (mTargetMap != null) {
             findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
+    }
+
+    private Set<Class<?>> getAllClasses(Class<?> concreteClass) {
+        List<Class<?>> parentClasses = new LinkedList<>();
+        Set<Class<?>> classes = new HashSet<>();
+        parentClasses.add(concreteClass);
+        while (!parentClasses.isEmpty()) {
+            Class<?> clazz = parentClasses.remove(0);
+            classes.add(clazz);
+            Class<?> parentClass = clazz.getSuperclass();
+            if (parentClass != null) {
+                parentClasses.add(parentClass);
+            }
+        }
+        return classes;
     }
 
     private void determineThreadAndDeliverEvent(Event event) {
