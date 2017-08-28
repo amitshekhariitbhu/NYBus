@@ -18,18 +18,16 @@ package sample.mindorks.com.nybus;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.thread.NYThread;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    private TestTarget targetOne;
-    private TestTarget targetTwo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +46,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        targetOne = new TestTarget(TestTarget.CHANNEL_ONE);
-        targetTwo = new TestTarget(TestTarget.CHANNEL_ONE,TestTarget.CHANNEL_TWO);
-        NYBus.get().post("String to be received in one and two" ,TestTarget.CHANNEL_TWO);
+        NYBus.get().register(this, TestTarget.CHANNEL_ONE);
+        NYBus.get().post(1, TestTarget.CHANNEL_ONE);
 
     }
 
-    @Subscribe(channelId = "two")
-    public void onEventForTypeOne(Integer value) {
-        Toast.makeText(this, "Event received on first Channel in activity", Toast.LENGTH_SHORT).show();
-    }
+    @Subscribe(channelId = TestTarget.CHANNEL_ONE, threadType = NYThread.MAIN)
+    public void onEvent(Integer value) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            System.out.println("event received in background thread "+value);
 
+        } else {
+            System.out.println("event received in main thread "+value);
+
+
+        }
+    }
 
 
     @Override
     protected void onStop() {
-       //
-        // NYBus.get().unregister(this,TestTarget.CHANNEL_ONE);
+        NYBus.get().unregister(this, TestTarget.CHANNEL_ONE);
         super.onStop();
-       // targetOne.destroy();
-       // targetTwo.destroy();
+
     }
 
 

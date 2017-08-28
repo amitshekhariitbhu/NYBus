@@ -22,6 +22,7 @@ import com.mindorks.nybus.scheduler.SchedulerProvider;
 import java.util.concurrent.Executors;
 
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -32,7 +33,7 @@ public class SchedulerProviderImplementation implements SchedulerProvider {
 
     @Override
     public Scheduler provideMainThreadScheduler() {
-        return Schedulers.io();
+        return AndroidSchedulers.mainThread();
     }
 
     @Override

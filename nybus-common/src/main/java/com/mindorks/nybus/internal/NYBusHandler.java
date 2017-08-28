@@ -243,7 +243,7 @@ public class NYBusHandler {
 
     private NYThread getMethodThread(Method subscribeMethod) {
         Subscribe subscribeAnnotation = subscribeMethod.getAnnotation(Subscribe.class);
-        return subscribeAnnotation.getThreadType();
+        return subscribeAnnotation.threadType();
     }
 
     private void createNewEventInEventsToTargetsMap(Object targetObject,

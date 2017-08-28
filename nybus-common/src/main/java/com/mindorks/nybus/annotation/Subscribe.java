@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface Subscribe {
     String[] channelId() default "default";
-    NYThread getThreadType() default  NYThread.POSTING;
+    NYThread threadType() default  NYThread.POSTING;
 
 
 }
