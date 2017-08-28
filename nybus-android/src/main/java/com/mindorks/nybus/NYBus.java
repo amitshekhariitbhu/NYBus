@@ -17,11 +17,12 @@
 package com.mindorks.nybus;
 
 
-import com.mindorks.nybus.AndroidScheduler.SchedulerProviderImplementation;
+import com.mindorks.nybus.androidScheduler.SchedulerProviderImplementation;
 import com.mindorks.nybus.driver.NYBusDriver;
 import com.mindorks.nybus.event.EventChannel;
 import com.mindorks.nybus.publisher.NYPublisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
+import com.mindorks.nybus.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +33,14 @@ import java.util.List;
  */
 
 public class NYBus {
+
     private static NYBus sNYBusInstance;
     private NYBusDriver mNYBusDriver;
 
     static {
-        NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
+        if (!Utils.isUnitTest()) {
+            NYBus.get().setSchedulerProvider(new SchedulerProviderImplementation());
+        }
     }
 
     private NYBus() {
