@@ -18,6 +18,7 @@ package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
 import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.EventClassFinder;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
@@ -43,8 +44,8 @@ import io.reactivex.functions.Consumer;
 
 public class NYBusDriver extends BusDriver {
 
-    public NYBusDriver(Publisher publisher) {
-        super(publisher);
+    public NYBusDriver(Publisher publisher, EventClassFinder eventClassFinder) {
+        super(publisher, eventClassFinder);
     }
 
     public void initPublishers(SchedulerProvider schedulerProvider) {
@@ -69,10 +70,9 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void post(Object eventObject, String channelId) {
-        ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap = mEventsToTargetsMap.
-                get(eventObject.getClass());
-        if (mTargetMap != null) {
-            findTargetsAndDeliver(mTargetMap, eventObject, channelId);
+        List<Class<?>> eventClasses = mEventClassFinder.getAll(eventObject.getClass());
+        for (Class<?> eventClass : eventClasses) {
+            postSingle(eventObject, channelId, eventClass);
         }
     }
 
@@ -91,6 +91,14 @@ public class NYBusDriver extends BusDriver {
                     }
                 }
             }
+        }
+    }
+
+    private void postSingle(Object eventObject, String channelId, Class<?> eventClass) {
+        ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap = mEventsToTargetsMap.
+                get(eventClass);
+        if (mTargetMap != null) {
+            findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
     }
 

@@ -20,10 +20,14 @@ package com.mindorks.nybus;
 import com.mindorks.nybus.events.Event;
 import com.mindorks.nybus.events.EventOne;
 import com.mindorks.nybus.events.EventTwo;
+import com.mindorks.nybus.events.InterfaceEventImpl;
+import com.mindorks.nybus.events.SubClassEvent;
 import com.mindorks.nybus.targets.ChannelTarget;
+import com.mindorks.nybus.targets.InterfaceEventTarget;
 import com.mindorks.nybus.targets.MultipleChannelIDMethod;
 import com.mindorks.nybus.targets.OverrideTarget;
 import com.mindorks.nybus.targets.SimpleTarget;
+import com.mindorks.nybus.targets.SubClassEventTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
 
 import org.junit.Before;
@@ -211,6 +215,28 @@ public class NYBusTest {
 
         verify(simpleTarget, times(30000)).onEventOne(event);
         verify(simpleTarget, times(30000)).onEventTwo(event);
+    }
+
+    @Test
+    public void testSubClassEvent() throws Exception {
+        SubClassEventTarget subClassEventTarget = Mockito.spy(new SubClassEventTarget());
+        subClassEventTarget.register();
+        SubClassEvent event = new SubClassEvent();
+        NYBus.get().post(event);
+        verify(subClassEventTarget).onEvent(event);
+        verify(subClassEventTarget).onEventSubClass(event);
+        subClassEventTarget.unregister();
+    }
+
+    @Test
+    public void testInterfaceEvent() throws Exception {
+        InterfaceEventTarget interfaceEventTarget = Mockito.spy(new InterfaceEventTarget());
+        interfaceEventTarget.register();
+        InterfaceEventImpl event = new InterfaceEventImpl();
+        NYBus.get().post(event);
+        verify(interfaceEventTarget).onEventInterface(event);
+        verify(interfaceEventTarget).onEventInterfaceImpl(event);
+        interfaceEventTarget.unregister();
     }
 
 }

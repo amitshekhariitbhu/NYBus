@@ -17,6 +17,7 @@
 package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.EventClassFinder;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 
@@ -33,10 +34,13 @@ abstract class BusDriver {
 
     Publisher mPublisher;
 
+    EventClassFinder mEventClassFinder;
+
     ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<SubscriberHolder>>> mEventsToTargetsMap;
 
-    BusDriver(Publisher publisher) {
+    BusDriver(Publisher publisher, EventClassFinder eventClassFinder) {
         this.mPublisher = publisher;
+        this.mEventClassFinder = eventClassFinder;
         this.mEventsToTargetsMap = new ConcurrentHashMap<>();
     }
 
