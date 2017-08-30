@@ -36,6 +36,8 @@ import java.util.Set;
 
 public class SubscribeMethodFinder {
 
+    private static final String SEPARATOR = "_";
+
     private SubscribeMethodFinder() {
         // no instance
     }
@@ -43,50 +45,78 @@ public class SubscribeMethodFinder {
     public static HashMap<String, SubscriberHolder> getAll(Object object,
                                                            List<String> channelId) {
         HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap = new HashMap<>();
-        Set<Class<?>> classes = getAllClasses(object.getClass());
-        for (Class<?> clazz : classes) {
-            List<SubscriberHolder> subscriberHolders =
-                    provideMethodsWithSubscribeAnnotation(clazz, channelId);
-            if (subscriberHolders != null && subscriberHolders.size() != 0) {
-                for (SubscriberHolder subscriberHolder : subscriberHolders) {
-                    final String key = subscriberHolder.subscribedMethod.getName() + "_" +
-                            subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
-                    uniqueSubscriberHolderMap.put(key, subscriberHolder);
-                }
+        try {
+            Method[] declaredMethodsOfConcreteClass = object.getClass().getDeclaredMethods();
+            getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
+                    channelId, uniqueSubscriberHolderMap);
+            Set<Class<?>> classes = getAllSuperClasses(object.getClass());
+            for (Class<?> clazz : classes) {
+                Method[] declaredMethods = clazz.getDeclaredMethods();
+                getAndAddSubscribeHolderToUniqueMap(declaredMethods,
+                        channelId, uniqueSubscriberHolderMap);
             }
+        } catch (Throwable ignored) {
+            // sometimes the above used getDeclaredMethods throw exception
+            // in that case, use getMethods, as getMethods give all the methods
+            // including the superclasses, so no need to call getAllSuperClasses
+            Method[] declaredMethodsOfConcreteClass = object.getClass().getMethods();
+            getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
+                    channelId, uniqueSubscriberHolderMap);
         }
         return uniqueSubscriberHolderMap;
     }
 
-    private static Set<Class<?>> getAllClasses(Class<?> concreteClass) {
+    private static void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
+                                                            List<String> channelId,
+                                                            HashMap<String, SubscriberHolder>
+                                                                    uniqueSubscriberHolderMap) {
+        List<SubscriberHolder> subscriberHolders = new ArrayList<>();
+        for (Method method : methods) {
+            boolean isMethodValid = hasSubscribeAnnotation(method)
+                    && isAccessModifierPublic(method)
+                    && isReturnTypeVoid(method)
+                    && hasSingleParameter(method);
+            if (isMethodValid) {
+                SubscriberHolder subscriberHolder = generateSubscribedMethodHolder(method,
+                        channelId);
+                subscriberHolders.add(subscriberHolder);
+            }
+        }
+        if (subscriberHolders.size() != 0) {
+            for (SubscriberHolder subscriberHolder : subscriberHolders) {
+                uniqueSubscriberHolderMap.put(getKeyForSubscribeHolder(subscriberHolder),
+                        subscriberHolder);
+            }
+        }
+    }
+
+    private static String getKeyForSubscribeHolder(SubscriberHolder subscriberHolder) {
+        return subscriberHolder.subscribedMethod.getName()
+                + SEPARATOR
+                + subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
+    }
+
+    private static Set<Class<?>> getAllSuperClasses(Class<?> concreteClass) {
         List<Class<?>> parentClasses = new LinkedList<>();
         Set<Class<?>> classes = new HashSet<>();
         parentClasses.add(concreteClass);
         while (!parentClasses.isEmpty()) {
             Class<?> clazz = parentClasses.remove(0);
-            classes.add(clazz);
+            if (!concreteClass.equals(clazz)) {
+                classes.add(clazz);
+            }
             Class<?> parentClass = clazz.getSuperclass();
-            if (parentClass != null) {
+            if (parentClass != null && !skipClass(parentClass.getName())) {
                 parentClasses.add(parentClass);
             }
         }
         return classes;
     }
 
-    private static List<SubscriberHolder> provideMethodsWithSubscribeAnnotation(Class<?> subscriber,
-                                                                                List<String> channelId) {
-        List<SubscriberHolder> subscribeAnnotatedMethods = new ArrayList<>();
-        Method[] declaredMethods = subscriber.getDeclaredMethods();
-        for (Method method : declaredMethods) {
-            boolean isMethodValid = hasSubscribeAnnotation(method) && isAccessModifierPublic(method)
-                    && isReturnTypeVoid(method) && hasSingleParameter(method);
-            if (isMethodValid) {
-                SubscriberHolder subscriberHolder = generateSubscribedMethodHolder(method,
-                        channelId);
-                subscribeAnnotatedMethods.add(subscriberHolder);
-            }
-        }
-        return subscribeAnnotatedMethods;
+    private static boolean skipClass(String className) {
+        return className.startsWith("java.")
+                || className.startsWith("javax.")
+                || className.startsWith("android.");
     }
 
     private static boolean hasSubscribeAnnotation(Method method) {
