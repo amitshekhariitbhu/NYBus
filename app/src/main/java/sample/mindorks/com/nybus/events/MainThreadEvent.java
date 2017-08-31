@@ -14,33 +14,11 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package sample.mindorks.com.nybus.events;
 
-import android.os.Bundle;
+/**
+ * Created by amitshekhar on 31/08/17.
+ */
 
-import android.support.v7.app.AppCompatActivity;
-
-import com.mindorks.nybus.NYBus;
-
-public class SecondActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
-
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        NYBus.get().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        NYBus.get().unregister(this);
-        super.onStop();
-    }
-
-
+public class MainThreadEvent {
 }

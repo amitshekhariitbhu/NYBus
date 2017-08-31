@@ -14,12 +14,10 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package sample.mindorks.com.nybus.targets;
 
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-
-import java.util.ArrayList;
 
 /**
  * Created by amitshekhar on 18/08/17.

@@ -18,7 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sample.mindorks.com.nybus.activities.SecondActivity">
+    tools:context="sample.mindorks.com.nybus.activities.SelectionActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,6 +28,28 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:onClick="startMainActivity"
+            android:text="Start Main" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:onClick="startSecondActivity"
+            android:text="Start Second" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:onClick="startThreadActivity"
+            android:text="Start Thread" />
 
     </LinearLayout>
 

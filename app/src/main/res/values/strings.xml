@@ -16,5 +16,4 @@
 
 <resources>
     <string name="app_name">NYBus</string>
-    <string name="title_activity_second">SecondActivity</string>
 </resources>

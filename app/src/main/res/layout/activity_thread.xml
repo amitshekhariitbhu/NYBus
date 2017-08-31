@@ -18,7 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sample.mindorks.com.nybus.activities.SecondActivity">
+    tools:context="sample.mindorks.com.nybus.activities.ThreadActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,6 +28,21 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:onClick="createEventFromMain"
+            android:text="Create Event From Main" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:onClick="createEventFromBg"
+            android:text="Create Event From BG" />
 
     </LinearLayout>
 

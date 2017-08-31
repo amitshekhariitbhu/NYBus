@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package sample.mindorks.com.nybus.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +25,9 @@ import android.view.View;
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.thread.NYThread;
+
+import sample.mindorks.com.nybus.R;
+import sample.mindorks.com.nybus.targets.TestTarget;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 startActivity(intent);
-
             }
         });
     }
@@ -48,28 +50,21 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         NYBus.get().register(this, TestTarget.CHANNEL_ONE);
         NYBus.get().post(1, TestTarget.CHANNEL_ONE);
-
     }
 
     @Subscribe(channelId = TestTarget.CHANNEL_ONE, threadType = NYThread.MAIN)
     public void onEvent(Integer value) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            System.out.println("event received in background thread "+value);
-
+            System.out.println("event received in background thread " + value);
         } else {
-            System.out.println("event received in main thread "+value);
-
-
+            System.out.println("event received in main thread " + value);
         }
     }
-
 
     @Override
     protected void onStop() {
         NYBus.get().unregister(this, TestTarget.CHANNEL_ONE);
         super.onStop();
-
     }
-
 
 }
