@@ -18,8 +18,8 @@ package sample.mindorks.com.nybus.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
@@ -33,6 +33,7 @@ import sample.mindorks.com.nybus.events.MainThreadEvent;
 import sample.mindorks.com.nybus.events.NewThreadEvent;
 import sample.mindorks.com.nybus.events.PostingThreadEvent;
 import sample.mindorks.com.nybus.events.TrampolineThreadEvent;
+import sample.mindorks.com.nybus.utils.AppConstants;
 import sample.mindorks.com.nybus.utils.ThreadUtils;
 
 /**
@@ -43,18 +44,52 @@ public class ThreadActivity extends AppCompatActivity {
 
     private static final String TAG = "ThreadActivity";
     private static final String POSTING_THREAD_MAIN = "posting_thread_main";
-    private static final String POSTING_THREAD_NEW_THREAD = "posting_thread_new_thread";
+    private static final String POSTING_THREAD_BACKGROUND = "posting_thread_background";
+
+    private TextView mainThreadEventFromMainThread;
+    private TextView iOThreadEventFromMainThread;
+    private TextView computationThreadEventFromMainThread;
+    private TextView executorThreadEventFromMainThread;
+    private TextView newThreadEventFromMainThread;
+    private TextView postingThreadEventFromMainThread;
+    private TextView trampolineThreadEventFromMainThread;
+
+    private TextView mainThreadEventFromBgThread;
+    private TextView iOThreadEventFromBgThread;
+    private TextView computationThreadEventFromBgThread;
+    private TextView executorThreadEventFromBgThread;
+    private TextView newThreadEventFromBgThread;
+    private TextView postingThreadEventFromBgThread;
+    private TextView trampolineThreadEventFromBgThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thread);
+
+        mainThreadEventFromMainThread = (TextView) findViewById(R.id.mainThreadEventFromMainThread);
+        iOThreadEventFromMainThread = (TextView) findViewById(R.id.iOThreadEventFromMainThread);
+        computationThreadEventFromMainThread = (TextView) findViewById(R.id.computationThreadEventFromMainThread);
+        executorThreadEventFromMainThread = (TextView) findViewById(R.id.executorThreadEventFromMainThread);
+        newThreadEventFromMainThread = (TextView) findViewById(R.id.newThreadEventFromMainThread);
+        postingThreadEventFromMainThread = (TextView) findViewById(R.id.postingThreadEventFromMainThread);
+        trampolineThreadEventFromMainThread = (TextView) findViewById(R.id.trampolineThreadEventFromMainThread);
+
+        mainThreadEventFromBgThread = (TextView) findViewById(R.id.mainThreadEventFromBgThread);
+        iOThreadEventFromBgThread = (TextView) findViewById(R.id.iOThreadEventFromBgThread);
+        computationThreadEventFromBgThread = (TextView) findViewById(R.id.computationThreadEventFromBgThread);
+        executorThreadEventFromBgThread = (TextView) findViewById(R.id.executorThreadEventFromBgThread);
+        newThreadEventFromBgThread = (TextView) findViewById(R.id.newThreadEventFromBgThread);
+        postingThreadEventFromBgThread = (TextView) findViewById(R.id.postingThreadEventFromBgThread);
+        trampolineThreadEventFromBgThread = (TextView) findViewById(R.id.trampolineThreadEventFromBgThread);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         NYBus.get().register(this);
+        createEventsFromMainThread();
+        createEventsFromBgThread();
     }
 
     @Override
@@ -64,47 +99,88 @@ public class ThreadActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadType = NYThread.COMPUTATION)
-    public void onEvent(ComputationThreadEvent event) {
+    public void onEvent(final ComputationThreadEvent event) {
         if (ThreadUtils.isComputationThread()) {
-            Log.d(TAG, "onEvent : ComputationThreadEvent");
-        } else {
-            Log.d(TAG, "onEvent : ComputationThreadEvent is in wrong thread");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
+                        computationThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                        computationThreadEventFromMainThread.setText(AppConstants.ComputationThreadEventFromMainThread);
+                    } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+                        computationThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        computationThreadEventFromBgThread.setText(AppConstants.ComputationThreadEventFromBgThread);
+                    }
+                }
+            });
         }
     }
 
     @Subscribe(threadType = NYThread.EXECUTOR)
-    public void onEvent(ExecutorThreadEvent event) {
+    public void onEvent(final ExecutorThreadEvent event) {
         if (ThreadUtils.isExecutorThread()) {
-            Log.d(TAG, "onEvent : ExecutorThreadEvent");
-        } else {
-            Log.d(TAG, "onEvent : ExecutorThreadEvent is in wrong thread");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
+                        executorThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                        executorThreadEventFromMainThread.setText(AppConstants.ExecutorThreadEventFromMainThread);
+                    } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+                        executorThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        executorThreadEventFromBgThread.setText(AppConstants.ExecutorThreadEventFromBgThread);
+                    }
+                }
+            });
         }
+
     }
 
     @Subscribe(threadType = NYThread.IO)
-    public void onEvent(IOThreadEvent event) {
+    public void onEvent(final IOThreadEvent event) {
         if (ThreadUtils.isIOThread()) {
-            Log.d(TAG, "onEvent : IOThreadEvent");
-        } else {
-            Log.d(TAG, "onEvent : IOThreadEvent is in wrong thread");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
+                        iOThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                        iOThreadEventFromMainThread.setText(AppConstants.IOThreadEventFromMainThread);
+                    } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+                        iOThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        iOThreadEventFromBgThread.setText(AppConstants.IOThreadEventFromBgThread);
+                    }
+                }
+            });
         }
     }
 
     @Subscribe(threadType = NYThread.MAIN)
     public void onEvent(MainThreadEvent event) {
         if (ThreadUtils.isMainThread()) {
-            Log.d(TAG, "onEvent : MainThreadEvent");
-        } else {
-            Log.d(TAG, "onEvent : MainThreadEvent is in wrong thread");
+            if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
+                mainThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                mainThreadEventFromMainThread.setText(AppConstants.MainThreadEventFromMainThread);
+            } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+                mainThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                mainThreadEventFromBgThread.setText(AppConstants.MainThreadEventFromBgThread);
+            }
         }
     }
 
     @Subscribe(threadType = NYThread.NEW)
-    public void onEvent(NewThreadEvent event) {
+    public void onEvent(final NewThreadEvent event) {
         if (ThreadUtils.isNewThreadThread()) {
-            Log.d(TAG, "onEvent : NewThreadEvent");
-        } else {
-            Log.d(TAG, "onEvent : NewThreadEvent is in wrong thread");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
+                        newThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                        newThreadEventFromMainThread.setText(AppConstants.NewThreadEventFromMainThread);
+                    } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+                        newThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        newThreadEventFromBgThread.setText(AppConstants.NewThreadEventFromBgThread);
+                    }
+                }
+            });
         }
     }
 
@@ -112,15 +188,18 @@ public class ThreadActivity extends AppCompatActivity {
     public void onEvent(PostingThreadEvent event) {
         if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
             if (ThreadUtils.isMainThread()) {
-                Log.d(TAG, "onEvent : PostingThreadEvent");
-            } else {
-                Log.d(TAG, "onEvent : PostingThreadEvent is in wrong thread");
+                postingThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                postingThreadEventFromMainThread.setText(AppConstants.PostingThreadEventFromMainThread);
             }
-        } else if (event.postingThreadName.equals(POSTING_THREAD_NEW_THREAD)) {
-            if (ThreadUtils.isPostingNewThread()) {
-                Log.d(TAG, "onEvent : PostingThreadEvent");
-            } else {
-                Log.d(TAG, "onEvent : PostingThreadEvent is in wrong thread");
+        } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+            if (ThreadUtils.isPostingBackgroundThread()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        postingThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        postingThreadEventFromBgThread.setText(AppConstants.PostingThreadEventFromBgThread);
+                    }
+                });
             }
         }
     }
@@ -129,43 +208,51 @@ public class ThreadActivity extends AppCompatActivity {
     public void onEvent(TrampolineThreadEvent event) {
         if (event.postingThreadName.equals(POSTING_THREAD_MAIN)) {
             if (ThreadUtils.isMainThread()) {
-                Log.d(TAG, "onEvent : TrampolineThreadEvent");
-            } else {
-                Log.d(TAG, "onEvent : TrampolineThreadEvent is in wrong thread");
+                trampolineThreadEventFromMainThread.setVisibility(View.VISIBLE);
+                trampolineThreadEventFromMainThread.setText(AppConstants.TrampolineThreadEventFromMainThread);
             }
-        } else if (event.postingThreadName.equals(POSTING_THREAD_NEW_THREAD)) {
-            if (ThreadUtils.isPostingNewThread()) {
-                Log.d(TAG, "onEvent : TrampolineThreadEvent");
-            } else {
-                Log.d(TAG, "onEvent : TrampolineThreadEvent is in wrong thread");
+        } else if (event.postingThreadName.equals(POSTING_THREAD_BACKGROUND)) {
+            if (ThreadUtils.isPostingBackgroundThread()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        trampolineThreadEventFromBgThread.setVisibility(View.VISIBLE);
+                        trampolineThreadEventFromBgThread.setText(AppConstants.TrampolineThreadEventFromBgThread);
+                    }
+                });
             }
         }
     }
 
-    public void createEventFromMain(View view) {
-        NYBus.get().post(new ComputationThreadEvent());
-        NYBus.get().post(new ExecutorThreadEvent());
-        NYBus.get().post(new IOThreadEvent());
-        NYBus.get().post(new MainThreadEvent());
-        NYBus.get().post(new NewThreadEvent());
+    private void createEventsFromMainThread() {
+        NYBus.get().post(new ComputationThreadEvent(POSTING_THREAD_MAIN));
+        NYBus.get().post(new ExecutorThreadEvent(POSTING_THREAD_MAIN));
+        NYBus.get().post(new IOThreadEvent(POSTING_THREAD_MAIN));
+        NYBus.get().post(new MainThreadEvent(POSTING_THREAD_MAIN));
+        NYBus.get().post(new NewThreadEvent(POSTING_THREAD_MAIN));
         NYBus.get().post(new PostingThreadEvent(POSTING_THREAD_MAIN));
         NYBus.get().post(new TrampolineThreadEvent(POSTING_THREAD_MAIN));
     }
 
-    public void createEventFromBg(View view) {
+    private void createEventsFromBgThread() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                NYBus.get().post(new ComputationThreadEvent());
-                NYBus.get().post(new ExecutorThreadEvent());
-                NYBus.get().post(new IOThreadEvent());
-                NYBus.get().post(new MainThreadEvent());
-                NYBus.get().post(new NewThreadEvent());
-                NYBus.get().post(new PostingThreadEvent(POSTING_THREAD_NEW_THREAD));
-                NYBus.get().post(new TrampolineThreadEvent(POSTING_THREAD_NEW_THREAD));
+                try {
+                    Thread.sleep(1000); // delay for posting event after 1 sec
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                NYBus.get().post(new ComputationThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new ExecutorThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new IOThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new MainThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new NewThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new PostingThreadEvent(POSTING_THREAD_BACKGROUND));
+                NYBus.get().post(new TrampolineThreadEvent(POSTING_THREAD_BACKGROUND));
             }
         });
-        thread.setName(POSTING_THREAD_NEW_THREAD);
+        thread.setName(POSTING_THREAD_BACKGROUND);
         thread.start();
     }
 

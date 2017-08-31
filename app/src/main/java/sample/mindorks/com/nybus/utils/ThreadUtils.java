@@ -51,8 +51,8 @@ public class ThreadUtils {
         return Thread.currentThread().getName().contains("RxNewThreadScheduler");
     }
 
-    public static boolean isPostingNewThread() {
-        return Thread.currentThread().getName().contains("posting_thread_new_thread");
+    public static boolean isPostingBackgroundThread() {
+        return Thread.currentThread().getName().contains("posting_thread_background");
     }
 
 }

@@ -21,4 +21,11 @@ package sample.mindorks.com.nybus.events;
  */
 
 public class ExecutorThreadEvent {
+
+    public String postingThreadName;
+
+    public ExecutorThreadEvent(String postingThreadName) {
+        this.postingThreadName = postingThreadName;
+    }
+
 }

@@ -21,4 +21,11 @@ package sample.mindorks.com.nybus.events;
  */
 
 public class IOThreadEvent {
+
+    public String postingThreadName;
+
+    public IOThreadEvent(String postingThreadName) {
+        this.postingThreadName = postingThreadName;
+    }
+
 }

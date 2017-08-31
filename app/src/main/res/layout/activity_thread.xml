@@ -29,20 +29,131 @@
         android:paddingRight="8dp"
         android:paddingTop="8dp">
 
-        <Button
+        <TextView
+            android:id="@+id/mainThreadEventFromMainThread"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:onClick="createEventFromMain"
-            android:text="Create Event From Main" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
 
-
-        <Button
+        <TextView
+            android:id="@+id/iOThreadEventFromMainThread"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:onClick="createEventFromBg"
-            android:text="Create Event From BG" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/computationThreadEventFromMainThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/executorThreadEventFromMainThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/newThreadEventFromMainThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/postingThreadEventFromMainThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/trampolineThreadEventFromMainThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/mainThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/iOThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/computationThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/executorThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/newThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/postingThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/trampolineThreadEventFromBgThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
