@@ -20,7 +20,8 @@ package com.mindorks.nybus;
 import com.mindorks.nybus.androidScheduler.SchedulerProviderImplementation;
 import com.mindorks.nybus.driver.NYBusDriver;
 import com.mindorks.nybus.event.EventChannel;
-import com.mindorks.nybus.event.EventClassFinder;
+import com.mindorks.nybus.finder.NYEventClassFinder;
+import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
 import com.mindorks.nybus.publisher.NYPublisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.util.Utils;
@@ -45,7 +46,9 @@ public class NYBus {
     }
 
     private NYBus() {
-        mNYBusDriver = new NYBusDriver(new NYPublisher(), new EventClassFinder());
+        mNYBusDriver = new NYBusDriver(new NYPublisher(),
+                new NYSubscribeMethodFinder(),
+                new NYEventClassFinder());
     }
 
     public static NYBus get() {

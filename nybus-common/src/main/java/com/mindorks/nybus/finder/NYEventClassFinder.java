@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus.finder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,14 +25,15 @@ import java.util.Map;
  * Created by amitshekhar on 30/08/17.
  */
 
-public class EventClassFinder {
+public class NYEventClassFinder implements EventClassFinder {
 
     private final Map<Class<?>, List<Class<?>>> eventTypesCache;
 
-    public EventClassFinder() {
+    public NYEventClassFinder() {
         eventTypesCache = new HashMap<>();
     }
 
+    @Override
     public List<Class<?>> getAll(Class<?> eventClass) {
         synchronized (eventTypesCache) {
             List<Class<?>> eventTypes = eventTypesCache.get(eventClass);

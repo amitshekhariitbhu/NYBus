@@ -18,12 +18,12 @@ package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
 import com.mindorks.nybus.event.Event;
-import com.mindorks.nybus.event.EventClassFinder;
+import com.mindorks.nybus.finder.EventClassFinder;
+import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 import com.mindorks.nybus.thread.NYThread;
-import com.mindorks.nybus.utils.SubscribeMethodFinder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,8 +44,10 @@ import io.reactivex.functions.Consumer;
 
 public class NYBusDriver extends BusDriver {
 
-    public NYBusDriver(Publisher publisher, EventClassFinder eventClassFinder) {
-        super(publisher, eventClassFinder);
+    public NYBusDriver(Publisher publisher,
+                       SubscribeMethodFinder subscribeMethodFinder,
+                       EventClassFinder eventClassFinder) {
+        super(publisher, subscribeMethodFinder, eventClassFinder);
     }
 
     public void initPublishers(SchedulerProvider schedulerProvider) {
@@ -62,7 +64,7 @@ public class NYBusDriver extends BusDriver {
 
     public void register(Object object, List<String> channelId) {
         HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap =
-                SubscribeMethodFinder.getAll(object, channelId);
+                mSubscribeMethodFinder.getAll(object, channelId);
         for (Map.Entry<String, SubscriberHolder> methodNameToSubscriberHolder :
                 uniqueSubscriberHolderMap.entrySet()) {
             addEntriesInTargetMap(object, methodNameToSubscriberHolder.getValue());

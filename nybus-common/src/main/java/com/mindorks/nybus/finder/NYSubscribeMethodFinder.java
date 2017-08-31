@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.utils;
+package com.mindorks.nybus.finder;
 
 import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
@@ -34,16 +34,17 @@ import java.util.Set;
  * Created by amitshekhar on 28/08/17.
  */
 
-public class SubscribeMethodFinder {
+public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
 
     private static final String SEPARATOR = "_";
 
-    private SubscribeMethodFinder() {
-        // no instance
+    public NYSubscribeMethodFinder() {
+
     }
 
-    public static HashMap<String, SubscriberHolder> getAll(Object object,
-                                                           List<String> channelId) {
+    @Override
+    public HashMap<String, SubscriberHolder> getAll(Object object,
+                                                    List<String> channelId) {
         HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap = new HashMap<>();
         try {
             Method[] declaredMethodsOfConcreteClass = object.getClass().getDeclaredMethods();
@@ -66,10 +67,10 @@ public class SubscribeMethodFinder {
         return uniqueSubscriberHolderMap;
     }
 
-    private static void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
-                                                            List<String> channelId,
-                                                            HashMap<String, SubscriberHolder>
-                                                                    uniqueSubscriberHolderMap) {
+    private void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
+                                                     List<String> channelId,
+                                                     HashMap<String, SubscriberHolder>
+                                                             uniqueSubscriberHolderMap) {
         List<SubscriberHolder> subscriberHolders = new ArrayList<>();
         for (Method method : methods) {
             boolean isMethodValid = hasSubscribeAnnotation(method)
@@ -90,13 +91,13 @@ public class SubscribeMethodFinder {
         }
     }
 
-    private static String getKeyForSubscribeHolder(SubscriberHolder subscriberHolder) {
+    private String getKeyForSubscribeHolder(SubscriberHolder subscriberHolder) {
         return subscriberHolder.subscribedMethod.getName()
                 + SEPARATOR
                 + subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
     }
 
-    private static Set<Class<?>> getAllSuperClasses(Class<?> concreteClass) {
+    private Set<Class<?>> getAllSuperClasses(Class<?> concreteClass) {
         List<Class<?>> parentClasses = new LinkedList<>();
         Set<Class<?>> classes = new HashSet<>();
         parentClasses.add(concreteClass);
@@ -113,43 +114,43 @@ public class SubscribeMethodFinder {
         return classes;
     }
 
-    private static boolean skipClass(String className) {
+    private boolean skipClass(String className) {
         return className.startsWith("java.")
                 || className.startsWith("javax.")
                 || className.startsWith("android.");
     }
 
-    private static boolean hasSubscribeAnnotation(Method method) {
+    private boolean hasSubscribeAnnotation(Method method) {
         Subscribe subscribeAnnotation = method.getAnnotation(Subscribe.class);
         return subscribeAnnotation != null;
     }
 
-    private static boolean isAccessModifierPublic(Method method) {
+    private boolean isAccessModifierPublic(Method method) {
         return (method.getModifiers() & Modifier.PUBLIC) != 0;
     }
 
-    private static boolean isReturnTypeVoid(Method method) {
+    private boolean isReturnTypeVoid(Method method) {
         return (method.getReturnType().equals(Void.TYPE));
     }
 
-    private static boolean hasSingleParameter(Method method) {
+    private boolean hasSingleParameter(Method method) {
         return method.getParameterTypes().length == 1;
     }
 
-    private static SubscriberHolder generateSubscribedMethodHolder(Method method,
-                                                                   List<String> targetChannelId) {
+    private SubscriberHolder generateSubscribedMethodHolder(Method method,
+                                                            List<String> targetChannelId) {
         List<String> methodChannelIds = new ArrayList<>(getMethodChannelId(method));
         NYThread subscribedThreadType = getMethodThread(method);
         methodChannelIds.retainAll(targetChannelId);
         return new SubscriberHolder(method, methodChannelIds, subscribedThreadType);
     }
 
-    private static List<String> getMethodChannelId(Method subscribeMethod) {
+    private List<String> getMethodChannelId(Method subscribeMethod) {
         Subscribe subscribeAnnotation = subscribeMethod.getAnnotation(Subscribe.class);
         return Arrays.asList(subscribeAnnotation.channelId());
     }
 
-    private static NYThread getMethodThread(Method subscribeMethod) {
+    private NYThread getMethodThread(Method subscribeMethod) {
         Subscribe subscribeAnnotation = subscribeMethod.getAnnotation(Subscribe.class);
         return subscribeAnnotation.threadType();
     }
