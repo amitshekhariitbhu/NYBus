@@ -16,7 +16,7 @@
 
 package com.mindorks.nybus.consumer;
 
-import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.NYEvent;
 
 import io.reactivex.functions.Consumer;
 
@@ -26,70 +26,70 @@ import io.reactivex.functions.Consumer;
 
 public class ConsumerProvider {
 
-    private Consumer<Event> postingThreadConsumer;
-    private Consumer<Event> mainThreadConsumer;
-    private Consumer<Event> iOThreadConsumer;
-    private Consumer<Event> computationThreadConsumer;
-    private Consumer<Event> trampolineThreadConsumer;
-    private Consumer<Event> executorThreadConsumer;
-    private Consumer<Event> newThreadConsumer;
+    private Consumer<NYEvent> postingThreadConsumer;
+    private Consumer<NYEvent> mainThreadConsumer;
+    private Consumer<NYEvent> iOThreadConsumer;
+    private Consumer<NYEvent> computationThreadConsumer;
+    private Consumer<NYEvent> trampolineThreadConsumer;
+    private Consumer<NYEvent> executorThreadConsumer;
+    private Consumer<NYEvent> newThreadConsumer;
 
     public ConsumerProvider() {
     }
 
-    public Consumer<Event> getPostingThreadConsumer() {
+    public Consumer<NYEvent> getPostingThreadConsumer() {
         return postingThreadConsumer;
     }
 
-    public void setPostingThreadConsumer(Consumer<Event> postingThreadConsumer) {
+    public void setPostingThreadConsumer(Consumer<NYEvent> postingThreadConsumer) {
         this.postingThreadConsumer = postingThreadConsumer;
     }
 
-    public Consumer<Event> getMainThreadConsumer() {
+    public Consumer<NYEvent> getMainThreadConsumer() {
         return mainThreadConsumer;
     }
 
-    public void setMainThreadConsumer(Consumer<Event> mainThreadConsumer) {
+    public void setMainThreadConsumer(Consumer<NYEvent> mainThreadConsumer) {
         this.mainThreadConsumer = mainThreadConsumer;
     }
 
-    public Consumer<Event> getIOThreadConsumer() {
+    public Consumer<NYEvent> getIOThreadConsumer() {
         return iOThreadConsumer;
     }
 
-    public void setIOThreadConsumer(Consumer<Event> iOThreadConsumer) {
+    public void setIOThreadConsumer(Consumer<NYEvent> iOThreadConsumer) {
         this.iOThreadConsumer = iOThreadConsumer;
     }
 
-    public Consumer<Event> getComputationThreadConsumer() {
+    public Consumer<NYEvent> getComputationThreadConsumer() {
         return computationThreadConsumer;
     }
 
-    public void setComputationThreadConsumer(Consumer<Event> computationThreadConsumer) {
+    public void setComputationThreadConsumer(Consumer<NYEvent> computationThreadConsumer) {
         this.computationThreadConsumer = computationThreadConsumer;
     }
 
-    public Consumer<Event> getTrampolineThreadConsumer() {
+    public Consumer<NYEvent> getTrampolineThreadConsumer() {
         return trampolineThreadConsumer;
     }
 
-    public void setTrampolineThreadConsumer(Consumer<Event> trampolineThreadConsumer) {
+    public void setTrampolineThreadConsumer(Consumer<NYEvent> trampolineThreadConsumer) {
         this.trampolineThreadConsumer = trampolineThreadConsumer;
     }
 
-    public Consumer<Event> getExecutorThreadConsumer() {
+    public Consumer<NYEvent> getExecutorThreadConsumer() {
         return executorThreadConsumer;
     }
 
-    public void setExecutorThreadConsumer(Consumer<Event> executorThreadConsumer) {
+    public void setExecutorThreadConsumer(Consumer<NYEvent> executorThreadConsumer) {
         this.executorThreadConsumer = executorThreadConsumer;
     }
 
-    public Consumer<Event> getNewThreadConsumer() {
+    public Consumer<NYEvent> getNewThreadConsumer() {
         return newThreadConsumer;
     }
 
-    public void setNewThreadConsumer(Consumer<Event> newThreadConsumer) {
+    public void setNewThreadConsumer(Consumer<NYEvent> newThreadConsumer) {
         this.newThreadConsumer = newThreadConsumer;
     }
 

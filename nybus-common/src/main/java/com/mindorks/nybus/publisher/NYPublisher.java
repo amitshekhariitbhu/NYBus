@@ -17,7 +17,7 @@
 package com.mindorks.nybus.publisher;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
-import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 import io.reactivex.subjects.PublishSubject;
@@ -28,13 +28,13 @@ import io.reactivex.subjects.PublishSubject;
 
 public class NYPublisher implements Publisher {
 
-    private PublishSubject<Event> postingThreadPublisher;
-    private PublishSubject<Event> mainThreadPublisher;
-    private PublishSubject<Event> iOThreadPublisher;
-    private PublishSubject<Event> computationThreadPublisher;
-    private PublishSubject<Event> trampolineThreadPublisher;
-    private PublishSubject<Event> executorThreadPublisher;
-    private PublishSubject<Event> newThreadPublisher;
+    private PublishSubject<NYEvent> postingThreadPublisher;
+    private PublishSubject<NYEvent> mainThreadPublisher;
+    private PublishSubject<NYEvent> iOThreadPublisher;
+    private PublishSubject<NYEvent> computationThreadPublisher;
+    private PublishSubject<NYEvent> trampolineThreadPublisher;
+    private PublishSubject<NYEvent> executorThreadPublisher;
+    private PublishSubject<NYEvent> newThreadPublisher;
 
     @Override
     public void initPublishers(SchedulerProvider schedulerProvider,
@@ -73,37 +73,37 @@ public class NYPublisher implements Publisher {
     }
 
     @Override
-    public PublishSubject<Event> forPostingThread() {
+    public PublishSubject<NYEvent> forPostingThread() {
         return postingThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forMainThread() {
+    public PublishSubject<NYEvent> forMainThread() {
         return mainThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forIOThread() {
+    public PublishSubject<NYEvent> forIOThread() {
         return iOThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forComputationThread() {
+    public PublishSubject<NYEvent> forComputationThread() {
         return computationThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forTrampolineThread() {
+    public PublishSubject<NYEvent> forTrampolineThread() {
         return trampolineThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forExecutorThread() {
+    public PublishSubject<NYEvent> forExecutorThread() {
         return executorThreadPublisher;
     }
 
     @Override
-    public PublishSubject<Event> forNewThread() {
+    public PublishSubject<NYEvent> forNewThread() {
         return newThreadPublisher;
     }
 

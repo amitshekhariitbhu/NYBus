@@ -17,7 +17,7 @@
 package com.mindorks.nybus.publisher;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
-import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 import io.reactivex.subjects.PublishSubject;
@@ -31,18 +31,18 @@ public interface Publisher {
     void initPublishers(SchedulerProvider schedulerProvider,
                         ConsumerProvider consumerProvider);
 
-    PublishSubject<Event> forPostingThread();
+    PublishSubject<NYEvent> forPostingThread();
 
-    PublishSubject<Event> forMainThread();
+    PublishSubject<NYEvent> forMainThread();
 
-    PublishSubject<Event> forIOThread();
+    PublishSubject<NYEvent> forIOThread();
 
-    PublishSubject<Event> forComputationThread();
+    PublishSubject<NYEvent> forComputationThread();
 
-    PublishSubject<Event> forTrampolineThread();
+    PublishSubject<NYEvent> forTrampolineThread();
 
-    PublishSubject<Event> forExecutorThread();
+    PublishSubject<NYEvent> forExecutorThread();
 
-    PublishSubject<Event> forNewThread();
+    PublishSubject<NYEvent> forNewThread();
 
 }

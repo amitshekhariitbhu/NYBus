@@ -17,7 +17,7 @@
 package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
-import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.finder.EventClassFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.publisher.Publisher;
@@ -104,10 +104,10 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private Consumer<Event> getConsumer() {
-        return new Consumer<Event>() {
+    private Consumer<NYEvent> getConsumer() {
+        return new Consumer<NYEvent>() {
             @Override
-            public void accept(@NonNull Event event) throws Exception {
+            public void accept(@NonNull NYEvent event) throws Exception {
                 deliverEventToTargetMethod(event.targetObject,
                         event.subscribedMethod,
                         event.object);
@@ -115,7 +115,7 @@ public class NYBusDriver extends BusDriver {
         };
     }
 
-    private void determineThreadAndDeliverEvent(Event event) {
+    private void determineThreadAndDeliverEvent(NYEvent event) {
         final NYThread thread = event.subscribedMethod.subscribedThreadType;
         switch (thread) {
             case POSTING:
@@ -153,7 +153,7 @@ public class NYBusDriver extends BusDriver {
             for (SubscriberHolder subscribedMethodHolder : mSubscribedMethods) {
                 List<String> methodChannelId = subscribedMethodHolder.subscribedChannelID;
                 if (methodChannelId.contains(channelId)) {
-                    Event event = new Event(eventObject, mTargetMapEntry.getKey(),
+                    NYEvent event = new NYEvent(eventObject, mTargetMapEntry.getKey(),
                             subscribedMethodHolder);
                     determineThreadAndDeliverEvent(event);
                 }

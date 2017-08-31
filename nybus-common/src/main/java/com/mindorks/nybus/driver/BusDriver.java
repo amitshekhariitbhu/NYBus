@@ -16,7 +16,7 @@
 
 package com.mindorks.nybus.driver;
 
-import com.mindorks.nybus.event.Event;
+import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.finder.EventClassFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.publisher.Publisher;
@@ -50,31 +50,31 @@ abstract class BusDriver {
         this.mEventsToTargetsMap = new ConcurrentHashMap<>();
     }
 
-    PublishSubject<Event> getPostingThreadPublisher() {
+    PublishSubject<NYEvent> getPostingThreadPublisher() {
         return mPublisher.forPostingThread();
     }
 
-    PublishSubject<Event> getMainThreadPublisher() {
+    PublishSubject<NYEvent> getMainThreadPublisher() {
         return mPublisher.forMainThread();
     }
 
-    PublishSubject<Event> getIOThreadPublisher() {
+    PublishSubject<NYEvent> getIOThreadPublisher() {
         return mPublisher.forIOThread();
     }
 
-    PublishSubject<Event> getComputationThreadPublisher() {
+    PublishSubject<NYEvent> getComputationThreadPublisher() {
         return mPublisher.forComputationThread();
     }
 
-    PublishSubject<Event> getTrampolineThreadPublisher() {
+    PublishSubject<NYEvent> getTrampolineThreadPublisher() {
         return mPublisher.forTrampolineThread();
     }
 
-    PublishSubject<Event> getExecutorThreadPublisher() {
+    PublishSubject<NYEvent> getExecutorThreadPublisher() {
         return mPublisher.forExecutorThread();
     }
 
-    PublishSubject<Event> getNewThreadPublisher() {
+    PublishSubject<NYEvent> getNewThreadPublisher() {
         return mPublisher.forNewThread();
     }
 

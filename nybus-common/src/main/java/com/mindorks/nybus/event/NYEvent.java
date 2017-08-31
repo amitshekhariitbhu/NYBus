@@ -24,14 +24,13 @@ import java.lang.reflect.Method;
  * Created by Jyoti on 16/08/17.
  */
 
-public class Event {
+public class NYEvent {
 
     public Object object;
     public Object targetObject;
     public SubscriberHolder subscribedMethod;
 
-
-    public Event(Object object,Object targetObject,SubscriberHolder subscribedMethod) {
+    public NYEvent(Object object, Object targetObject, SubscriberHolder subscribedMethod) {
         this.object = object;
         this.targetObject = targetObject;
         this.subscribedMethod = subscribedMethod;
