@@ -68,6 +68,7 @@ public class NYBusDriver extends BusDriver {
         for (Map.Entry<String, SubscriberHolder> methodNameToSubscriberHolder :
                 uniqueSubscriberHolderMap.entrySet()) {
             addEntriesInTargetMap(object, methodNameToSubscriberHolder.getValue());
+
         }
     }
 
@@ -230,7 +231,7 @@ public class NYBusDriver extends BusDriver {
         while (subscribedMethodsIterator.hasNext()) {
             SubscriberHolder subscriberHolder = (SubscriberHolder) subscribedMethodsIterator.next();
             List<String> methodChannelId = subscriberHolder.subscribedChannelID;
-            if (methodChannelId.containsAll(targetChannelId)) {
+            if (targetChannelId.containsAll(methodChannelId)) {
                 subscribedMethodsIterator.remove();
                 removeTargetIfRequired(subscribedMethods, mTargetMap, targetObject);
             }
