@@ -68,7 +68,6 @@ public class NYBusDriver extends BusDriver {
         for (Map.Entry<String, SubscriberHolder> methodNameToSubscriberHolder :
                 uniqueSubscriberHolderMap.entrySet()) {
             addEntriesInTargetMap(object, methodNameToSubscriberHolder.getValue());
-
         }
     }
 
@@ -109,40 +108,40 @@ public class NYBusDriver extends BusDriver {
         return new Consumer<NYEvent>() {
             @Override
             public void accept(@NonNull NYEvent event) throws Exception {
-                deliverEventToTargetMethod(event.targetObject,
-                        event.subscribedMethod,
-                        event.object);
+                deliverEventToTargetMethod(event);
             }
         };
     }
 
     private void determineThreadAndDeliverEvent(NYEvent event) {
-        final NYThread thread = event.subscribedMethod.subscribedThreadType;
-        switch (thread) {
-            case POSTING:
-                getPostingThreadPublisher().onNext(event);
-                break;
-            case MAIN:
-                getMainThreadPublisher().onNext(event);
-                break;
-            case IO:
-                getIOThreadPublisher().onNext(event);
-                break;
-            case NEW:
-                getNewThreadPublisher().onNext(event);
-                break;
-            case COMPUTATION:
-                getComputationThreadPublisher().onNext(event);
-                break;
-            case TRAMPOLINE:
-                getTrampolineThreadPublisher().onNext(event);
-                break;
-            case EXECUTOR:
-                getExecutorThreadPublisher().onNext(event);
-                break;
-            default:
-                getPostingThreadPublisher().onNext(event);
-                break;
+        synchronized (this) {
+            final NYThread thread = event.subscriberHolder.subscribedThreadType;
+            switch (thread) {
+                case POSTING:
+                    getPostingThreadPublisher().onNext(event);
+                    break;
+                case MAIN:
+                    getMainThreadPublisher().onNext(event);
+                    break;
+                case IO:
+                    getIOThreadPublisher().onNext(event);
+                    break;
+                case NEW:
+                    getNewThreadPublisher().onNext(event);
+                    break;
+                case COMPUTATION:
+                    getComputationThreadPublisher().onNext(event);
+                    break;
+                case TRAMPOLINE:
+                    getTrampolineThreadPublisher().onNext(event);
+                    break;
+                case EXECUTOR:
+                    getExecutorThreadPublisher().onNext(event);
+                    break;
+                default:
+                    getPostingThreadPublisher().onNext(event);
+                    break;
+            }
         }
     }
 
@@ -150,7 +149,7 @@ public class NYBusDriver extends BusDriver {
                                        Object eventObject, String channelId) {
         for (Map.Entry<Object, Set<SubscriberHolder>> mTargetMapEntry :
                 mTargetMap.entrySet()) {
-            Set<SubscriberHolder> mSubscribedMethods = mTargetMapEntry.getValue();
+            Set<SubscriberHolder> mSubscribedMethods = new HashSet<>(mTargetMapEntry.getValue());
             for (SubscriberHolder subscribedMethodHolder : mSubscribedMethods) {
                 List<String> methodChannelId = subscribedMethodHolder.subscribedChannelID;
                 if (methodChannelId.contains(channelId)) {
@@ -162,14 +161,11 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-
-    private void deliverEventToTargetMethod(Object targetObject,
-                                            SubscriberHolder subscribeMethodHolder,
-                                            Object eventObject) throws InvocationTargetException {
+    private void deliverEventToTargetMethod(NYEvent event) throws InvocationTargetException {
         try {
-            Method method = subscribeMethodHolder.subscribedMethod;
+            Method method = event.subscriberHolder.subscribedMethod;
             method.setAccessible(true);
-            method.invoke(targetObject, eventObject);
+            method.invoke(event.targetObject, event.object);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

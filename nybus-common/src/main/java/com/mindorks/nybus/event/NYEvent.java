@@ -18,8 +18,6 @@ package com.mindorks.nybus.event;
 
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 
-import java.lang.reflect.Method;
-
 /**
  * Created by Jyoti on 16/08/17.
  */
@@ -28,12 +26,12 @@ public class NYEvent {
 
     public Object object;
     public Object targetObject;
-    public SubscriberHolder subscribedMethod;
+    public SubscriberHolder subscriberHolder;
 
-    public NYEvent(Object object, Object targetObject, SubscriberHolder subscribedMethod) {
+    public NYEvent(Object object, Object targetObject, SubscriberHolder subscriberHolder) {
         this.object = object;
         this.targetObject = targetObject;
-        this.subscribedMethod = subscribedMethod;
+        this.subscriberHolder = subscriberHolder;
     }
 
 }

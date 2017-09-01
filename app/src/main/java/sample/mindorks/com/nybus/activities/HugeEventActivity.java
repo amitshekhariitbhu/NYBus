@@ -18,6 +18,7 @@ package sample.mindorks.com.nybus.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,12 +44,12 @@ import sample.mindorks.com.nybus.utils.AppConstants;
 
 public class HugeEventActivity extends AppCompatActivity {
 
-    private int numberOfEventsReceived = 0;
-    private static final int NUMBER_FOR_OF_UNIQUE_EVENT = 7;
-    private static final int NUMBER_OF_EVENT_CREATOR = 2;
-    private static final int NUMBER_FOR_ONE_LOOP = 10;
+    private volatile int numberOfEventsReceived = 0;
+    private static final int NUMBER_FOR_UNIQUE_EVENT = 7;
+    private static final int NUMBER_OF_EVENT_CREATOR = 3;
+    private static final int NUMBER_FOR_ONE_LOOP = 1000;
     private static final int TOTAL_NUMBER_OF_EVENTS = NUMBER_OF_EVENT_CREATOR *
-            NUMBER_FOR_OF_UNIQUE_EVENT
+            NUMBER_FOR_UNIQUE_EVENT
             * NUMBER_FOR_ONE_LOOP;
     private static final int BREAK_FOR_EVENT_FROM_MAIN_THREAD = 10;
     private static final String CHANNEL_ONE = "one";
@@ -184,8 +185,9 @@ public class HugeEventActivity extends AppCompatActivity {
         increaseAndCheckForTotalNumberOfEvents();
     }
 
-    private void increaseAndCheckForTotalNumberOfEvents() {
+    private synchronized void increaseAndCheckForTotalNumberOfEvents() {
         numberOfEventsReceived++;
+        Log.d("numberOfEventsReceived", " " + numberOfEventsReceived);
         if (numberOfEventsReceived == TOTAL_NUMBER_OF_EVENTS) {
             runOnUiThread(new Runnable() {
                 @Override
