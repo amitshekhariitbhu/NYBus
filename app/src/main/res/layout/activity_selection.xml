@@ -33,16 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_margin="8dp"
-            android:onClick="startMainActivity"
-            android:text="Start Main" />
-
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:onClick="startSecondActivity"
-            android:text="Start Second" />
+            android:onClick="startHugeEventActivity"
+            android:text="Start Huge Event" />
 
         <Button
             android:layout_width="match_parent"

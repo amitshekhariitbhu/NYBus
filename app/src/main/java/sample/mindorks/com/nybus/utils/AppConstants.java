@@ -38,4 +38,6 @@ public class AppConstants {
     public static final String PostingThreadEventFromBgThread = "PostingThreadEventFromBgThread";
     public static final String TrampolineThreadEventFromBgThread = "TrampolineThreadEventFromBgThread";
 
+    public static final String AllEventsReceived = "All Events Received";
+
 }

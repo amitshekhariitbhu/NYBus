@@ -35,12 +35,8 @@ public class SelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_selection);
     }
 
-    public void startMainActivity(View view) {
-        startActivity(new Intent(SelectionActivity.this, MainActivity.class));
-    }
-
-    public void startSecondActivity(View view) {
-        startActivity(new Intent(SelectionActivity.this, SecondActivity.class));
+    public void startHugeEventActivity(View view) {
+        startActivity(new Intent(SelectionActivity.this, HugeEventActivity.class));
     }
 
     public void startThreadActivity(View view) {

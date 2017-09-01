@@ -18,18 +18,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
-    tools:context="sample.mindorks.com.nybus.activities.MainActivity">
+    tools:context="sample.mindorks.com.nybus.activities.HugeEventActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_margin="16dp"
+        android:textColor="@android:color/black"
+        android:visibility="invisible" />
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="match_parent"
-        android:layout_height="80dp" />
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
 
 </LinearLayout>
