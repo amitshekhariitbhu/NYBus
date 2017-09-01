@@ -93,7 +93,7 @@ public class ThreadActivityTest {
     }
 
     @Test
-    public void testMainThreadEvent() {
+    public void testAllEvents() {
         onView(withId(R.id.mainThreadEventFromMainThread)).check(matches(isDisplayed()));
         onView(withId(R.id.mainThreadEventFromMainThread)).check(matches(withText(AppConstants.MainThreadEventFromMainThread)));
 

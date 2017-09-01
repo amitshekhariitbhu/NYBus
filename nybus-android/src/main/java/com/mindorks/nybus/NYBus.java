@@ -75,7 +75,6 @@ public class NYBus {
             channelIDListForRegister = new ArrayList<>(Arrays.asList(channelIDs));
         }
         register(object, channelIDListForRegister);
-
     }
 
     public void register(Object object, List<String> channelId) {
@@ -104,6 +103,5 @@ public class NYBus {
     public void post(Object object, String channelId) {
         mNYBusDriver.post(object, channelId);
     }
-
 
 }
