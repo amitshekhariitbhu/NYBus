@@ -39,9 +39,9 @@ abstract class BusDriver {
 
     EventClassFinder mEventClassFinder;
 
-    ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, Set<SubscriberHolder>>> mEventsToTargetsMap;
+    ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String,SubscriberHolder>>> mEventsToTargetsMap;
 
-    final Object DELIVERLOCK = new Object();
+    final Object DELIVER_LOCK = new Object();
 
     BusDriver(Publisher publisher,
               SubscribeMethodFinder subscribeMethodFinder,

@@ -20,12 +20,13 @@ import com.mindorks.nybus.thread.NYThread;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Jyoti on 27/08/17.
  */
 
-public class SubscriberHolder {
+public class SubscriberHolder{
 
     public Method subscribedMethod;
     public List<String> subscribedChannelID;
@@ -39,4 +40,7 @@ public class SubscriberHolder {
         this.subscribedThreadType = subscribedThreadType;
     }
 
+    public String getHashKey() {
+        return Integer.toString(Objects.hashCode(this));
+    }
 }

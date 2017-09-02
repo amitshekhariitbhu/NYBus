@@ -28,11 +28,8 @@ import com.mindorks.nybus.thread.NYThread;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.annotations.NonNull;
@@ -82,16 +79,16 @@ public class NYBusDriver extends BusDriver {
 
     public void unregister(Object targetObject, List<String> targetChannelId) {
         synchronized (this) {
-            for (Map.Entry<Class<?>, ConcurrentHashMap<Object, Set<SubscriberHolder>>>
+            for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>>
                     mEventsToTargetsMapEntry :
                     mEventsToTargetsMap.entrySet()) {
-                ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap =
+                ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
                         mEventsToTargetsMapEntry.getValue();
                 if (mTargetMap != null) {
-                    for (Map.Entry<Object, Set<SubscriberHolder>> mTargetMapEntry :
+                    for (Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMapEntry :
                             mTargetMap.entrySet()) {
                         if (mTargetMapEntry.getKey().equals(targetObject)) {
-                            removeMethodFromCurrentSet(mTargetMap, targetObject, targetChannelId);
+                            removeMethodFromMethodsMap(mTargetMap, targetObject, targetChannelId);
                             removeEventIfRequired(mTargetMap, mEventsToTargetsMapEntry);
                         }
                     }
@@ -101,8 +98,8 @@ public class NYBusDriver extends BusDriver {
     }
 
     private void postSingle(Object eventObject, String channelId, Class<?> eventClass) {
-        ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap = mEventsToTargetsMap.
-                get(eventClass);
+        ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
+                mEventsToTargetsMap.get(eventClass);
         if (mTargetMap != null) {
             findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
@@ -118,7 +115,7 @@ public class NYBusDriver extends BusDriver {
     }
 
     private void determineThreadAndDeliverEvent(NYEvent event) {
-        synchronized (DELIVERLOCK) {
+        synchronized (DELIVER_LOCK) {
             final NYThread thread = event.subscriberHolder.subscribedThreadType;
             switch (thread) {
                 case POSTING:
@@ -149,16 +146,18 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private void findTargetsAndDeliver(ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap,
+    private void findTargetsAndDeliver(ConcurrentHashMap<Object,
+                                       ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                        Object eventObject, String channelId) {
-        for (Map.Entry<Object, Set<SubscriberHolder>> mTargetMapEntry :
+        for (Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMapEntry :
                 mTargetMap.entrySet()) {
-            Set<SubscriberHolder> mSubscribedMethods = new HashSet<>(mTargetMapEntry.getValue());
-            for (SubscriberHolder subscribedMethodHolder : mSubscribedMethods) {
-                List<String> methodChannelId = subscribedMethodHolder.subscribedChannelID;
+            ConcurrentHashMap<String, SubscriberHolder> mSubscribedMethods =
+                    new ConcurrentHashMap<>(mTargetMapEntry.getValue());
+            for (Map.Entry<String, SubscriberHolder> subscribedMethodHolder : mSubscribedMethods.entrySet()) {
+                List<String> methodChannelId = subscribedMethodHolder.getValue().subscribedChannelID;
                 if (methodChannelId.contains(channelId)) {
                     NYEvent event = new NYEvent(eventObject, mTargetMapEntry.getKey(),
-                            subscribedMethodHolder);
+                            subscribedMethodHolder.getValue());
                     determineThreadAndDeliverEvent(event);
                 }
             }
@@ -187,10 +186,10 @@ public class NYBusDriver extends BusDriver {
 
     private void createNewEventInEventsToTargetsMap(Object targetObject,
                                                     SubscriberHolder subscribeMethodHolder) {
-        ConcurrentHashMap<Object, Set<SubscriberHolder>> valuesForEventsToTargetsMap =
-                new ConcurrentHashMap<>();
-        Set<SubscriberHolder> methodSet = new HashSet<>();
-        methodSet.add(subscribeMethodHolder);
+        ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>
+                valuesForEventsToTargetsMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, SubscriberHolder> methodSet = new ConcurrentHashMap<>();
+        methodSet.put(Integer.toString(subscribeMethodHolder.hashCode()), subscribeMethodHolder);
         valuesForEventsToTargetsMap.put(targetObject, methodSet);
         mEventsToTargetsMap.put(subscribeMethodHolder.subscribedMethod.getParameterTypes()[0],
                 valuesForEventsToTargetsMap);
@@ -198,7 +197,7 @@ public class NYBusDriver extends BusDriver {
 
     private void addOrUpdateMethodsInTargetMap(Object targetObject,
                                                SubscriberHolder subscribeMethodHolder) {
-        ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap =
+        ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
                 mEventsToTargetsMap.get(subscribeMethodHolder.subscribedMethod.
                         getParameterTypes()[0]);
         if (mTargetMap != null) {
@@ -212,45 +211,54 @@ public class NYBusDriver extends BusDriver {
 
     private void updateMethodInSet(Object targetObject,
                                    SubscriberHolder subscribeMethod,
-                                   ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap) {
-        Set<SubscriberHolder> methodSet = mTargetMap.get(targetObject);
-        methodSet.add(subscribeMethod);
+                                   ConcurrentHashMap<Object, ConcurrentHashMap<String,
+                                           SubscriberHolder>> mTargetMap) {
+        ConcurrentHashMap<String, SubscriberHolder> methodSet = mTargetMap.get(targetObject);
+        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
     }
 
     private void addEntryInTargetMap(Object targetObject,
                                      SubscriberHolder subscribeMethod,
-                                     ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap) {
-        Set<SubscriberHolder> methodSet = new HashSet<>();
-        methodSet.add(subscribeMethod);
+                                     ConcurrentHashMap<Object, ConcurrentHashMap<String,
+                                             SubscriberHolder>> mTargetMap) {
+        ConcurrentHashMap<String, SubscriberHolder> methodSet = new ConcurrentHashMap<>();
+        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
         mTargetMap.put(targetObject, methodSet);
     }
 
-    private void removeMethodFromCurrentSet(ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap,
+    private void removeMethodFromMethodsMap(ConcurrentHashMap<Object,
+            ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                             Object targetObject,
                                             List<String> targetChannelId) {
-        Set<SubscriberHolder> subscribedMethods = mTargetMap.get(targetObject);
-        Iterator subscribedMethodsIterator = subscribedMethods.iterator();
-        while (subscribedMethodsIterator.hasNext()) {
-            SubscriberHolder subscriberHolder = (SubscriberHolder) subscribedMethodsIterator.next();
-            List<String> methodChannelId = subscriberHolder.subscribedChannelID;
+        ConcurrentHashMap<String, SubscriberHolder> mSubscribedMethodsMap =
+                mTargetMap.get(targetObject);
+        for (Map.Entry<String, SubscriberHolder> mSubscribedMethodsMapEntry :
+                mSubscribedMethodsMap.entrySet()) {
+            SubscriberHolder subscribedMethod = mSubscribedMethodsMapEntry.getValue();
+            List<String> methodChannelId = subscribedMethod.subscribedChannelID;
             if (targetChannelId.containsAll(methodChannelId)) {
-                subscribedMethodsIterator.remove();
-                removeTargetIfRequired(subscribedMethods, mTargetMap, targetObject);
+                mSubscribedMethodsMap.remove(mSubscribedMethodsMapEntry.getKey());
+                removeTargetIfRequired(mSubscribedMethodsMap, mTargetMap, targetObject);
+
             }
         }
+
     }
 
-    private void removeTargetIfRequired(Set<SubscriberHolder> subscribedMethods,
-                                        ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap,
+    private void removeTargetIfRequired(ConcurrentHashMap<String, SubscriberHolder> subscribedMethods,
+                                        ConcurrentHashMap<Object,
+                                                ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                         Object targetObject) {
         if (subscribedMethods.size() == 0) {
             mTargetMap.remove(targetObject);
         }
     }
 
-    private void removeEventIfRequired(ConcurrentHashMap<Object, Set<SubscriberHolder>> mTargetMap,
+    private void removeEventIfRequired(ConcurrentHashMap<Object,
+            ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                        Map.Entry<Class<?>, ConcurrentHashMap<Object,
-                                               Set<SubscriberHolder>>> mEventsToTargetsMapEntry) {
+                                               ConcurrentHashMap<String,
+                                                       SubscriberHolder>>> mEventsToTargetsMapEntry) {
         if (mTargetMap.size() == 0) {
             mEventsToTargetsMap.remove(mEventsToTargetsMapEntry.getKey());
         }
