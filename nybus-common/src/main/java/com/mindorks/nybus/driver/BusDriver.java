@@ -22,7 +22,6 @@ import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.subjects.PublishSubject;
@@ -39,7 +38,7 @@ abstract class BusDriver {
 
     EventClassFinder mEventClassFinder;
 
-    ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String,SubscriberHolder>>> mEventsToTargetsMap;
+    ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>> mEventsToTargetsMap;
 
     final Object DELIVER_LOCK = new Object();
 
