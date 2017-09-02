@@ -151,7 +151,8 @@ public class NYBusDriver extends BusDriver {
                                        Object eventObject, String channelId) {
         for (Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMapEntry :
                 mTargetMap.entrySet()) {
-            ConcurrentHashMap<String, SubscriberHolder> mSubscribedMethods = mTargetMapEntry.getValue();
+            ConcurrentHashMap<String, SubscriberHolder> mSubscribedMethods =
+                    new ConcurrentHashMap<>(mTargetMapEntry.getValue());
             for (Map.Entry<String, SubscriberHolder> subscribedMethodHolder : mSubscribedMethods.entrySet()) {
                 List<String> methodChannelId = subscribedMethodHolder.getValue().subscribedChannelID;
                 if (methodChannelId.contains(channelId)) {
