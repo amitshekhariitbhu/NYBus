@@ -239,4 +239,45 @@ public class NYBusTest {
         interfaceEventTarget.unregister();
     }
 
+    @Test
+    public void testHugeNumberOfRegisterAndUnRegister() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(30000);
+
+        final SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
+        final Event event = new Event();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10000; i++) {
+                    simpleTarget.register();
+                    latch.countDown();
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10000; i++) {
+                    simpleTarget.unregister();
+                    latch.countDown();
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10000; i++) {
+                    NYBus.get().post(event);
+                    latch.countDown();
+                }
+            }
+        }).start();
+
+        assertTrue(latch.await(5, SECONDS));
+
+    }
+
 }
