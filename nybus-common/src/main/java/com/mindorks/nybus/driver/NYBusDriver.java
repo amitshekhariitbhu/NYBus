@@ -118,7 +118,7 @@ public class NYBusDriver extends BusDriver {
     }
 
     private void determineThreadAndDeliverEvent(NYEvent event) {
-        synchronized (this) {
+        synchronized (DELIVERLOCK) {
             final NYThread thread = event.subscriberHolder.subscribedThreadType;
             switch (thread) {
                 case POSTING:
