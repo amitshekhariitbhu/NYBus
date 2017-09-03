@@ -14,18 +14,27 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus.annotation;
 
-import android.app.Application;
+import com.mindorks.nybus.thread.NYThread;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by Jyoti on 16/08/17.
  */
 
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Subscribe {
+
+    String[] channelId() default "default";
+
+    NYThread threadType() default NYThread.POSTING;
+
 }

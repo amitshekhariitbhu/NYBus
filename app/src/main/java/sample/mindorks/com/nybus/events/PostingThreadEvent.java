@@ -14,18 +14,18 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
-
-import android.app.Application;
-
+package sample.mindorks.com.nybus.events;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by amitshekhar on 31/08/17.
  */
 
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
+public class PostingThreadEvent {
+
+    public String postingThreadName;
+
+    public PostingThreadEvent(String postingThreadName) {
+        this.postingThreadName = postingThreadName;
     }
+
 }

@@ -14,18 +14,12 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+apply plugin: 'java'
 
-import android.app.Application;
-
-
-/**
- * Created by Jyoti on 14/08/17.
- */
-
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
 }
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

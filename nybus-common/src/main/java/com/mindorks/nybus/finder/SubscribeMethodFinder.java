@@ -14,18 +14,19 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus.finder;
 
-import android.app.Application;
+import com.mindorks.nybus.subscriber.SubscriberHolder;
 
+import java.util.HashMap;
+import java.util.List;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by amitshekhar on 31/08/17.
  */
 
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+public interface SubscribeMethodFinder {
+
+    HashMap<String, SubscriberHolder> getAll(Object object, List<String> channelId);
+
 }

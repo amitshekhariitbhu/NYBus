@@ -14,18 +14,30 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus.targets;
 
-import android.app.Application;
-
+import com.mindorks.nybus.NYBus;
+import com.mindorks.nybus.annotation.Subscribe;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by Jyoti on 27/08/17.
  */
 
-public class NYBusApplication extends Application {
+public class MultipleChannelIDMethod implements Target {
+
+
+    @Subscribe(channelId = {"one","two","default"})
+    public void onEventForTypeString(String value) {
+
+    }
+
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void register(String... channelID) {
+        NYBus.get().register(this,channelID);
+    }
+
+    @Override
+    public void unregister(String... channelID) {
+        NYBus.get().register(this,channelID);
     }
 }

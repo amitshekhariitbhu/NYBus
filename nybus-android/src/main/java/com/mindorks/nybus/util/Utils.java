@@ -14,18 +14,25 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
-
-import android.app.Application;
-
+package com.mindorks.nybus.util;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by amitshekhar on 28/08/17.
  */
 
-public class NYBusApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
+public class Utils {
+
+    private Utils() {
+        // no instance
     }
+
+    public static boolean isUnitTest() {
+        try {
+            Class.forName("com.mindorks.nybus.UnitTest");
+            return true;
+        } catch (ClassNotFoundException ignore) {
+            return false;
+        }
+    }
+
 }

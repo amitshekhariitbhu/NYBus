@@ -14,18 +14,30 @@
  *    limitations under the License.
  */
 
-package sample.mindorks.com.nybus;
+package com.mindorks.nybus.targets;
 
-import android.app.Application;
-
+import com.mindorks.nybus.NYBus;
+import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.Event;
 
 /**
- * Created by Jyoti on 14/08/17.
+ * Created by amitshekhar on 27/08/17.
  */
 
-public class NYBusApplication extends Application {
+public class SuperSimpleTarget extends SimpleTarget {
+
+    @Subscribe
+    public void onEventThree(Event event) {
+        super.onEventTwo(event);
+    }
+
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void register(String... channelID) {
+        NYBus.get().register(this);
+    }
+
+    @Override
+    public void unregister(String... channelID) {
+        NYBus.get().unregister(this);
     }
 }
