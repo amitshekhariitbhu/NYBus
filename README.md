@@ -6,6 +6,8 @@
 
 ## A pub-sub library for Android and Java applications.
 
+## This pub-sub library NYBus uses RxJava(RxJava2) for creating RxBus(RxBus2).
+
 [![Mindorks](https://img.shields.io/badge/mindorks-opensource-blue.svg)](https://mindorks.com/open-source-projects)
 [![Mindorks Community](https://img.shields.io/badge/join-community-blue.svg)](https://mindorks.com/join-community)
 
