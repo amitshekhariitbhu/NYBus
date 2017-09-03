@@ -35,6 +35,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static junit.framework.Assert.assertTrue;
@@ -47,7 +50,6 @@ public class NYBusAndroidTest {
 
     @Test
     public void testSimpleTarget() throws Exception {
-
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
         simpleTarget.register();
         Event event = new Event();
@@ -59,12 +61,10 @@ public class NYBusAndroidTest {
         NYBus.get().post(eventOne);
         verify(simpleTarget, never()).onEventOne(eventOne);
         verify(simpleTarget, never()).onEventTwo(eventOne);
-
     }
 
     @Test
     public void testSuperSimpleTarget() throws Exception {
-
         SuperSimpleTarget superSimpleTarget = Mockito.spy(new SuperSimpleTarget());
         superSimpleTarget.register();
         Event event = new Event();
@@ -78,7 +78,6 @@ public class NYBusAndroidTest {
         verify(superSimpleTarget, never()).onEventOne(eventOne);
         verify(superSimpleTarget, never()).onEventTwo(eventOne);
         verify(superSimpleTarget, never()).onEventThree(eventOne);
-
     }
 
     @Test
@@ -90,9 +89,7 @@ public class NYBusAndroidTest {
         NYBus.get().post(eventOne);
         verify(overrideTarget).onEvent(eventOne);
         verify(overrideTarget, never()).onEvent(eventTwo);
-
         NYBus.get().post(eventTwo);
-
         verify(overrideTarget).onEvent(eventTwo);
         overrideTarget.unregister();
     }
@@ -122,15 +119,11 @@ public class NYBusAndroidTest {
         verify(channelTargetOne, never()).onEventForTypeOne("Message Default");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message Default");
         verify(channelTargetOne).onEventForTypeDefault("Message Default");
-
         NYBus.get().post("Message One", ChannelTarget.CHANNEL_ONE);
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
-
-
         channelTargetOne.unregister();
-
     }
 
     @Test
@@ -147,52 +140,47 @@ public class NYBusAndroidTest {
         verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
-
     }
 
     @Test
     public void testHugeNumberOfEvents() throws Exception {
 
-        final CountDownLatch latch = new CountDownLatch(30000);
+        final CountDownLatch latch = new CountDownLatch(200);
 
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
         simpleTarget.register();
         final Event event = new Event();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10000; i++) {
+        ThreadPoolExecutor executorOne = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>());
+
+        for (int i = 0; i < 100; i++) {
+            executorOne.execute(new Runnable() {
+                @Override
+                public void run() {
                     NYBus.get().post(event);
                     latch.countDown();
                 }
-            }
-        }).start();
+            });
+        }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10000; i++) {
+        ThreadPoolExecutor executorTwo = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>());
+
+        for (int i = 0; i < 100; i++) {
+            executorTwo.execute(new Runnable() {
+                @Override
+                public void run() {
                     NYBus.get().post(event);
                     latch.countDown();
                 }
-            }
-        }).start();
+            });
+        }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10000; i++) {
-                    NYBus.get().post(event);
-                    latch.countDown();
-                }
-            }
-        }).start();
+        assertTrue(latch.await(10, SECONDS));
 
-        assertTrue(latch.await(5, SECONDS));
-
-        verify(simpleTarget, times(30000)).onEventOne(event);
-        verify(simpleTarget, times(30000)).onEventTwo(event);
+        verify(simpleTarget, times(200)).onEventOne(event);
+        verify(simpleTarget, times(200)).onEventTwo(event);
     }
 
 

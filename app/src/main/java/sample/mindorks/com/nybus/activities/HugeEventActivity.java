@@ -46,10 +46,10 @@ public class HugeEventActivity extends AppCompatActivity {
     private volatile int numberOfEventsReceived = 0;
     private static final int NUMBER_FOR_UNIQUE_EVENT = 7;
     private static final int NUMBER_OF_EVENT_CREATOR = 3;
-    private static final int NUMBER_FOR_ONE_LOOP = 10000;
+    private static final int NUMBER_FOR_ONE_LOOP = 1000;
     private static final int TOTAL_NUMBER_OF_EVENTS = NUMBER_OF_EVENT_CREATOR *
             NUMBER_FOR_UNIQUE_EVENT
-            * NUMBER_FOR_ONE_LOOP; // 210000 - Awesome! it's more than 2 lacs
+            * NUMBER_FOR_ONE_LOOP;
     private static final int BREAK_FOR_EVENT_FROM_MAIN_THREAD = 10;
     private static final String CHANNEL_ONE = "one";
     private static final String CHANNEL_TWO = "two";

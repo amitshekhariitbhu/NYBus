@@ -164,11 +164,13 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private void deliverEventToTargetMethod(NYEvent event) throws InvocationTargetException {
+    private void deliverEventToTargetMethod(NYEvent event) {
         try {
             Method method = event.subscriberHolder.subscribedMethod;
             method.setAccessible(true);
             method.invoke(event.targetObject, event.object);
+        } catch (InvocationTargetException e) {
+            e.getCause().printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
