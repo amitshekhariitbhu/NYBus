@@ -113,8 +113,8 @@ public class NYBusTest {
         NYBus.get().post("Message two", ChannelTarget.CHANNEL_TWO);
         verify(channelTargetTwo).onEventForTypeTwo("Message two");
         verify(channelTargetTwo, never()).onEventForTypeOne("Message two");
-        channelTargetOne.unregister();
-        channelTargetTwo.unregister();
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
+        channelTargetTwo.unregister(ChannelTarget.CHANNEL_TWO);
     }
 
     @Test
@@ -130,7 +130,8 @@ public class NYBusTest {
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
-        channelTargetOne.unregister();
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
     }
 
     @Test
@@ -147,6 +148,8 @@ public class NYBusTest {
         verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
     }
 
     @Test
@@ -160,6 +163,8 @@ public class NYBusTest {
         verify(multipleChannelIDMethod).onEventForTypeString("Message on two");
         NYBus.get().post("Message on default");
         verify(multipleChannelIDMethod, never()).onEventForTypeString("Message on default");
+        multipleChannelIDMethod.unregister(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
     }
 
     @Test

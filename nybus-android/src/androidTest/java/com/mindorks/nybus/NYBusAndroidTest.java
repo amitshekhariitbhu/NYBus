@@ -106,8 +106,8 @@ public class NYBusAndroidTest {
         NYBus.get().post("Message two", ChannelTarget.CHANNEL_TWO);
         verify(channelTargetTwo).onEventForTypeTwo("Message two");
         verify(channelTargetTwo, never()).onEventForTypeOne("Message two");
-        channelTargetOne.unregister();
-        channelTargetTwo.unregister();
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
+        channelTargetTwo.unregister(ChannelTarget.CHANNEL_TWO);
     }
 
     @Test
@@ -123,7 +123,8 @@ public class NYBusAndroidTest {
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
-        channelTargetOne.unregister();
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
     }
 
     @Test
@@ -140,6 +141,8 @@ public class NYBusAndroidTest {
         verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
     }
 
     @Test
@@ -182,7 +185,6 @@ public class NYBusAndroidTest {
         verify(simpleTarget, times(200)).onEventOne(event);
         verify(simpleTarget, times(200)).onEventTwo(event);
     }
-
 
     @Test
     public void testSubClassEvent() throws Exception {
