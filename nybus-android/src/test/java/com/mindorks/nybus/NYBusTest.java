@@ -30,6 +30,7 @@ import com.mindorks.nybus.targets.SimpleTarget;
 import com.mindorks.nybus.targets.SubClassEventTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -273,4 +274,30 @@ public class NYBusTest {
         assertTrue(latch.await(10, SECONDS));
     }
 
-}
+
+    @Test
+    public void testIsRegistered() throws Exception {
+        boolean isRegistered;
+        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
+
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE);
+        assertTrue(!isRegistered);
+
+        channelTargetOne.register(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
+        assertTrue(isRegistered);
+
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
+        assertTrue(!isRegistered);
+
+        channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO,ChannelTarget.CHANNEL_THREE);
+        assertTrue(!isRegistered);
+
+    }
+    }
