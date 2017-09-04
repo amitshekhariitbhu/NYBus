@@ -27,6 +27,7 @@ public class ChannelTarget implements Target {
 
     public static final String CHANNEL_ONE = "one";
     public static final String CHANNEL_TWO = "two";
+    public static final String CHANNEL_THREE = "three";
     public static final String CHANNEL_DEFAULT = "default";
 
 
@@ -55,6 +56,11 @@ public class ChannelTarget implements Target {
 
     @Override
     public void unregister(String... channelID) {
-        NYBus.get().unregister(this);
+        NYBus.get().unregister(this,channelID);
     }
+
+    public boolean isRegistered(String... channelID) {
+        return NYBus.get().isRegistered(this, channelID);
+    }
+
 }

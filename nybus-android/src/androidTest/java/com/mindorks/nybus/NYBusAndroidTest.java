@@ -208,4 +208,27 @@ public class NYBusAndroidTest {
         interfaceEventTarget.unregister();
     }
 
+    public void testIsRegistered() throws Exception {
+        boolean isRegistered;
+        ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
+
+        channelTargetOne.register(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
+        assertTrue(isRegistered);
+
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO);
+        assertTrue(!isRegistered);
+
+        channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
+        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+                ChannelTarget.CHANNEL_TWO, "four");
+        assertTrue(!isRegistered);
+
+    }
+
+
 }
