@@ -101,4 +101,9 @@ public class NYBus {
         mNYBusDriver.post(object, channelId);
     }
 
+    public boolean isRegistered(Object object,String... channelIDs) {
+        List<String> channelID = new ArrayList<>(Arrays.asList(channelIDs));
+        return mNYBusDriver.isRegistered(object,channelID);
+    }
+
 }
