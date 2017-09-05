@@ -62,6 +62,7 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void register(Object object, List<String> channelId) {
+
         synchronized (this) {
             HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap =
                     mSubscribeMethodFinder.getAll(object, channelId);
@@ -99,7 +100,7 @@ public class NYBusDriver extends BusDriver {
     }
 
     private Set<String> getMethodChannelIds(Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>>
-                                                           mTargetMapEntry) {
+                                                    mTargetMapEntry) {
         Set<String> methodChannelIDSet = new HashSet<>();
         ConcurrentHashMap<String, SubscriberHolder> subscribedMethods = mTargetMapEntry.getValue();
         for (Map.Entry<String, SubscriberHolder> subscribedMethodsEntry : subscribedMethods
@@ -253,7 +254,7 @@ public class NYBusDriver extends BusDriver {
                                    ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                            SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = mTargetMap.get(targetObject);
-        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
     }
 
     private void addEntryInTargetMap(Object targetObject,
@@ -261,7 +262,7 @@ public class NYBusDriver extends BusDriver {
                                      ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                              SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = new ConcurrentHashMap<>();
-        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
         mTargetMap.put(targetObject, methodSet);
     }
 
@@ -302,6 +303,7 @@ public class NYBusDriver extends BusDriver {
             mEventsToTargetsMap.remove(mEventsToTargetsMapEntry.getKey());
         }
     }
+
 
 }
 

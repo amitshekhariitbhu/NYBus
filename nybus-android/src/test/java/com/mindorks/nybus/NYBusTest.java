@@ -289,10 +289,18 @@ public class NYBusTest {
                 ChannelTarget.CHANNEL_TWO);
         assertTrue(isRegistered);
 
+        isRegistered = channelTargetOne.isRegistered();
+        assertTrue(isRegistered);
+
         channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
         isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
         assertTrue(!isRegistered);
+
+        channelTargetOne.unregister(ChannelTarget.CHANNEL_DEFAULT);
+        isRegistered = channelTargetOne.isRegistered();
+        assertTrue(!isRegistered);
+
 
         channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
         isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,

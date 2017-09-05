@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 
 public class SubscriberHolder{
-
+    private static final String SEPARATOR = "_";
     public Method subscribedMethod;
     public List<String> subscribedChannelID;
     public NYThread subscribedThreadType;
@@ -40,7 +40,12 @@ public class SubscriberHolder{
         this.subscribedThreadType = subscribedThreadType;
     }
 
-    public String getHashKey() {
-        return Integer.toString(Objects.hashCode(this));
+
+    public String getKeyForSubscribeHolderMap(SubscriberHolder subscriberHolder) {
+        return subscriberHolder.subscribedMethod.getName()
+                + SEPARATOR
+                + subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
     }
+
+
 }

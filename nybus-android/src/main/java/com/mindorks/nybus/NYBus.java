@@ -18,6 +18,7 @@ package com.mindorks.nybus;
 
 
 import com.mindorks.nybus.androidScheduler.SchedulerProviderImplementation;
+import com.mindorks.nybus.utils.ListUtils;
 import com.mindorks.nybus.driver.NYBusDriver;
 import com.mindorks.nybus.event.EventChannel;
 import com.mindorks.nybus.finder.NYEventClassFinder;
@@ -67,14 +68,7 @@ public class NYBus {
     }
 
     public void register(Object object, String... channelIDs) {
-        List<String> channelIDListForRegister;
-        if (channelIDs.length == 0) {
-            channelIDListForRegister = new ArrayList<>();
-            channelIDListForRegister.add(EventChannel.DEFAULT);
-        } else {
-            channelIDListForRegister = new ArrayList<>(Arrays.asList(channelIDs));
-        }
-        register(object, channelIDListForRegister);
+        register(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
     public void register(Object object, List<String> channelId) {
@@ -82,14 +76,7 @@ public class NYBus {
     }
 
     public void unregister(Object object, String... channelIDs) {
-        List<String> channelIDListForUnregister;
-        if (channelIDs.length == 0) {
-            channelIDListForUnregister = new ArrayList<>();
-            channelIDListForUnregister.add(EventChannel.DEFAULT);
-        } else {
-            channelIDListForUnregister = new ArrayList<>(Arrays.asList(channelIDs));
-        }
-        unregister(object, channelIDListForUnregister);
+        unregister(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
     public void unregister(Object object, List<String> channelId) {
@@ -105,7 +92,6 @@ public class NYBus {
     }
 
     public boolean isRegistered(Object object,String... channelIDs) {
-        List<String> channelID = new ArrayList<>(Arrays.asList(channelIDs));
-       return mNYBusDriver.isRegistered(object,channelID);
+        return mNYBusDriver.isRegistered(object, ListUtils.convertVarargsToList(channelIDs));
     }
 }
