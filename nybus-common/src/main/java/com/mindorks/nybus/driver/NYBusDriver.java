@@ -28,8 +28,10 @@ import com.mindorks.nybus.thread.NYThread;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.annotations.NonNull;
@@ -60,6 +62,7 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void register(Object object, List<String> channelId) {
+
         synchronized (this) {
             HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap =
                     mSubscribeMethodFinder.getAll(object, channelId);
@@ -76,6 +79,40 @@ public class NYBusDriver extends BusDriver {
             postSingle(eventObject, channelId, eventClass);
         }
     }
+
+    public boolean isRegistered(Object targetObject, List<String> targetChannelId) {
+        boolean isRegistered = false;
+        for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>>
+                mEventsToTargetsMapEntry : mEventsToTargetsMap.entrySet()) {
+            ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
+                    mEventsToTargetsMapEntry.getValue();
+            if (mTargetMap != null) {
+                for (Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMapEntry :
+                        mTargetMap.entrySet()) {
+                    if (mTargetMapEntry.getKey().equals(targetObject)) {
+                        isRegistered = getMethodChannelIds(mTargetMapEntry).containsAll
+                                (targetChannelId);
+                    }
+                }
+            }
+        }
+        return isRegistered;
+    }
+
+    private Set<String> getMethodChannelIds(Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>>
+                                                    mTargetMapEntry) {
+        Set<String> methodChannelIDSet = new HashSet<>();
+        ConcurrentHashMap<String, SubscriberHolder> subscribedMethods = mTargetMapEntry.getValue();
+        for (Map.Entry<String, SubscriberHolder> subscribedMethodsEntry : subscribedMethods
+                .entrySet()) {
+            List<String> subscribedChannelIDs = subscribedMethodsEntry.getValue().subscribedChannelID;
+            for (String channelId : subscribedChannelIDs) {
+                methodChannelIDSet.add(channelId);
+            }
+        }
+        return methodChannelIDSet;
+    }
+
 
     public void unregister(Object targetObject, List<String> targetChannelId) {
         synchronized (this) {
@@ -110,6 +147,7 @@ public class NYBusDriver extends BusDriver {
             @Override
             public void accept(@NonNull NYEvent event) throws Exception {
                 deliverEventToTargetMethod(event);
+
             }
         };
     }
@@ -168,7 +206,7 @@ public class NYBusDriver extends BusDriver {
         try {
             Method method = event.subscriberHolder.subscribedMethod;
             method.setAccessible(true);
-            method.invoke(event.targetObject, event.object);
+            method.invoke(event.targetObject, event.eventObject);
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
         } catch (IllegalAccessException e) {
@@ -216,7 +254,7 @@ public class NYBusDriver extends BusDriver {
                                    ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                            SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = mTargetMap.get(targetObject);
-        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
     }
 
     private void addEntryInTargetMap(Object targetObject,
@@ -224,7 +262,7 @@ public class NYBusDriver extends BusDriver {
                                      ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                              SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = new ConcurrentHashMap<>();
-        methodSet.put(subscribeMethod.getHashKey(), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
         mTargetMap.put(targetObject, methodSet);
     }
 
@@ -265,6 +303,7 @@ public class NYBusDriver extends BusDriver {
             mEventsToTargetsMap.remove(mEventsToTargetsMapEntry.getKey());
         }
     }
+
 
 }
 

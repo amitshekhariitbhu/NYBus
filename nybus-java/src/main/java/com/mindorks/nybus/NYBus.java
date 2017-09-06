@@ -15,16 +15,39 @@
  */
 
 package com.mindorks.nybus;
+
+import com.mindorks.nybus.driver.NYBusDriver;
+import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.finder.NYEventClassFinder;
+import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
+import com.mindorks.nybus.publisher.NYPublisher;
+import com.mindorks.nybus.scheduler.SchedulerProvider;
+import com.mindorks.nybus.scheduler.SchedulerProviderImpl;
+import com.mindorks.nybus.utils.ListUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by amitshekhar on 14/08/17.
  */
 
-import com.mindorks.scheduler.SchedulerProvider;
-import com.mindorks.internal.NYBusHandler;
 
 public class NYBus {
+
     private static NYBus sNYBusInstance;
-    private NYBusHandler mNYBusHandler;
+    private NYBusDriver mNYBusDriver;
+
+    static {
+        NYBus.get().setSchedulerProvider(new SchedulerProviderImpl());
+    }
+
+    private NYBus() {
+        mNYBusDriver = new NYBusDriver(new NYPublisher(),
+                new NYSubscribeMethodFinder(),
+                new NYEventClassFinder());
+    }
 
     public static NYBus get() {
         if (sNYBusInstance == null) {
@@ -37,12 +60,35 @@ public class NYBus {
         return sNYBusInstance;
     }
 
-
-    private NYBus() {
-        mNYBusHandler = new NYBusHandler();
-    }
-
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
-        mNYBusHandler.setSchedulerProvider(schedulerProvider);
+        mNYBusDriver.initPublishers(schedulerProvider);
     }
+
+    public void register(Object object, String... channelIDs) {
+        register(object, ListUtils.convertVarargsToList(channelIDs));
+    }
+
+    public void register(Object object, List<String> channelId) {
+        mNYBusDriver.register(object, channelId);
+    }
+
+    public void unregister(Object object, String... channelIDs) {
+        unregister(object, ListUtils.convertVarargsToList(channelIDs));
+    }
+
+    public void unregister(Object object, List<String> channelId) {
+        mNYBusDriver.unregister(object, channelId);
+    }
+
+    public void post(Object object) {
+        post(object, EventChannel.DEFAULT);
+    }
+
+    public void post(Object object, String channelId) {
+        mNYBusDriver.post(object, channelId);
+    }
+
+    public boolean isRegistered(Object object,String... channelIDs) {
+        return mNYBusDriver.isRegistered(object, ListUtils.convertVarargsToList(channelIDs));    }
+
 }

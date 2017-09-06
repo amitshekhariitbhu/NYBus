@@ -24,14 +24,15 @@ import com.mindorks.nybus.subscriber.SubscriberHolder;
 
 public class NYEvent {
 
-    public Object object;
+    public Object eventObject;
     public Object targetObject;
     public SubscriberHolder subscriberHolder;
 
-    public NYEvent(Object object, Object targetObject, SubscriberHolder subscriberHolder) {
-        this.object = object;
+
+    public NYEvent(Object eventObject,Object targetObject,SubscriberHolder subscribedMethod) {
+        this.eventObject = eventObject;
         this.targetObject = targetObject;
-        this.subscriberHolder = subscriberHolder;
+        this.subscriberHolder = subscribedMethod;
     }
 
 }
