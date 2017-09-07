@@ -37,26 +37,24 @@ import java.util.Set;
 public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
 
     private static final String SEPARATOR = "_";
-    Set<String> methodChannelIDs;
-
 
     public NYSubscribeMethodFinder() {
 
     }
 
     @Override
-    public HashMap<String, SubscriberHolder> getAll(Object object,
-                                                    List<String> targetChannelId) {
+    public TargetData getData(Object object, List<String> targetChannelId) {
         HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap = new HashMap<>();
+        Set<String> methodChannelIDs = new HashSet<>();
         try {
             Method[] declaredMethodsOfConcreteClass = object.getClass().getDeclaredMethods();
             getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
-                    targetChannelId, uniqueSubscriberHolderMap);
+                    targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
             Set<Class<?>> classes = getAllSuperClasses(object.getClass());
             for (Class<?> clazz : classes) {
                 Method[] declaredMethods = clazz.getDeclaredMethods();
                 getAndAddSubscribeHolderToUniqueMap(declaredMethods,
-                        targetChannelId, uniqueSubscriberHolderMap);
+                        targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
             }
         } catch (Throwable ignored) {
             // sometimes the above used getDeclaredMethods throw exception
@@ -64,22 +62,20 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
             // including the superclasses, so no need to call getAllSuperClasses
             Method[] declaredMethodsOfConcreteClass = object.getClass().getMethods();
             getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
-                    targetChannelId, uniqueSubscriberHolderMap);
+                    targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
         }
-        return uniqueSubscriberHolderMap;
-    }
-
-    @Override
-    public Set<String> getAllMethodChannelId() {
-        return methodChannelIDs;
+        TargetData targetData = new TargetData();
+        targetData.subscriberHolders = new ArrayList<>(uniqueSubscriberHolderMap.values());
+        targetData.methodChannelIDs = methodChannelIDs;
+        return targetData;
     }
 
     private void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
                                                      List<String> targetChannelId,
+                                                     Set<String> methodChannelIDs,
                                                      HashMap<String, SubscriberHolder>
                                                              uniqueSubscriberHolderMap) {
         List<SubscriberHolder> subscriberHolders = new ArrayList<>();
-        methodChannelIDs = new HashSet<>();
         for (Method method : methods) {
             boolean isMethodValid = hasSubscribeAnnotation(method)
                     && isAccessModifierPublic(method)
@@ -158,7 +154,6 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
 
     private SubscriberHolder generateSubscribedMethodHolder(Method method,
                                                             List<String> targetChannelId) {
-
         SubscriberHolder subscriberHolder;
         List<String> methodChannelIds = new ArrayList<>(getMethodChannelId(method));
         NYThread subscribedThreadType = getMethodThread(method);

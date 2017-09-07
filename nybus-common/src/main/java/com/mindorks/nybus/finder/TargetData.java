@@ -16,14 +16,19 @@
 
 package com.mindorks.nybus.finder;
 
+import com.mindorks.nybus.subscriber.SubscriberHolder;
+
 import java.util.List;
+import java.util.Set;
 
 /**
- * Created by amitshekhar on 31/08/17.
+ * Created by amitshekhar on 07/09/17.
  */
 
-public interface SubscribeMethodFinder {
+public class TargetData {
 
-    TargetData getData(Object object, List<String> channelId);
+    public List<SubscriberHolder> subscriberHolders;
+
+    public Set<String> methodChannelIDs;
 
 }

@@ -21,6 +21,7 @@ import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.exception.NYBusException;
 import com.mindorks.nybus.finder.EventClassFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
+import com.mindorks.nybus.finder.TargetData;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
@@ -28,7 +29,6 @@ import com.mindorks.nybus.thread.NYThread;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import sun.rmi.runtime.Log;
 
 /**
  * Created by Jyoti on 14/08/17.
@@ -64,31 +63,29 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void register(Object object, List<String> targetChannelIds) {
-
         synchronized (this) {
-            if (!isTargetRegistered(object,targetChannelIds)) {
-                HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap =
-                        mSubscribeMethodFinder.getAll(object, targetChannelIds);
-                Set<String> uniqueChannelIdHolderSet = mSubscribeMethodFinder.getAllMethodChannelId();
-                if (uniqueSubscriberHolderMap.size() > 0) {
+            if (!isTargetRegistered(object, targetChannelIds)) {
+                TargetData targetData = mSubscribeMethodFinder.getData(object, targetChannelIds);
+                List<SubscriberHolder> subscriberHolders = targetData.subscriberHolders;
+                Set<String> uniqueChannelIdHolderSet = targetData.methodChannelIDs;
+                if (subscriberHolders.size() > 0) {
                     targetChannelIds.removeAll(uniqueChannelIdHolderSet);
                     if (targetChannelIds.size() > 0) {
-                        for (String targethannelId : targetChannelIds) {
+                        for (String targetChannelId : targetChannelIds) {
                             throw new NYBusException("Subscriber " + object.getClass()
                                     + " and its super classes have no public methods with the " +
-                                    "@Subscribe annotation on ChannelID" + targethannelId);
+                                    "@Subscribe annotation on ChannelID" + targetChannelId);
                         }
                     }
-                    for (Map.Entry<String, SubscriberHolder> methodNameToSubscriberHolder :
-                            uniqueSubscriberHolderMap.entrySet()) {
-                        addEntriesInTargetMap(object, methodNameToSubscriberHolder.getValue());
+                    for (SubscriberHolder subscriberHolder : subscriberHolders) {
+                        addEntriesInTargetMap(object, subscriberHolder);
                     }
                 } else {
                     throw new NYBusException("Subscriber " + object.getClass()
                             + " and its super classes have no public methods with the @Subscribe annotation");
                 }
 
-            }else{
+            } else {
                 throw new NYBusException(object.getClass()
                         + " is already registered on same channel ids");
             }
@@ -120,26 +117,25 @@ public class NYBusDriver extends BusDriver {
         }
         return isRegistered;
     }
-    private boolean isTargetRegistered(Object targetObject, List<String> targetChannelId){
+
+    private boolean isTargetRegistered(Object targetObject, List<String> targetChannelId) {
         Set<String> currentlyRegisteredChannelId = new HashSet<>();
-        for(Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String,
-                SubscriberHolder>>> mEventsToTargetsMapEntry : mEventsToTargetsMap.entrySet()){
+        for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String,
+                SubscriberHolder>>> mEventsToTargetsMapEntry : mEventsToTargetsMap.entrySet()) {
             ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
                     mEventsToTargetsMapEntry.getValue();
-            if(mTargetMap.containsKey(targetObject)){
+            if (mTargetMap.containsKey(targetObject)) {
                 ConcurrentHashMap<String, SubscriberHolder> subscribeMethods = mTargetMap.get
                         (targetObject);
-                for(Map.Entry<String,SubscriberHolder> subscribeMethodEntry : subscribeMethods.entrySet()){
-                    for(String methodChannelID:subscribeMethodEntry.getValue().subscribedChannelID){
+                for (Map.Entry<String, SubscriberHolder> subscribeMethodEntry : subscribeMethods.entrySet()) {
+                    for (String methodChannelID : subscribeMethodEntry.getValue().subscribedChannelID) {
                         currentlyRegisteredChannelId.add(methodChannelID);
 
                     }
                 }
             }
-
         }
-
-        return currentlyRegisteredChannelId.size()>0&& currentlyRegisteredChannelId.containsAll(targetChannelId);
+        return currentlyRegisteredChannelId.size() > 0 && currentlyRegisteredChannelId.containsAll(targetChannelId);
     }
 
 
@@ -160,7 +156,7 @@ public class NYBusDriver extends BusDriver {
 
     public void unregister(Object targetObject, List<String> targetChannelId) {
         synchronized (this) {
-            if (isTargetRegistered(targetObject,targetChannelId)) {
+            if (isTargetRegistered(targetObject, targetChannelId)) {
                 for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>>
                         mEventsToTargetsMapEntry : mEventsToTargetsMap.entrySet()) {
                     ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
@@ -184,7 +180,6 @@ public class NYBusDriver extends BusDriver {
                         "unregistered");
             }
         }
-
     }
 
     private void postSingle(Object eventObject, String channelId, Class<?> eventClass) {
@@ -332,10 +327,8 @@ public class NYBusDriver extends BusDriver {
             if (targetChannelId.containsAll(methodChannelId)) {
                 mSubscribedMethodsMap.remove(mSubscribedMethodsMapEntry.getKey());
                 removeTargetIfRequired(mSubscribedMethodsMap, mTargetMap, targetObject);
-
             }
         }
-
     }
 
     private void removeTargetIfRequired(ConcurrentHashMap<String, SubscriberHolder> subscribedMethods,
@@ -356,7 +349,6 @@ public class NYBusDriver extends BusDriver {
             mEventsToTargetsMap.remove(mEventsToTargetsMapEntry.getKey());
         }
     }
-
 
 }
 
