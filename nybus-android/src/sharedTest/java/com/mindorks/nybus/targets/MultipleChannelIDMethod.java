@@ -38,6 +38,6 @@ public class MultipleChannelIDMethod implements Target {
 
     @Override
     public void unregister(String... channelID) {
-        NYBus.get().register(this,channelID);
+        NYBus.get().unregister(this,channelID);
     }
 }

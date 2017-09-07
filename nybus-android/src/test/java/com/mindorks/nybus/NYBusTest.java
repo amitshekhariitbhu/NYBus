@@ -150,7 +150,7 @@ public class NYBusTest {
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
         channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
-                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
+                ChannelTarget.CHANNEL_TWO);
     }
 
     @Test
