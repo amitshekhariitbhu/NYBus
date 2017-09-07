@@ -22,4 +22,7 @@ package com.mindorks.nybus.event;
 
 public interface EventChannel {
     String DEFAULT = "default";
+    String ONE = "one";
+    String TWO = "two";
+    String THREE = "three";
 }

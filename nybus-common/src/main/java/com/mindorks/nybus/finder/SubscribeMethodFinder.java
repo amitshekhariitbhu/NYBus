@@ -20,6 +20,7 @@ import com.mindorks.nybus.subscriber.SubscriberHolder;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by amitshekhar on 31/08/17.
@@ -28,5 +29,6 @@ import java.util.List;
 public interface SubscribeMethodFinder {
 
     HashMap<String, SubscriberHolder> getAll(Object object, List<String> channelId);
+    Set<String> getAllMethodChannelId();
 
 }

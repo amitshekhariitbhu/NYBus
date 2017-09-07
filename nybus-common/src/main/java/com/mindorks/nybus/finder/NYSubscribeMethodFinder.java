@@ -37,6 +37,8 @@ import java.util.Set;
 public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
 
     private static final String SEPARATOR = "_";
+    Set<String> methodChannelIDs;
+
 
     public NYSubscribeMethodFinder() {
 
@@ -67,11 +69,17 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
         return uniqueSubscriberHolderMap;
     }
 
+    @Override
+    public Set<String> getAllMethodChannelId() {
+        return methodChannelIDs;
+    }
+
     private void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
                                                      List<String> targetChannelId,
                                                      HashMap<String, SubscriberHolder>
                                                              uniqueSubscriberHolderMap) {
         List<SubscriberHolder> subscriberHolders = new ArrayList<>();
+        methodChannelIDs = new HashSet<>();
         for (Method method : methods) {
             boolean isMethodValid = hasSubscribeAnnotation(method)
                     && isAccessModifierPublic(method)
@@ -82,6 +90,7 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
                         targetChannelId);
                 if (subscriberHolder != null) {
                     subscriberHolders.add(subscriberHolder);
+                    addMethodChannelIDsToList(subscriberHolder, methodChannelIDs);
                 }
             }
         }
@@ -120,6 +129,14 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
         return className.startsWith("java.")
                 || className.startsWith("javax.")
                 || className.startsWith("android.");
+    }
+
+    private void addMethodChannelIDsToList(SubscriberHolder subscriberHolder, Set<String>
+            channelIdSet) {
+        for (String methodChannel : subscriberHolder.subscribedChannelID) {
+            channelIdSet.add(methodChannel);
+        }
+
     }
 
     private boolean hasSubscribeAnnotation(Method method) {
