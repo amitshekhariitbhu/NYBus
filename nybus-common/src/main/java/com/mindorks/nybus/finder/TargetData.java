@@ -14,39 +14,21 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.targets;
+package com.mindorks.nybus.finder;
 
-import com.mindorks.nybus.NYBus;
-import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.Event;
+import com.mindorks.nybus.subscriber.SubscriberHolder;
+
+import java.util.List;
+import java.util.Set;
 
 /**
- * Created by amitshekhar on 25/08/17.
+ * Created by amitshekhar on 07/09/17.
  */
 
-public class SimpleTarget implements Target {
+public class TargetData {
 
-    public SimpleTarget() {
+    public List<SubscriberHolder> subscriberHolders;
 
-    }
+    public Set<String> methodChannelIDs;
 
-    @Subscribe
-    public void onEventOne(Event event) {
-
-    }
-
-    @Subscribe
-    public void onEventTwo(Event event) {
-
-    }
-
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this,channelID);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this,channelID);
-    }
 }

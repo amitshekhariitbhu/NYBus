@@ -16,9 +16,6 @@
 
 package com.mindorks.nybus.finder;
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
-
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,6 +24,6 @@ import java.util.List;
 
 public interface SubscribeMethodFinder {
 
-    HashMap<String, SubscriberHolder> getAll(Object object, List<String> channelId);
+    TargetData getData(Object object, List<String> channelId);
 
 }

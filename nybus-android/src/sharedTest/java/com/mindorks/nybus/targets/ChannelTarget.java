@@ -29,6 +29,8 @@ public class ChannelTarget implements Target {
     public static final String CHANNEL_TWO = "two";
     public static final String CHANNEL_THREE = "three";
     public static final String CHANNEL_DEFAULT = "default";
+    public static final String CHANNEL_FOUR = "four";
+
 
 
     public ChannelTarget() {

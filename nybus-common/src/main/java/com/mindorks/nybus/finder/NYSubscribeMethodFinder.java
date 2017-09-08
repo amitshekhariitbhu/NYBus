@@ -43,18 +43,18 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
     }
 
     @Override
-    public HashMap<String, SubscriberHolder> getAll(Object object,
-                                                    List<String> targetChannelId) {
+    public TargetData getData(Object object, List<String> targetChannelId) {
         HashMap<String, SubscriberHolder> uniqueSubscriberHolderMap = new HashMap<>();
+        Set<String> methodChannelIDs = new HashSet<>();
         try {
             Method[] declaredMethodsOfConcreteClass = object.getClass().getDeclaredMethods();
             getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
-                    targetChannelId, uniqueSubscriberHolderMap);
+                    targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
             Set<Class<?>> classes = getAllSuperClasses(object.getClass());
             for (Class<?> clazz : classes) {
                 Method[] declaredMethods = clazz.getDeclaredMethods();
                 getAndAddSubscribeHolderToUniqueMap(declaredMethods,
-                        targetChannelId, uniqueSubscriberHolderMap);
+                        targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
             }
         } catch (Throwable ignored) {
             // sometimes the above used getDeclaredMethods throw exception
@@ -62,13 +62,17 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
             // including the superclasses, so no need to call getAllSuperClasses
             Method[] declaredMethodsOfConcreteClass = object.getClass().getMethods();
             getAndAddSubscribeHolderToUniqueMap(declaredMethodsOfConcreteClass,
-                    targetChannelId, uniqueSubscriberHolderMap);
+                    targetChannelId, methodChannelIDs, uniqueSubscriberHolderMap);
         }
-        return uniqueSubscriberHolderMap;
+        TargetData targetData = new TargetData();
+        targetData.subscriberHolders = new ArrayList<>(uniqueSubscriberHolderMap.values());
+        targetData.methodChannelIDs = methodChannelIDs;
+        return targetData;
     }
 
     private void getAndAddSubscribeHolderToUniqueMap(Method[] methods,
                                                      List<String> targetChannelId,
+                                                     Set<String> methodChannelIDs,
                                                      HashMap<String, SubscriberHolder>
                                                              uniqueSubscriberHolderMap) {
         List<SubscriberHolder> subscriberHolders = new ArrayList<>();
@@ -82,6 +86,7 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
                         targetChannelId);
                 if (subscriberHolder != null) {
                     subscriberHolders.add(subscriberHolder);
+                    addMethodChannelIDsToList(subscriberHolder, methodChannelIDs);
                 }
             }
         }
@@ -122,6 +127,14 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
                 || className.startsWith("android.");
     }
 
+    private void addMethodChannelIDsToList(SubscriberHolder subscriberHolder, Set<String>
+            channelIdSet) {
+        for (String methodChannel : subscriberHolder.subscribedChannelID) {
+            channelIdSet.add(methodChannel);
+        }
+
+    }
+
     private boolean hasSubscribeAnnotation(Method method) {
         Subscribe subscribeAnnotation = method.getAnnotation(Subscribe.class);
         return subscribeAnnotation != null;
@@ -141,7 +154,6 @@ public class NYSubscribeMethodFinder implements SubscribeMethodFinder {
 
     private SubscriberHolder generateSubscribedMethodHolder(Method method,
                                                             List<String> targetChannelId) {
-
         SubscriberHolder subscriberHolder;
         List<String> methodChannelIds = new ArrayList<>(getMethodChannelId(method));
         NYThread subscribedThreadType = getMethodThread(method);

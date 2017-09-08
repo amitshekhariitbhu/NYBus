@@ -225,7 +225,7 @@ public class NYBusAndroidTest {
 
         channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
         isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
-                ChannelTarget.CHANNEL_TWO, "four");
+                ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_FOUR);
         assertTrue(!isRegistered);
 
     }
