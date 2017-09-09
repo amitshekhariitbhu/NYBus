@@ -44,11 +44,11 @@ public class OverrideTarget implements Target {
 
     @Override
     public void register(String ... channelID) {
-        NYBus.get().register(this);
+        NYBus.get().register(this,channelID);
     }
 
     @Override
     public void unregister(String ... channelID) {
-        NYBus.get().unregister(this);
+        NYBus.get().unregister(this,channelID);
     }
 }
