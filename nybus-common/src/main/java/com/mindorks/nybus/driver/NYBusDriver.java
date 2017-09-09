@@ -43,7 +43,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class NYBusDriver extends BusDriver {
-    boolean isTargetRegistered;
+
     public NYBusDriver(Publisher publisher,
                        SubscribeMethodFinder subscribeMethodFinder,
                        EventClassFinder eventClassFinder) {
@@ -93,13 +93,15 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void post(Object eventObject, String channelId) {
-        isTargetRegistered = false;
+        boolean isDelivered = false;
         List<Class<?>> eventClasses = mEventClassFinder.getAll(eventObject.getClass());
         for (Class<?> eventClass : eventClasses) {
-            postSingle(eventObject, channelId, eventClass);
+            boolean isDeliveredForSingle = postSingle(eventObject, channelId, eventClass);
+            isDelivered = isDeliveredForSingle || isDelivered;
         }
-        if(!isTargetRegistered){
-            throw new NYBusException("No target found for the event"+eventObject.getClass());
+        if (!isDelivered) {
+            throw new NYBusException("No target found for the event" + eventObject.getClass()
+                    + " on channel ID" + channelId);
         }
     }
 
@@ -186,14 +188,14 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private void postSingle(Object eventObject, String channelId, Class<?> eventClass) {
+    private boolean postSingle(Object eventObject, String channelId, Class<?> eventClass) {
+        boolean isDelivered = false;
         ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
                 mEventsToTargetsMap.get(eventClass);
         if (mTargetMap != null) {
-            isTargetRegistered = true;
-            findTargetsAndDeliver(mTargetMap, eventObject, channelId);
+            isDelivered = findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
-
+        return isDelivered;
     }
 
     private Consumer<NYEvent> getConsumer() {
@@ -238,10 +240,10 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private void findTargetsAndDeliver(ConcurrentHashMap<Object,
+    private boolean findTargetsAndDeliver(ConcurrentHashMap<Object,
             ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
-                                       Object eventObject, String channelId) {
-        boolean isTargetAvailable = false;
+                                          Object eventObject, String channelId) {
+        boolean isDelivered = false;
         for (Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMapEntry :
                 mTargetMap.entrySet()) {
             ConcurrentHashMap<String, SubscriberHolder> mSubscribedMethods =
@@ -249,16 +251,14 @@ public class NYBusDriver extends BusDriver {
             for (Map.Entry<String, SubscriberHolder> subscribedMethodHolder : mSubscribedMethods.entrySet()) {
                 List<String> methodChannelId = subscribedMethodHolder.getValue().subscribedChannelID;
                 if (methodChannelId.contains(channelId)) {
-                    isTargetAvailable = true;
+                    isDelivered = true;
                     NYEvent event = new NYEvent(eventObject, mTargetMapEntry.getKey(),
                             subscribedMethodHolder.getValue());
                     determineThreadAndDeliverEvent(event);
                 }
             }
         }
-        if(!isTargetAvailable){
-            throw new NYBusException("No target found for the event"+eventObject.getClass()+" on channel ID" +channelId);
-        }
+        return isDelivered;
     }
 
     private void deliverEventToTargetMethod(NYEvent event) {
