@@ -43,6 +43,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class NYBusDriver extends BusDriver {
+
     public NYBusDriver(Publisher publisher,
                        SubscribeMethodFinder subscribeMethodFinder,
                        EventClassFinder eventClassFinder) {
@@ -73,7 +74,7 @@ public class NYBusDriver extends BusDriver {
                         for (String targetChannelId : targetChannelIds) {
                             throw new NYBusException("Subscriber " + object.getClass()
                                     + " and its super classes have no public methods with the " +
-                                    "@Subscribe annotation on ChannelID" + targetChannelId);
+                                    "@Subscribe annotation on ChannelID " + targetChannelId);
                         }
                     }
                     for (SubscriberHolder subscriberHolder : subscriberHolders) {
@@ -96,12 +97,12 @@ public class NYBusDriver extends BusDriver {
         List<Class<?>> eventClasses = mEventClassFinder.getAll(eventObject.getClass());
         for (Class<?> eventClass : eventClasses) {
             boolean hasPostedSingle = postSingle(eventObject, channelId, eventClass);
-            if(hasPostedSingle){
-                isAnyTargetRegistered = hasPostedSingle;
+            if (hasPostedSingle) {
+                isAnyTargetRegistered = true;
             }
         }
-        if(!isAnyTargetRegistered){
-            throw new NYBusException("No target found for the event"+eventObject.getClass());
+        if (!isAnyTargetRegistered) {
+            throw new NYBusException("No target found for the event" + eventObject.getClass());
         }
     }
 
@@ -196,7 +197,7 @@ public class NYBusDriver extends BusDriver {
             hasDelivered = true;
             findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
-    return hasDelivered;
+        return hasDelivered;
     }
 
     private Consumer<NYEvent> getConsumer() {
@@ -259,8 +260,8 @@ public class NYBusDriver extends BusDriver {
                 }
             }
         }
-        if(!isTargetAvailable){
-            throw new NYBusException("No target found for the event"+eventObject.getClass()+" on channel ID" +channelId);
+        if (!isTargetAvailable) {
+            throw new NYBusException("No target found for the event" + eventObject.getClass() + " on channel ID" + channelId);
         }
     }
 

@@ -31,6 +31,7 @@ import io.reactivex.subjects.PublishSubject;
  */
 
 abstract class BusDriver {
+
     Publisher mPublisher;
 
     SubscribeMethodFinder mSubscribeMethodFinder;

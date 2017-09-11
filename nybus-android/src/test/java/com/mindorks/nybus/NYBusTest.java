@@ -33,7 +33,6 @@ import com.mindorks.nybus.targets.SimpleTarget;
 import com.mindorks.nybus.targets.SubClassEventTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
 
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -172,7 +171,7 @@ public class NYBusTest {
         verify(multipleChannelIDMethod).onEventForTypeString("Message on two");
         try {
             NYBus.get().post("Message on default");
-        }catch (NYBusException e){
+        } catch (NYBusException e) {
 
         }
 
@@ -255,7 +254,11 @@ public class NYBusTest {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
-                    simpleTarget.register();
+                    try {
+                        simpleTarget.register();
+                    } catch (NYBusException ignore) {
+
+                    }
                     latch.countDown();
                 }
             }
@@ -265,7 +268,11 @@ public class NYBusTest {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
-                    simpleTarget.unregister();
+                    try {
+                        simpleTarget.unregister();
+                    } catch (NYBusException ignore) {
+
+                    }
                     latch.countDown();
                 }
             }
@@ -278,7 +285,11 @@ public class NYBusTest {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    NYBus.get().post(event);
+                    try {
+                        NYBus.get().post(event);
+                    } catch (NYBusException ignore) {
+
+                    }
                     latch.countDown();
                 }
             });
@@ -342,14 +353,15 @@ public class NYBusTest {
         exceptionTarget.register("two");
 
     }
+
     @Test
     public void testRegisterWithSomeSubscribeMethods() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
         thrown.expect(NYBusException.class);
         thrown.expectMessage("Subscriber " + exceptionTarget.getClass()
                 + " and its super classes have no public methods with the " +
-                "@Subscribe annotation on ChannelID" + "two");
-        exceptionTarget.register("one","two");
+                "@Subscribe annotation on ChannelID two");
+        exceptionTarget.register("one", "two");
 
     }
 
@@ -358,20 +370,23 @@ public class NYBusTest {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
         String eventString = "Method not found on channel ID Two";
         thrown.expect(NYBusException.class);
-        thrown.expectMessage("No target found for the event"+eventString.getClass()+" on channel ID" +"two");
+        thrown.expectMessage("No target found for the event" + eventString.getClass()
+                + " on channel ID" + "two");
         exceptionTarget.register("one");
-        NYBus.get().post(eventString,"one");
-        NYBus.get().post(eventString,"two");
+        NYBus.get().post(eventString, "one");
+        NYBus.get().post(eventString, "two");
     }
+
     @Test
     public void testPostWithNoTarget() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
         final NoTargetEvent eventObject = new NoTargetEvent();
         thrown.expect(NYBusException.class);
-        thrown.expectMessage("No target found for the event"+eventObject.getClass());
+        thrown.expectMessage("No target found for the event" + eventObject.getClass());
         exceptionTarget.register("one");
         NYBus.get().post(eventObject);
     }
+
     @Test
     public void testUnregisterWithoutRegistration() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
@@ -384,6 +399,7 @@ public class NYBusTest {
                 "unregistered");
         exceptionTarget.unregister("one");
     }
+
     @Test
     public void testUnregisterWithoutRegistrationOnChannelID() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
@@ -397,4 +413,5 @@ public class NYBusTest {
         exceptionTarget.register("one");
         exceptionTarget.unregister();
     }
+
 }
