@@ -43,7 +43,6 @@ import io.reactivex.functions.Consumer;
  */
 
 public class NYBusDriver extends BusDriver {
-    boolean isTargetRegistered;
     public NYBusDriver(Publisher publisher,
                        SubscribeMethodFinder subscribeMethodFinder,
                        EventClassFinder eventClassFinder) {
@@ -93,12 +92,15 @@ public class NYBusDriver extends BusDriver {
     }
 
     public void post(Object eventObject, String channelId) {
-        isTargetRegistered = false;
+        boolean isAnyTargetRegistered = false;
         List<Class<?>> eventClasses = mEventClassFinder.getAll(eventObject.getClass());
         for (Class<?> eventClass : eventClasses) {
-            postSingle(eventObject, channelId, eventClass);
+            boolean hasPostedSingle = postSingle(eventObject, channelId, eventClass);
+            if(hasPostedSingle){
+                isAnyTargetRegistered = hasPostedSingle;
+            }
         }
-        if(!isTargetRegistered){
+        if(!isAnyTargetRegistered){
             throw new NYBusException("No target found for the event"+eventObject.getClass());
         }
     }
@@ -186,14 +188,15 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
-    private void postSingle(Object eventObject, String channelId, Class<?> eventClass) {
+    private boolean postSingle(Object eventObject, String channelId, Class<?> eventClass) {
+        boolean hasDelivered = false;
         ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
                 mEventsToTargetsMap.get(eventClass);
         if (mTargetMap != null) {
-            isTargetRegistered = true;
+            hasDelivered = true;
             findTargetsAndDeliver(mTargetMap, eventObject, channelId);
         }
-
+    return hasDelivered;
     }
 
     private Consumer<NYEvent> getConsumer() {
