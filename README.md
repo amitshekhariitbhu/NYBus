@@ -8,6 +8,8 @@
 
 ## This pub-sub library NYBus uses RxJava(RxJava2) for creating RxBus(RxBus2).
 
+### You must have used EventBus. NYBus is very similar to the Eventbus. NYBus is implemented using RxJava.
+
 [![Mindorks](https://img.shields.io/badge/mindorks-opensource-blue.svg)](https://mindorks.com/open-source-projects)
 [![Mindorks Community](https://img.shields.io/badge/join-community-blue.svg)](https://mindorks.com/join-community)
 
