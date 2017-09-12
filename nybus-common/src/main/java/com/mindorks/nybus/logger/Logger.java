@@ -7,4 +7,5 @@ package com.mindorks.nybus.logger;
 public interface Logger {
 
     void log(String value);
+
 }
