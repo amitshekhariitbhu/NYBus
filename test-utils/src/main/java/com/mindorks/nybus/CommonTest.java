@@ -6,7 +6,7 @@ import com.mindorks.nybus.events.EventTwo;
 import com.mindorks.nybus.events.InterfaceEventImpl;
 import com.mindorks.nybus.events.NoTargetEvent;
 import com.mindorks.nybus.events.SubClassEvent;
-import com.mindorks.nybus.exception.NYBusException;
+import com.mindorks.nybus.logger.Logger;
 import com.mindorks.nybus.targets.ChannelTarget;
 import com.mindorks.nybus.targets.ExceptionTarget;
 import com.mindorks.nybus.targets.InterfaceEventTarget;
@@ -16,9 +16,8 @@ import com.mindorks.nybus.targets.SimpleTarget;
 import com.mindorks.nybus.targets.SubClassEventTarget;
 import com.mindorks.nybus.targets.SuperSimpleTarget;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
@@ -33,15 +32,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by gaura on 12-09-2017.
+ * Created by anandgaurav on 12-09-2017.
  */
 
 public class CommonTest {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     public Bus bus;
+
+    @Mock
+    Logger logger;
 
     @Test
     public void testSimpleTarget() throws Exception {
@@ -149,12 +148,7 @@ public class CommonTest {
         verify(multipleChannelIDMethod).onEventForTypeString("Message on One");
         bus.post("Message on two", ChannelTarget.CHANNEL_TWO);
         verify(multipleChannelIDMethod).onEventForTypeString("Message on two");
-        try {
-            bus.post("Message on default");
-        } catch (NYBusException ignore) {
-
-        }
-
+        bus.post("Message on default");
         verify(multipleChannelIDMethod, never()).onEventForTypeString("Message on default");
         bus.unregister(multipleChannelIDMethod, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
@@ -234,11 +228,7 @@ public class CommonTest {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
-                    try {
-                        bus.register(simpleTarget);
-                    } catch (NYBusException ignore) {
-
-                    }
+                    bus.register(simpleTarget);
                     latch.countDown();
                 }
             }
@@ -248,11 +238,7 @@ public class CommonTest {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
-                    try {
-                        bus.unregister(simpleTarget);
-                    } catch (NYBusException ignore) {
-
-                    }
+                    bus.unregister(simpleTarget);
                     latch.countDown();
                 }
             }
@@ -265,11 +251,7 @@ public class CommonTest {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        bus.post(event);
-                    } catch (NYBusException ignore) {
-
-                    }
+                    bus.post(event);
                     latch.countDown();
                 }
             });
@@ -316,82 +298,72 @@ public class CommonTest {
     @Test
     public void testMultipleRegistrationOnSameChannelId() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage(exceptionTarget.getClass()
+        bus.register(exceptionTarget, "one");
+        bus.register(exceptionTarget, "one");
+        verify(logger).log(exceptionTarget.getClass()
                 + " is already registered on same channel ids");
-        bus.register(exceptionTarget, "one");
-        bus.register(exceptionTarget, "one");
-
     }
 
     @Test
     public void testRegisterWithNoSubscribeMethods() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage("Subscriber " + exceptionTarget.getClass()
-                + " and its super classes have no public methods with the @Subscribe annotation");
         bus.register(exceptionTarget, "two");
-
+        verify(logger).log("Subscriber " + exceptionTarget.getClass()
+                + " and its super classes have no public methods with the @Subscribe annotation");
     }
 
     @Test
     public void testRegisterWithSomeSubscribeMethods() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage("Subscriber " + exceptionTarget.getClass()
+        bus.register(exceptionTarget, "one", "two");
+        verify(logger).log("Subscriber " + exceptionTarget.getClass()
                 + " and its super classes have no public methods with the " +
                 "@Subscribe annotation on ChannelID two");
-        bus.register(exceptionTarget, "one", "two");
-
     }
 
     @Test
     public void testPostWithNoTargetOnParticularChannel() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
         String eventString = "Method not found on channel ID Two";
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage("No target found for the event" + eventString.getClass()
-                + " on channel ID" + "two");
         bus.register(exceptionTarget, "one");
         bus.post(eventString, "one");
         bus.post(eventString, "two");
+        verify(logger).log("No target found for the event" + eventString.getClass()
+                + " on channel ID" + "two");
     }
 
     @Test
     public void testPostWithNoTarget() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
         final NoTargetEvent eventObject = new NoTargetEvent();
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage("No target found for the event" + eventObject.getClass());
         bus.register(exceptionTarget, "one");
         bus.post(eventObject);
+        verify(logger).log("No target found for the event" + eventObject.getClass());
     }
 
     @Test
     public void testUnregisterWithoutRegistration() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage(exceptionTarget.getClass()
+        bus.unregister(exceptionTarget, "one");
+        verify(logger).log(exceptionTarget.getClass()
                 + " is either not subscribed(on some channel ID you wish to unregister " +
                 "from) " +
                 "or has " +
                 "already been " +
                 "unregistered");
-        bus.unregister(exceptionTarget, "one");
     }
 
     @Test
     public void testUnregisterWithoutRegistrationOnChannelID() {
         ExceptionTarget exceptionTarget = Mockito.spy(new ExceptionTarget());
-        thrown.expect(NYBusException.class);
-        thrown.expectMessage(exceptionTarget.getClass()
+        bus.register(exceptionTarget, "one");
+        bus.unregister(exceptionTarget);
+        verify(logger).log(exceptionTarget.getClass()
                 + " is either not subscribed(on some channel ID you wish to unregister " +
                 "from) " +
                 "or has " +
                 "already been " +
                 "unregistered");
-        bus.register(exceptionTarget, "one");
-        bus.unregister(exceptionTarget);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.mindorks.nybus;
 
+import com.mindorks.nybus.logger.Logger;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface Bus {
 
     void setSchedulerProvider(SchedulerProvider schedulerProvider);
+
+    void setLogger(Logger logger);
 
     void register(Object object, String... channelIDs);
 
@@ -24,5 +27,5 @@ public interface Bus {
 
     void post(Object object, String channelId);
 
-    boolean isRegistered(Object object,String... channelIDs);
+    boolean isRegistered(Object object, String... channelIDs);
 }

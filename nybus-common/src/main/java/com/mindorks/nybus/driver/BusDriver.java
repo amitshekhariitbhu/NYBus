@@ -19,6 +19,7 @@ package com.mindorks.nybus.driver;
 import com.mindorks.nybus.event.NYEvent;
 import com.mindorks.nybus.finder.EventClassFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
+import com.mindorks.nybus.logger.Logger;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
 
@@ -38,16 +39,20 @@ abstract class BusDriver {
 
     EventClassFinder mEventClassFinder;
 
+    Logger mLogger;
+
     ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>> mEventsToTargetsMap;
 
     final Object DELIVER_LOCK = new Object();
 
     BusDriver(Publisher publisher,
               SubscribeMethodFinder subscribeMethodFinder,
-              EventClassFinder eventClassFinder) {
+              EventClassFinder eventClassFinder,
+              Logger logger) {
         this.mPublisher = publisher;
         this.mSubscribeMethodFinder = subscribeMethodFinder;
         this.mEventClassFinder = eventClassFinder;
+        this.mLogger = logger;
         this.mEventsToTargetsMap = new ConcurrentHashMap<>();
     }
 

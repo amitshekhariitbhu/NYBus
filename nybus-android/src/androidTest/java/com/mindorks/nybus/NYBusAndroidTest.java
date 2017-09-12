@@ -16,17 +16,17 @@
 
 package com.mindorks.nybus;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(AndroidJUnit4.class)
-public class NYBusAndroidTest extends CommonTest{
+@RunWith(MockitoJUnitRunner.class)
+public class NYBusAndroidTest extends CommonTest {
 
     @Before
     public void before() throws Exception {
         bus = NYBus.get();
+        bus.setLogger(logger);
     }
 
 }

@@ -18,10 +18,10 @@ package com.mindorks.nybus.driver;
 
 import com.mindorks.nybus.consumer.ConsumerProvider;
 import com.mindorks.nybus.event.NYEvent;
-import com.mindorks.nybus.exception.NYBusException;
 import com.mindorks.nybus.finder.EventClassFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.finder.TargetData;
+import com.mindorks.nybus.logger.Logger;
 import com.mindorks.nybus.publisher.Publisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.subscriber.SubscriberHolder;
@@ -46,8 +46,9 @@ public class NYBusDriver extends BusDriver {
 
     public NYBusDriver(Publisher publisher,
                        SubscribeMethodFinder subscribeMethodFinder,
-                       EventClassFinder eventClassFinder) {
-        super(publisher, subscribeMethodFinder, eventClassFinder);
+                       EventClassFinder eventClassFinder,
+                       Logger logger) {
+        super(publisher, subscribeMethodFinder, eventClassFinder, logger);
     }
 
     public void initPublishers(SchedulerProvider schedulerProvider) {
@@ -62,6 +63,10 @@ public class NYBusDriver extends BusDriver {
         mPublisher.initPublishers(schedulerProvider, consumerProvider);
     }
 
+    public void setLogger(Logger logger) {
+        this.mLogger = logger;
+    }
+
     public void register(Object object, List<String> targetChannelIds) {
         synchronized (this) {
             if (!isTargetRegistered(object, targetChannelIds)) {
@@ -72,7 +77,7 @@ public class NYBusDriver extends BusDriver {
                     targetChannelIds.removeAll(uniqueChannelIdHolderSet);
                     if (targetChannelIds.size() > 0) {
                         for (String targetChannelId : targetChannelIds) {
-                            throw new NYBusException("Subscriber " + object.getClass()
+                            mLogger.log("Subscriber " + object.getClass()
                                     + " and its super classes have no public methods with the " +
                                     "@Subscribe annotation on ChannelID " + targetChannelId);
                         }
@@ -81,12 +86,13 @@ public class NYBusDriver extends BusDriver {
                         addEntriesInTargetMap(object, subscriberHolder);
                     }
                 } else {
-                    throw new NYBusException("Subscriber " + object.getClass()
-                            + " and its super classes have no public methods with the @Subscribe annotation");
+                    mLogger.log("Subscriber " + object.getClass()
+                            + " and its super classes have no public methods" +
+                            " with the @Subscribe annotation");
                 }
 
             } else {
-                throw new NYBusException(object.getClass()
+                mLogger.log(object.getClass()
                         + " is already registered on same channel ids");
             }
         }
@@ -102,7 +108,7 @@ public class NYBusDriver extends BusDriver {
             }
         }
         if (!isAnyTargetRegistered) {
-            throw new NYBusException("No target found for the event" + eventObject.getClass());
+            mLogger.log("No target found for the event" + eventObject.getClass());
         }
     }
 
@@ -179,7 +185,7 @@ public class NYBusDriver extends BusDriver {
                     }
                 }
             } else {
-                throw new NYBusException(targetObject.getClass()
+                mLogger.log(targetObject.getClass()
                         + " is either not subscribed(on some channel ID you wish to unregister " +
                         "from) " +
                         "or has " +
@@ -261,7 +267,8 @@ public class NYBusDriver extends BusDriver {
             }
         }
         if (!isTargetAvailable) {
-            throw new NYBusException("No target found for the event" + eventObject.getClass() + " on channel ID" + channelId);
+            mLogger.log("No target found for the event" +
+                    eventObject.getClass() + " on channel ID" + channelId);
         }
     }
 
