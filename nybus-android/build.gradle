@@ -51,3 +51,4 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile project(':nybus-common')
 }
+//apply from: 'upload.gradle'
