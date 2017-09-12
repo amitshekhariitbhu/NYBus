@@ -17,7 +17,7 @@
 package com.mindorks.nybus;
 
 import com.mindorks.nybus.driver.NYBusDriver;
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 import com.mindorks.nybus.finder.NYEventClassFinder;
 import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
 import com.mindorks.nybus.logger.JavaLogger;
@@ -94,7 +94,7 @@ public class NYBus implements Bus {
 
     @Override
     public void post(Object object) {
-        post(object, EventChannel.DEFAULT);
+        post(object, Channel.DEFAULT);
     }
 
     @Override

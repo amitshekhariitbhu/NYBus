@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 import com.mindorks.nybus.thread.NYThread;
 
 import sample.mindorks.com.nybus.R;
@@ -68,14 +68,14 @@ public class HugeEventActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        NYBus.get().register(this, EventChannel.DEFAULT, CHANNEL_ONE, CHANNEL_TWO);
+        NYBus.get().register(this, Channel.DEFAULT, CHANNEL_ONE, CHANNEL_TWO);
         createHugeNumberOfEvents();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        NYBus.get().unregister(this, EventChannel.DEFAULT, CHANNEL_ONE, CHANNEL_TWO);
+        NYBus.get().unregister(this, Channel.DEFAULT, CHANNEL_ONE, CHANNEL_TWO);
     }
 
     @Subscribe(threadType = NYThread.COMPUTATION)

@@ -20,7 +20,7 @@ package com.mindorks.nybus.event;
  * Created by Jyoti on 16/08/17.
  */
 
-public interface EventChannel {
+public interface Channel {
 
     String DEFAULT = "default";
     String ONE = "one";

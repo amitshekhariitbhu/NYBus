@@ -16,7 +16,7 @@
 
 package com.mindorks.nybus.utils;
 
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class ListUtils {
         List<String> channelIDListForRegister;
         if (channelIDs.length == 0) {
             channelIDListForRegister = new ArrayList<>();
-            channelIDListForRegister.add(EventChannel.DEFAULT);
+            channelIDListForRegister.add(Channel.DEFAULT);
         } else {
             channelIDListForRegister = new ArrayList<>(Arrays.asList(channelIDs));
         }

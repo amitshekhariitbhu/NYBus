@@ -17,7 +17,7 @@
 package com.mindorks.nybus;
 
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.finder.TargetData;
@@ -50,7 +50,7 @@ public class NYSubscribeMethodFinderTest {
     @Test
     public void testSubTestClassMethod() throws Exception {
         SubTestClass subTestClass = new SubTestClass();
-        List<String> channels = Arrays.asList("one", "two", EventChannel.DEFAULT);
+        List<String> channels = Arrays.asList("one", "two", Channel.DEFAULT);
         TargetData targetData = subscribeMethodFinder.getData(subTestClass, channels);
         List<SubscriberHolder> subscriberHolders = targetData.subscriberHolders;
         Set<String> methodChannelIDs = targetData.methodChannelIDs;
@@ -65,13 +65,13 @@ public class NYSubscribeMethodFinderTest {
 
         SubscriberHolder onEventSuperSH = subscriberHolders.get(1);
         assertEquals(1, onEventSuperSH.subscribedChannelID.size());
-        assertTrue(onEventSuperSH.subscribedChannelID.contains(EventChannel.DEFAULT));
+        assertTrue(onEventSuperSH.subscribedChannelID.contains(Channel.DEFAULT));
         assertEquals(NYThread.POSTING, onEventSuperSH.subscribedThreadType);
         assertEquals("onEventSuper", onEventSuperSH.subscribedMethod.getName());
 
         SubscriberHolder onEventSH = subscriberHolders.get(2);
         assertEquals(1, onEventSH.subscribedChannelID.size());
-        assertTrue(onEventSH.subscribedChannelID.contains(EventChannel.DEFAULT));
+        assertTrue(onEventSH.subscribedChannelID.contains(Channel.DEFAULT));
         assertEquals(NYThread.COMPUTATION, onEventSH.subscribedThreadType);
         assertEquals("onEvent", onEventSH.subscribedMethod.getName());
 
