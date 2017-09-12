@@ -34,7 +34,7 @@ import java.util.List;
  */
 
 
-public class NYBus {
+public class NYBus implements Bus{
 
     private static NYBus sNYBusInstance;
     private NYBusDriver mNYBusDriver;
@@ -60,34 +60,42 @@ public class NYBus {
         return sNYBusInstance;
     }
 
+    @Override
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         mNYBusDriver.initPublishers(schedulerProvider);
     }
 
+    @Override
     public void register(Object object, String... channelIDs) {
         register(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
+    @Override
     public void register(Object object, List<String> channelId) {
         mNYBusDriver.register(object, channelId);
     }
 
+    @Override
     public void unregister(Object object, String... channelIDs) {
         unregister(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
+    @Override
     public void unregister(Object object, List<String> channelId) {
         mNYBusDriver.unregister(object, channelId);
     }
 
+    @Override
     public void post(Object object) {
         post(object, EventChannel.DEFAULT);
     }
 
+    @Override
     public void post(Object object, String channelId) {
         mNYBusDriver.post(object, channelId);
     }
 
+    @Override
     public boolean isRegistered(Object object,String... channelIDs) {
         return mNYBusDriver.isRegistered(object, ListUtils.convertVarargsToList(channelIDs));    }
 
