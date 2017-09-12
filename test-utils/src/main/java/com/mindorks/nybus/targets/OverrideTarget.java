@@ -16,38 +16,28 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
+import com.mindorks.nybus.events.EventOne;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.Event;
-import com.mindorks.nybus.events.SubClassEvent;
+import com.mindorks.nybus.events.EventTwo;
+
 
 /**
- * Created by amitshekhar on 30/08/17.
+ * Created by amitshekhar on 25/08/17.
  */
 
-public class SubClassEventTarget implements Target {
+public class OverrideTarget {
 
-    public SubClassEventTarget() {
-
-    }
-
-    @Subscribe
-    public void onEvent(Event event) {
+    public OverrideTarget() {
 
     }
 
     @Subscribe
-    public void onEventSubClass(SubClassEvent event) {
+    public void onEvent(EventOne eventOne) {
 
     }
 
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this);
-    }
+    @Subscribe
+    public void onEvent(EventTwo eventTwo) {
 
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this);
     }
 }

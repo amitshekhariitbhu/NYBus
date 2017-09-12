@@ -16,28 +16,18 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.Event;
 
 /**
- * Created by amitshekhar on 27/08/17.
+ * Created by Jyoti on 27/08/17.
  */
 
-public class SuperSimpleTarget extends SimpleTarget {
+public class MultipleChannelIDMethod {
 
-    @Subscribe
-    public void onEventThree(Event event) {
-        super.onEventTwo(event);
+
+    @Subscribe(channelId = {"one","two","default"})
+    public void onEventForTypeString(String value) {
+
     }
 
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this);
-    }
 }

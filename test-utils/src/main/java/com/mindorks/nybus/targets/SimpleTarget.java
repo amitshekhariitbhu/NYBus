@@ -16,28 +16,27 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.Event;
 
 /**
- * Created by Jyoti on 27/08/17.
+ * Created by amitshekhar on 25/08/17.
  */
 
-public class MultipleChannelIDMethod implements Target {
+public class SimpleTarget {
 
-
-    @Subscribe(channelId = {"one","two","default"})
-    public void onEventForTypeString(String value) {
+    public SimpleTarget() {
 
     }
 
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this,channelID);
+    @Subscribe
+    public void onEventOne(Event event) {
+
     }
 
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this,channelID);
+    @Subscribe
+    public void onEventTwo(Event event) {
+
     }
+
 }

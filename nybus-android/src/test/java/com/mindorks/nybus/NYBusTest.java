@@ -55,23 +55,23 @@ import static org.mockito.Mockito.verify;
  */
 public class NYBusTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void before() throws Exception {
         NYBus.get().setSchedulerProvider(new TestSchedulerProvider());
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void testSimpleTarget() throws Exception {
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
-        simpleTarget.register();
+        NYBus.get().register(simpleTarget);
         Event event = new Event();
         NYBus.get().post(event);
         verify(simpleTarget).onEventOne(event);
         verify(simpleTarget).onEventTwo(event);
-        simpleTarget.unregister();
+        NYBus.get().unregister(simpleTarget);
         Event eventOne = new Event();
         NYBus.get().post(eventOne);
         verify(simpleTarget, never()).onEventOne(eventOne);
@@ -81,13 +81,13 @@ public class NYBusTest {
     @Test
     public void testSuperSimpleTarget() throws Exception {
         SuperSimpleTarget superSimpleTarget = Mockito.spy(new SuperSimpleTarget());
-        superSimpleTarget.register();
+        NYBus.get().register(superSimpleTarget);
         Event event = new Event();
         NYBus.get().post(event);
         verify(superSimpleTarget).onEventOne(event);
         verify(superSimpleTarget).onEventTwo(event);
         verify(superSimpleTarget).onEventThree(event);
-        superSimpleTarget.unregister();
+        NYBus.get().unregister(superSimpleTarget);
         Event eventOne = new Event();
         NYBus.get().post(eventOne);
         verify(superSimpleTarget, never()).onEventOne(eventOne);
@@ -98,7 +98,7 @@ public class NYBusTest {
     @Test
     public void testOverrideTarget() throws Exception {
         OverrideTarget overrideTarget = Mockito.spy(new OverrideTarget());
-        overrideTarget.register();
+        NYBus.get().register(overrideTarget);
         EventOne eventOne = new EventOne();
         EventTwo eventTwo = new EventTwo();
         NYBus.get().post(eventOne);
@@ -106,29 +106,29 @@ public class NYBusTest {
         verify(overrideTarget, never()).onEvent(eventTwo);
         NYBus.get().post(eventTwo);
         verify(overrideTarget).onEvent(eventTwo);
-        overrideTarget.unregister();
+        NYBus.get().unregister(overrideTarget);
     }
 
     @Test
     public void testChannelTarget() throws Exception {
         ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
         ChannelTarget channelTargetTwo = Mockito.spy(new ChannelTarget());
-        channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
-        channelTargetTwo.register(ChannelTarget.CHANNEL_TWO);
+        NYBus.get().register(channelTargetOne, ChannelTarget.CHANNEL_ONE);
+        NYBus.get().register(channelTargetTwo, ChannelTarget.CHANNEL_TWO);
         NYBus.get().post("Message One", ChannelTarget.CHANNEL_ONE);
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
         NYBus.get().post("Message two", ChannelTarget.CHANNEL_TWO);
         verify(channelTargetTwo).onEventForTypeTwo("Message two");
         verify(channelTargetTwo, never()).onEventForTypeOne("Message two");
-        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
-        channelTargetTwo.unregister(ChannelTarget.CHANNEL_TWO);
+        NYBus.get().unregister(channelTargetOne, ChannelTarget.CHANNEL_ONE);
+        NYBus.get().unregister(channelTargetTwo, ChannelTarget.CHANNEL_TWO);
     }
 
     @Test
     public void testChannelTargetDefault() throws Exception {
         ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
-        channelTargetOne.register(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().register(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
         NYBus.get().post("Message Default");
         verify(channelTargetOne, never()).onEventForTypeOne("Message Default");
@@ -138,32 +138,32 @@ public class NYBusTest {
         verify(channelTargetOne).onEventForTypeOne("Message One");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message One");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message One");
-        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().unregister(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
     }
 
     @Test
     public void testChannelTargetUnregister() throws Exception {
         ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
-        channelTargetOne.register(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().register(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
         NYBus.get().post("Message Default");
         verify(channelTargetOne, never()).onEventForTypeOne("Message Default");
         verify(channelTargetOne, never()).onEventForTypeTwo("Message Default");
         verify(channelTargetOne).onEventForTypeDefault("Message Default");
-        channelTargetOne.unregister();
+        NYBus.get().unregister(channelTargetOne);
         NYBus.get().post("Message Two", ChannelTarget.CHANNEL_TWO);
         verify(channelTargetOne, never()).onEventForTypeOne("Message Two");
         verify(channelTargetOne, never()).onEventForTypeDefault("Message Two");
         verify(channelTargetOne).onEventForTypeTwo("Message Two");
-        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().unregister(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
     }
 
     @Test
     public void testChannelMultipleChannelMethod() throws Exception {
         MultipleChannelIDMethod multipleChannelIDMethod = Mockito.spy(new MultipleChannelIDMethod());
-        multipleChannelIDMethod.register(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().register(multipleChannelIDMethod, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
         NYBus.get().post("Message on One", ChannelTarget.CHANNEL_ONE);
         verify(multipleChannelIDMethod).onEventForTypeString("Message on One");
@@ -171,12 +171,12 @@ public class NYBusTest {
         verify(multipleChannelIDMethod).onEventForTypeString("Message on two");
         try {
             NYBus.get().post("Message on default");
-        } catch (NYBusException e) {
+        } catch (NYBusException ignore) {
 
         }
 
         verify(multipleChannelIDMethod, never()).onEventForTypeString("Message on default");
-        multipleChannelIDMethod.unregister(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().unregister(multipleChannelIDMethod, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
     }
 
@@ -186,7 +186,7 @@ public class NYBusTest {
         final CountDownLatch latch = new CountDownLatch(200);
 
         SimpleTarget simpleTarget = Mockito.spy(new SimpleTarget());
-        simpleTarget.register();
+        NYBus.get().register(simpleTarget);
         final Event event = new Event();
 
         ThreadPoolExecutor executorOne = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS,
@@ -224,23 +224,23 @@ public class NYBusTest {
     @Test
     public void testSubClassEvent() throws Exception {
         SubClassEventTarget subClassEventTarget = Mockito.spy(new SubClassEventTarget());
-        subClassEventTarget.register();
+        NYBus.get().register(subClassEventTarget);
         SubClassEvent event = new SubClassEvent();
         NYBus.get().post(event);
         verify(subClassEventTarget).onEvent(event);
         verify(subClassEventTarget).onEventSubClass(event);
-        subClassEventTarget.unregister();
+        NYBus.get().unregister(subClassEventTarget);
     }
 
     @Test
     public void testInterfaceEvent() throws Exception {
         InterfaceEventTarget interfaceEventTarget = Mockito.spy(new InterfaceEventTarget());
-        interfaceEventTarget.register();
+        NYBus.get().register(interfaceEventTarget);
         InterfaceEventImpl event = new InterfaceEventImpl();
         NYBus.get().post(event);
         verify(interfaceEventTarget).onEventInterface(event);
         verify(interfaceEventTarget).onEventInterfaceImpl(event);
-        interfaceEventTarget.unregister();
+        NYBus.get().unregister(interfaceEventTarget);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class NYBusTest {
             public void run() {
                 for (int i = 0; i < 1000; i++) {
                     try {
-                        simpleTarget.register();
+                        NYBus.get().register(simpleTarget);
                     } catch (NYBusException ignore) {
 
                     }
@@ -269,7 +269,7 @@ public class NYBusTest {
             public void run() {
                 for (int i = 0; i < 1000; i++) {
                     try {
-                        simpleTarget.unregister();
+                        NYBus.get().unregister(simpleTarget);
                     } catch (NYBusException ignore) {
 
                     }
@@ -304,30 +304,30 @@ public class NYBusTest {
         boolean isRegistered;
         ChannelTarget channelTargetOne = Mockito.spy(new ChannelTarget());
 
-        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE);
+        isRegistered = NYBus.get().isRegistered(channelTargetOne, ChannelTarget.CHANNEL_ONE);
         assertTrue(!isRegistered);
 
-        channelTargetOne.register(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().register(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_DEFAULT);
-        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+        isRegistered = NYBus.get().isRegistered(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
         assertTrue(isRegistered);
 
-        isRegistered = channelTargetOne.isRegistered();
+        isRegistered = NYBus.get().isRegistered(channelTargetOne);
         assertTrue(isRegistered);
 
-        channelTargetOne.unregister(ChannelTarget.CHANNEL_ONE);
-        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().unregister(channelTargetOne, ChannelTarget.CHANNEL_ONE);
+        isRegistered = NYBus.get().isRegistered(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO);
         assertTrue(!isRegistered);
 
-        channelTargetOne.unregister(ChannelTarget.CHANNEL_DEFAULT);
-        isRegistered = channelTargetOne.isRegistered();
+        NYBus.get().unregister(channelTargetOne, ChannelTarget.CHANNEL_DEFAULT);
+        isRegistered = NYBus.get().isRegistered(channelTargetOne);
         assertTrue(!isRegistered);
 
 
-        channelTargetOne.register(ChannelTarget.CHANNEL_ONE);
-        isRegistered = channelTargetOne.isRegistered(ChannelTarget.CHANNEL_ONE,
+        NYBus.get().register(channelTargetOne, ChannelTarget.CHANNEL_ONE);
+        isRegistered = NYBus.get().isRegistered(channelTargetOne, ChannelTarget.CHANNEL_ONE,
                 ChannelTarget.CHANNEL_TWO, ChannelTarget.CHANNEL_THREE);
         assertTrue(!isRegistered);
 
@@ -339,8 +339,8 @@ public class NYBusTest {
         thrown.expect(NYBusException.class);
         thrown.expectMessage(exceptionTarget.getClass()
                 + " is already registered on same channel ids");
-        exceptionTarget.register("one");
-        exceptionTarget.register("one");
+        NYBus.get().register(exceptionTarget, "one");
+        NYBus.get().register(exceptionTarget, "one");
 
     }
 
@@ -350,7 +350,7 @@ public class NYBusTest {
         thrown.expect(NYBusException.class);
         thrown.expectMessage("Subscriber " + exceptionTarget.getClass()
                 + " and its super classes have no public methods with the @Subscribe annotation");
-        exceptionTarget.register("two");
+        NYBus.get().register(exceptionTarget, "two");
 
     }
 
@@ -361,7 +361,7 @@ public class NYBusTest {
         thrown.expectMessage("Subscriber " + exceptionTarget.getClass()
                 + " and its super classes have no public methods with the " +
                 "@Subscribe annotation on ChannelID two");
-        exceptionTarget.register("one", "two");
+        NYBus.get().register(exceptionTarget, "one", "two");
 
     }
 
@@ -372,7 +372,7 @@ public class NYBusTest {
         thrown.expect(NYBusException.class);
         thrown.expectMessage("No target found for the event" + eventString.getClass()
                 + " on channel ID" + "two");
-        exceptionTarget.register("one");
+        NYBus.get().register(exceptionTarget, "one");
         NYBus.get().post(eventString, "one");
         NYBus.get().post(eventString, "two");
     }
@@ -383,7 +383,7 @@ public class NYBusTest {
         final NoTargetEvent eventObject = new NoTargetEvent();
         thrown.expect(NYBusException.class);
         thrown.expectMessage("No target found for the event" + eventObject.getClass());
-        exceptionTarget.register("one");
+        NYBus.get().register(exceptionTarget, "one");
         NYBus.get().post(eventObject);
     }
 
@@ -397,7 +397,7 @@ public class NYBusTest {
                 "or has " +
                 "already been " +
                 "unregistered");
-        exceptionTarget.unregister("one");
+        NYBus.get().unregister(exceptionTarget, "one");
     }
 
     @Test
@@ -410,8 +410,8 @@ public class NYBusTest {
                 "or has " +
                 "already been " +
                 "unregistered");
-        exceptionTarget.register("one");
-        exceptionTarget.unregister();
+        NYBus.get().register(exceptionTarget, "one");
+        NYBus.get().unregister(exceptionTarget);
     }
 
 }

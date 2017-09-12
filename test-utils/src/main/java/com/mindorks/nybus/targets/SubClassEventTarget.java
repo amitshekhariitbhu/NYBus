@@ -16,14 +16,27 @@
 
 package com.mindorks.nybus.targets;
 
+import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.Event;
+import com.mindorks.nybus.events.SubClassEvent;
+
 /**
- * Created by amitshekhar on 25/08/17.
+ * Created by amitshekhar on 30/08/17.
  */
 
-public interface Target {
+public class SubClassEventTarget {
 
-    void register(String... channelID);
+    public SubClassEventTarget() {
 
-    void unregister(String... channelID);
+    }
 
+    @Subscribe
+    public void onEvent(Event event) {
+
+    }
+
+    @Subscribe
+    public void onEventSubClass(SubClassEvent event) {
+
+    }
 }

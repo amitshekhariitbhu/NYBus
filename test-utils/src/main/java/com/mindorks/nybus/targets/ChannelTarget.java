@@ -16,37 +16,36 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.Event;
 
 /**
  * Created by amitshekhar on 25/08/17.
  */
 
-public class SimpleTarget implements Target {
+public class ChannelTarget{
 
-    public SimpleTarget() {
+    public static final String CHANNEL_ONE = "one";
+    public static final String CHANNEL_TWO = "two";
+    public static final String CHANNEL_THREE = "three";
+    public static final String CHANNEL_DEFAULT = "default";
+    public static final String CHANNEL_FOUR = "four";
 
+    public ChannelTarget() {
+    }
+
+    @Subscribe(channelId = CHANNEL_ONE)
+    public void onEventForTypeOne(String value) {
+        // only the instance of channel one should get this event
+    }
+
+    @Subscribe(channelId = CHANNEL_TWO)
+    public void onEventForTypeTwo(String value) {
+        // only the instance of channel two should get this event
     }
 
     @Subscribe
-    public void onEventOne(Event event) {
-
+    public void onEventForTypeDefault(String value) {
+        // only the instance of channel two should get this event
     }
 
-    @Subscribe
-    public void onEventTwo(Event event) {
-
-    }
-
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this,channelID);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this,channelID);
-    }
 }

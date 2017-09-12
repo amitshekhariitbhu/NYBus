@@ -14,4 +14,4 @@
  *    limitations under the License.
  */
 
-include ':app', ':nybus-android', ':nybus-common', ':nybus-java'
+include ':app', ':nybus-android', ':nybus-common', ':nybus-java', ':test-utils'
