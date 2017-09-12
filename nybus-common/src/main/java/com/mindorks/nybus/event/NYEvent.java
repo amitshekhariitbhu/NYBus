@@ -28,8 +28,7 @@ public class NYEvent {
     public Object targetObject;
     public SubscriberHolder subscriberHolder;
 
-
-    public NYEvent(Object eventObject,Object targetObject,SubscriberHolder subscribedMethod) {
+    public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {
         this.eventObject = eventObject;
         this.targetObject = targetObject;
         this.subscriberHolder = subscribedMethod;
