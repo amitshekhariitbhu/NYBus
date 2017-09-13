@@ -344,7 +344,7 @@ public abstract class CommonTest {
         bus.register(exceptionTarget, "one");
         bus.post(eventString, "one");
         bus.post(eventString, "two");
-        verify(logger).log("No target found for the event" + eventString.getClass()
+        verify(logger).log("No method found for the event" + eventString.getClass()
                 + " on channel ID" + "two");
     }
 
