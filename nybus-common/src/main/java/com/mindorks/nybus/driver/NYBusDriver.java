@@ -279,7 +279,7 @@ public class NYBusDriver extends BusDriver {
             }
         }
         if (!isTargetAvailable && log) {
-            mLogger.log("No target found for the event" +
+            mLogger.log("No method found for the event" +
                     eventObject.getClass() + " on channel ID" + channelId);
         }
     }
