@@ -21,8 +21,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.mindorks.nybus.NYBus;
-
 import sample.mindorks.com.nybus.R;
 
 /**
@@ -35,7 +33,6 @@ public class SelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
-        NYBus.get().post("ghjgkhk");
     }
 
     public void startHugeEventActivity(View view) {
