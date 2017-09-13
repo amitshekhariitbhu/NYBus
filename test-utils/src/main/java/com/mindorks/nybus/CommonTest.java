@@ -51,7 +51,7 @@ import static org.mockito.Mockito.verify;
  * Created by anandgaurav on 12-09-2017.
  */
 
-public class CommonTest {
+public abstract class CommonTest {
 
     public Bus bus;
 
