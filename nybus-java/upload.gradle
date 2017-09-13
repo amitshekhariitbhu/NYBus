@@ -85,7 +85,7 @@ if (project.rootProject.file("local.properties").exists()) {
 
         pkg {
             repo = "maven"
-            name = "java-nybus"
+            name = "nybus-java"
             websiteUrl = siteUrl
             vcsUrl = gitUrl
             licenses = ["Apache-2.0"]

@@ -90,7 +90,7 @@ if (project.rootProject.file("local.properties").exists()) {
 
         pkg {
             repo = "maven"
-            name = "android-nybus"
+            name = "nybus-android"
             websiteUrl = siteUrl
             vcsUrl = gitUrl
             licenses = ["Apache-2.0"]
