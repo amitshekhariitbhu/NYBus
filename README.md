@@ -20,11 +20,11 @@
 
 ## Android
 ```groovy
-compile 'com.mindorks.nybus:nybus-android:0.0.1'
+compile 'com.mindorks.nybus:nybus-android:0.0.2'
 ```
 ## Java
 ```groovy
-compile 'com.mindorks.nybus:nybus-java:0.0.1'
+compile 'com.mindorks.nybus:nybus-java:0.0.2'
 ```
 
 ## Simple Usage
@@ -111,6 +111,12 @@ public void onEvent(Event event) {
 
 }
 ```
+
+### Enable Logging
+```java
+NYBus.get().enableLogging();
+```
+It will log: D/NYBus: No target found for the eventclass com.mindorks.Event
 
 ## If this library helps you in anyway, show your love :heart: by putting a :star: on this project :v:
 

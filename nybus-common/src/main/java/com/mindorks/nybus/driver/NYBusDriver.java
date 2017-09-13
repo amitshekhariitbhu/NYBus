@@ -67,6 +67,10 @@ public class NYBusDriver extends BusDriver {
         this.mLogger = logger;
     }
 
+    public void enableLogging() {
+        this.log = true;
+    }
+
     public void register(Object object, List<String> targetChannelIds) {
         synchronized (this) {
             if (!isTargetRegistered(object, targetChannelIds)) {
@@ -77,23 +81,29 @@ public class NYBusDriver extends BusDriver {
                     targetChannelIds.removeAll(uniqueChannelIdHolderSet);
                     if (targetChannelIds.size() > 0) {
                         for (String targetChannelId : targetChannelIds) {
-                            mLogger.log("Subscriber " + object.getClass()
-                                    + " and its super classes have no public methods with the " +
-                                    "@Subscribe annotation on ChannelID " + targetChannelId);
+                            if (log) {
+                                mLogger.log("Subscriber " + object.getClass()
+                                        + " and its super classes have no public methods with the " +
+                                        "@Subscribe annotation on ChannelID " + targetChannelId);
+                            }
                         }
                     }
                     for (SubscriberHolder subscriberHolder : subscriberHolders) {
                         addEntriesInTargetMap(object, subscriberHolder);
                     }
                 } else {
-                    mLogger.log("Subscriber " + object.getClass()
-                            + " and its super classes have no public methods" +
-                            " with the @Subscribe annotation");
+                    if (log) {
+                        mLogger.log("Subscriber " + object.getClass()
+                                + " and its super classes have no public methods" +
+                                " with the @Subscribe annotation");
+                    }
                 }
 
             } else {
-                mLogger.log(object.getClass()
-                        + " is already registered on same channel ids");
+                if (log) {
+                    mLogger.log(object.getClass()
+                            + " is already registered on same channel ids");
+                }
             }
         }
     }
@@ -107,7 +117,7 @@ public class NYBusDriver extends BusDriver {
                 isAnyTargetRegistered = true;
             }
         }
-        if (!isAnyTargetRegistered) {
+        if (!isAnyTargetRegistered && log) {
             mLogger.log("No target found for the event" + eventObject.getClass());
         }
     }
@@ -185,12 +195,14 @@ public class NYBusDriver extends BusDriver {
                     }
                 }
             } else {
-                mLogger.log(targetObject.getClass()
-                        + " is either not subscribed(on some channel ID you wish to unregister " +
-                        "from) " +
-                        "or has " +
-                        "already been " +
-                        "unregistered");
+                if (log) {
+                    mLogger.log(targetObject.getClass()
+                            + " is either not subscribed(on some channel ID you wish to unregister " +
+                            "from) " +
+                            "or has " +
+                            "already been " +
+                            "unregistered");
+                }
             }
         }
     }
@@ -266,7 +278,7 @@ public class NYBusDriver extends BusDriver {
                 }
             }
         }
-        if (!isTargetAvailable) {
+        if (!isTargetAvailable && log) {
             mLogger.log("No target found for the event" +
                     eventObject.getClass() + " on channel ID" + channelId);
         }

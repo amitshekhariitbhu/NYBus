@@ -28,9 +28,7 @@ public class AndroidLogger implements Logger {
 
     @Override
     public void log(String value) {
-        if (BuildConfig.DEBUG) {
             Log.d("NYBus", value);
-        }
     }
 
 }

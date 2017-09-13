@@ -27,6 +27,7 @@ public class NYBusAndroidTest extends CommonTest {
     public void before() throws Exception {
         bus = NYBus.get();
         bus.setLogger(logger);
+        bus.enableLogging();
     }
 
 }
