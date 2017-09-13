@@ -14,16 +14,23 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.targets;
+package com.mindorks.nybus.logger;
+
+import android.util.Log;
+
+import com.mindorks.nybus.BuildConfig;
 
 /**
- * Created by amitshekhar on 25/08/17.
+ * Created by anandgaurav on 12-09-2017.
  */
 
-public interface Target {
+public class AndroidLogger implements Logger {
 
-    void register(String... channelID);
-
-    void unregister(String... channelID);
+    @Override
+    public void log(String value) {
+        if (BuildConfig.DEBUG) {
+            Log.d("NYBus", value);
+        }
+    }
 
 }

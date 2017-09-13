@@ -18,27 +18,26 @@ package com.mindorks.nybus;
 
 
 import com.mindorks.nybus.androidScheduler.SchedulerProviderImplementation;
-import com.mindorks.nybus.utils.ListUtils;
 import com.mindorks.nybus.driver.NYBusDriver;
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 import com.mindorks.nybus.finder.NYEventClassFinder;
 import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
+import com.mindorks.nybus.logger.AndroidLogger;
+import com.mindorks.nybus.logger.Logger;
 import com.mindorks.nybus.publisher.NYPublisher;
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 import com.mindorks.nybus.util.Utils;
+import com.mindorks.nybus.utils.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Jyoti on 16/08/17.
  */
 
-public class NYBus {
+public class NYBus implements Bus {
 
     private static NYBus sNYBusInstance;
-    private NYBusDriver mNYBusDriver;
 
     static {
         if (!Utils.isUnitTest()) {
@@ -46,10 +45,13 @@ public class NYBus {
         }
     }
 
+    private NYBusDriver mNYBusDriver;
+
     private NYBus() {
         mNYBusDriver = new NYBusDriver(new NYPublisher(),
                 new NYSubscribeMethodFinder(),
-                new NYEventClassFinder());
+                new NYEventClassFinder(),
+                new AndroidLogger());
     }
 
     public static NYBus get() {
@@ -63,35 +65,48 @@ public class NYBus {
         return sNYBusInstance;
     }
 
+    @Override
     public void setSchedulerProvider(SchedulerProvider schedulerProvider) {
         mNYBusDriver.initPublishers(schedulerProvider);
     }
 
+    @Override
+    public void setLogger(Logger logger) {
+        mNYBusDriver.setLogger(logger);
+    }
+
+    @Override
     public void register(Object object, String... channelIDs) {
         register(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
+    @Override
     public void register(Object object, List<String> channelId) {
         mNYBusDriver.register(object, channelId);
     }
 
+    @Override
     public void unregister(Object object, String... channelIDs) {
         unregister(object, ListUtils.convertVarargsToList(channelIDs));
     }
 
+    @Override
     public void unregister(Object object, List<String> channelId) {
         mNYBusDriver.unregister(object, channelId);
     }
 
+    @Override
     public void post(Object object) {
-        post(object, EventChannel.DEFAULT);
+        post(object, Channel.DEFAULT);
     }
 
+    @Override
     public void post(Object object, String channelId) {
         mNYBusDriver.post(object, channelId);
     }
 
-    public boolean isRegistered(Object object,String... channelIDs) {
+    @Override
+    public boolean isRegistered(Object object, String... channelIDs) {
         return mNYBusDriver.isRegistered(object, ListUtils.convertVarargsToList(channelIDs));
     }
 }

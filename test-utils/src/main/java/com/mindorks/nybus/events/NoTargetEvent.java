@@ -14,15 +14,11 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus.events;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by user on 07/09/17.
  */
 
-public interface EventChannel {
-    String DEFAULT = "default";
-    String ONE = "one";
-    String TWO = "two";
-    String THREE = "three";
+public class NoTargetEvent {
 }

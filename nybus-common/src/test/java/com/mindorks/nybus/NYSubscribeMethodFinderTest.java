@@ -17,7 +17,7 @@
 package com.mindorks.nybus;
 
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.event.EventChannel;
+import com.mindorks.nybus.event.Channel;
 import com.mindorks.nybus.finder.NYSubscribeMethodFinder;
 import com.mindorks.nybus.finder.SubscribeMethodFinder;
 import com.mindorks.nybus.finder.TargetData;
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * Created by amitshekhar on 03/09/17.
@@ -50,44 +51,64 @@ public class NYSubscribeMethodFinderTest {
     @Test
     public void testSubTestClassMethod() throws Exception {
         SubTestClass subTestClass = new SubTestClass();
-        List<String> channels = Arrays.asList("one", "two", EventChannel.DEFAULT);
+        List<String> channels = Arrays.asList("one", "two", Channel.DEFAULT);
         TargetData targetData = subscribeMethodFinder.getData(subTestClass, channels);
         List<SubscriberHolder> subscriberHolders = targetData.subscriberHolders;
         Set<String> methodChannelIDs = targetData.methodChannelIDs;
         assertEquals(5, subscriberHolders.size());
         assertEquals(3, methodChannelIDs.size());
 
-        SubscriberHolder onEventOneSH = subscriberHolders.get(0);
-        assertEquals(1, onEventOneSH.subscribedChannelID.size());
-        assertTrue(onEventOneSH.subscribedChannelID.contains("one"));
-        assertEquals(NYThread.POSTING, onEventOneSH.subscribedThreadType);
-        assertEquals("onEventOne", onEventOneSH.subscribedMethod.getName());
+        SubscriberHolder onEventOneSH = getSubscriberHolder(subscriberHolders, "onEventOne");
+        if (onEventOneSH != null) {
+            assertEquals(1, onEventOneSH.subscribedChannelID.size());
+            assertTrue(onEventOneSH.subscribedChannelID.contains("one"));
+            assertEquals(NYThread.POSTING, onEventOneSH.subscribedThreadType);
+            assertEquals("onEventOne", onEventOneSH.subscribedMethod.getName());
+        } else {
+            fail("onEventOneSH should not be null");
+        }
 
-        SubscriberHolder onEventSuperSH = subscriberHolders.get(1);
-        assertEquals(1, onEventSuperSH.subscribedChannelID.size());
-        assertTrue(onEventSuperSH.subscribedChannelID.contains(EventChannel.DEFAULT));
-        assertEquals(NYThread.POSTING, onEventSuperSH.subscribedThreadType);
-        assertEquals("onEventSuper", onEventSuperSH.subscribedMethod.getName());
+        SubscriberHolder onEventSuperSH = getSubscriberHolder(subscriberHolders, "onEventSuper");
+        if (onEventSuperSH != null) {
+            assertEquals(1, onEventSuperSH.subscribedChannelID.size());
+            assertTrue(onEventSuperSH.subscribedChannelID.contains(Channel.DEFAULT));
+            assertEquals(NYThread.POSTING, onEventSuperSH.subscribedThreadType);
+            assertEquals("onEventSuper", onEventSuperSH.subscribedMethod.getName());
+        } else {
+            fail("onEventSuperSH should not be null");
+        }
 
-        SubscriberHolder onEventSH = subscriberHolders.get(2);
-        assertEquals(1, onEventSH.subscribedChannelID.size());
-        assertTrue(onEventSH.subscribedChannelID.contains(EventChannel.DEFAULT));
-        assertEquals(NYThread.COMPUTATION, onEventSH.subscribedThreadType);
-        assertEquals("onEvent", onEventSH.subscribedMethod.getName());
+        SubscriberHolder onEventSH = getSubscriberHolder(subscriberHolders, "onEvent");
+        if (onEventSH != null) {
+            assertEquals(1, onEventSH.subscribedChannelID.size());
+            assertTrue(onEventSH.subscribedChannelID.contains(Channel.DEFAULT));
+            assertEquals(NYThread.COMPUTATION, onEventSH.subscribedThreadType);
+            assertEquals("onEvent", onEventSH.subscribedMethod.getName());
+        } else {
+            fail("onEventSH should not be null");
+        }
 
+        SubscriberHolder onEventTwoSH = getSubscriberHolder(subscriberHolders, "onEventTwo");
+        if (onEventTwoSH != null) {
+            assertEquals(1, onEventTwoSH.subscribedChannelID.size());
+            assertTrue(onEventTwoSH.subscribedChannelID.contains("two"));
+            assertEquals(NYThread.POSTING, onEventTwoSH.subscribedThreadType);
+            assertEquals("onEventTwo", onEventTwoSH.subscribedMethod.getName());
+        } else {
+            fail("onEventTwoSH should not be null");
+        }
 
-        SubscriberHolder onEventTwoSH = subscriberHolders.get(3);
-        assertEquals(1, onEventTwoSH.subscribedChannelID.size());
-        assertTrue(onEventTwoSH.subscribedChannelID.contains("two"));
-        assertEquals(NYThread.POSTING, onEventTwoSH.subscribedThreadType);
-        assertEquals("onEventTwo", onEventTwoSH.subscribedMethod.getName());
+        SubscriberHolder onEventOneTwoSH = getSubscriberHolder(subscriberHolders, "onEventOneTwo");
+        if (onEventOneTwoSH != null) {
+            assertEquals(2, onEventOneTwoSH.subscribedChannelID.size());
+            assertTrue(onEventOneTwoSH.subscribedChannelID.contains("one"));
+            assertTrue(onEventOneTwoSH.subscribedChannelID.contains("two"));
+            assertEquals(NYThread.POSTING, onEventOneTwoSH.subscribedThreadType);
+            assertEquals("onEventOneTwo", onEventOneTwoSH.subscribedMethod.getName());
+        } else {
+            fail("onEventOneTwoSH should not be null");
+        }
 
-        SubscriberHolder onEventOneTwoSH = subscriberHolders.get(4);
-        assertEquals(2, onEventOneTwoSH.subscribedChannelID.size());
-        assertTrue(onEventOneTwoSH.subscribedChannelID.contains("one"));
-        assertTrue(onEventOneTwoSH.subscribedChannelID.contains("two"));
-        assertEquals(NYThread.POSTING, onEventOneTwoSH.subscribedThreadType);
-        assertEquals("onEventOneTwo", onEventOneTwoSH.subscribedMethod.getName());
     }
 
     @Test
@@ -100,24 +121,36 @@ public class NYSubscribeMethodFinderTest {
         assertEquals(3, subscriberHolders.size());
         assertEquals(2, methodChannelIDs.size());
 
-        SubscriberHolder onEventOneSH = subscriberHolders.get(0);
-        assertEquals(1, onEventOneSH.subscribedChannelID.size());
-        assertTrue(onEventOneSH.subscribedChannelID.contains("one"));
-        assertEquals(NYThread.POSTING, onEventOneSH.subscribedThreadType);
-        assertEquals("onEventOne", onEventOneSH.subscribedMethod.getName());
+        SubscriberHolder onEventOneSH = getSubscriberHolder(subscriberHolders, "onEventOne");
+        if (onEventOneSH != null) {
+            assertEquals(1, onEventOneSH.subscribedChannelID.size());
+            assertTrue(onEventOneSH.subscribedChannelID.contains("one"));
+            assertEquals(NYThread.POSTING, onEventOneSH.subscribedThreadType);
+            assertEquals("onEventOne", onEventOneSH.subscribedMethod.getName());
+        } else {
+            fail("onEventOneSH should not be null");
+        }
 
-        SubscriberHolder onEventTwoSH = subscriberHolders.get(1);
-        assertEquals(1, onEventTwoSH.subscribedChannelID.size());
-        assertTrue(onEventTwoSH.subscribedChannelID.contains("two"));
-        assertEquals(NYThread.POSTING, onEventTwoSH.subscribedThreadType);
-        assertEquals("onEventTwo", onEventTwoSH.subscribedMethod.getName());
+        SubscriberHolder onEventTwoSH = getSubscriberHolder(subscriberHolders, "onEventTwo");
+        if (onEventTwoSH != null) {
+            assertEquals(1, onEventTwoSH.subscribedChannelID.size());
+            assertTrue(onEventTwoSH.subscribedChannelID.contains("two"));
+            assertEquals(NYThread.POSTING, onEventTwoSH.subscribedThreadType);
+            assertEquals("onEventTwo", onEventTwoSH.subscribedMethod.getName());
+        } else {
+            fail("onEventTwoSH should not be null");
+        }
 
-        SubscriberHolder onEventOneTwoSH = subscriberHolders.get(2);
-        assertEquals(2, onEventOneTwoSH.subscribedChannelID.size());
-        assertTrue(onEventOneTwoSH.subscribedChannelID.contains("one"));
-        assertTrue(onEventOneTwoSH.subscribedChannelID.contains("two"));
-        assertEquals(NYThread.POSTING, onEventOneTwoSH.subscribedThreadType);
-        assertEquals("onEventOneTwo", onEventOneTwoSH.subscribedMethod.getName());
+        SubscriberHolder onEventOneTwoSH = getSubscriberHolder(subscriberHolders, "onEventOneTwo");
+        if (onEventOneTwoSH != null) {
+            assertEquals(2, onEventOneTwoSH.subscribedChannelID.size());
+            assertTrue(onEventOneTwoSH.subscribedChannelID.contains("one"));
+            assertTrue(onEventOneTwoSH.subscribedChannelID.contains("two"));
+            assertEquals(NYThread.POSTING, onEventOneTwoSH.subscribedThreadType);
+            assertEquals("onEventOneTwo", onEventOneTwoSH.subscribedMethod.getName());
+        } else {
+            fail("onEventOneTwoSH should not be null");
+        }
     }
 
     public static class SuperTestClass {
@@ -150,6 +183,16 @@ public class NYSubscribeMethodFinderTest {
 
         }
 
+    }
+
+    private SubscriberHolder getSubscriberHolder(List<SubscriberHolder> subscriberHolders,
+                                                 String methodName) {
+        for (SubscriberHolder subscriberHolder : subscriberHolders) {
+            if (subscriberHolder.subscribedMethod.getName().equals(methodName)) {
+                return subscriberHolder;
+            }
+        }
+        return null;
     }
 
 }

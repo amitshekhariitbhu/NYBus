@@ -25,7 +25,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-
+        consumerProguardFiles 'proguard-rules.pro'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -33,15 +33,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    sourceSets {
-        String sharedTestDir = 'src/sharedTest/java'
-        test {
-            java.srcDir sharedTestDir
-        }
-        androidTest {
-            java.srcDir sharedTestDir
         }
     }
 }
@@ -53,8 +44,11 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.1'
+    testCompile project(':test-utils')
     androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
     androidTestCompile 'org.mockito:mockito-core:2.7.1'
+    androidTestCompile project(':test-utils')
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile project(':nybus-common')
 }
+//apply from: 'upload.gradle'

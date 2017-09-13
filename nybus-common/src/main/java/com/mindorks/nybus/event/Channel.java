@@ -14,30 +14,24 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.targets;
-
-import com.mindorks.nybus.NYBus;
-import com.mindorks.nybus.annotation.Subscribe;
+package com.mindorks.nybus.event;
 
 /**
- * Created by Jyoti on 27/08/17.
+ * Created by Jyoti on 16/08/17.
  */
 
-public class MultipleChannelIDMethod implements Target {
+public interface Channel {
 
+    String DEFAULT = "default";
+    String ONE = "one";
+    String TWO = "two";
+    String THREE = "three";
+    String FOUR = "four";
+    String FIVE = "five";
+    String SIX = "six";
+    String SEVEN = "seven";
+    String EIGHT = "eight";
+    String NINE = "nine";
+    String TEN = "ten";
 
-    @Subscribe(channelId = {"one","two","default"})
-    public void onEventForTypeString(String value) {
-
-    }
-
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this,channelID);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this,channelID);
-    }
 }

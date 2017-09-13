@@ -16,38 +16,21 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.annotation.Subscribe;
-import com.mindorks.nybus.events.InterfaceEvent;
-import com.mindorks.nybus.events.InterfaceEventImpl;
 
 /**
- * Created by amitshekhar on 30/08/17.
+ * Created by user on 07/09/17.
  */
 
-public class InterfaceEventTarget implements Target {
+public class ExceptionTarget {
 
-    public InterfaceEventTarget() {
-
-    }
-
-    @Subscribe
-    public void onEventInterface(InterfaceEvent event) {
+    public ExceptionTarget() {
 
     }
 
-    @Subscribe
-    public void onEventInterfaceImpl(InterfaceEventImpl event) {
-
+    @Subscribe(channelId = "one")
+    public void onEventForTypeOne(String value) {
+        // only the instance of channel one should get this event
     }
 
-    @Override
-    public void register(String... channelID) {
-        NYBus.get().register(this);
-    }
-
-    @Override
-    public void unregister(String... channelID) {
-        NYBus.get().unregister(this);
-    }
 }

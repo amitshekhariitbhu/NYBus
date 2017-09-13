@@ -14,24 +14,20 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
+import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.Event;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by amitshekhar on 27/08/17.
  */
 
-public class NYEvent {
+public class SuperSimpleTarget extends SimpleTarget {
 
-    public Object eventObject;
-    public Object targetObject;
-    public SubscriberHolder subscriberHolder;
-
-    public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {
-        this.eventObject = eventObject;
-        this.targetObject = targetObject;
-        this.subscriberHolder = subscribedMethod;
+    @Subscribe
+    public void onEventThree(Event event) {
+        super.onEventTwo(event);
     }
 
 }

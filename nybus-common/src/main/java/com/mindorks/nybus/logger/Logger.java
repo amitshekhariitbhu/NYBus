@@ -14,24 +14,14 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
-
-import com.mindorks.nybus.subscriber.SubscriberHolder;
+package com.mindorks.nybus.logger;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by anandgaurav on 12-09-2017.
  */
 
-public class NYEvent {
+public interface Logger {
 
-    public Object eventObject;
-    public Object targetObject;
-    public SubscriberHolder subscriberHolder;
-
-    public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {
-        this.eventObject = eventObject;
-        this.targetObject = targetObject;
-        this.subscriberHolder = subscribedMethod;
-    }
+    void log(String value);
 
 }

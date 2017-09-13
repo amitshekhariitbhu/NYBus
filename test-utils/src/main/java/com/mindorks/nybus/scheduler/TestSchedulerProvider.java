@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus;
+package com.mindorks.nybus.scheduler;
 
 import com.mindorks.nybus.scheduler.SchedulerProvider;
 

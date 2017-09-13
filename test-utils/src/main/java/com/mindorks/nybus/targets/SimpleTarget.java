@@ -14,26 +14,29 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.exception;
+package com.mindorks.nybus.targets;
+
+import com.mindorks.nybus.annotation.Subscribe;
+import com.mindorks.nybus.events.Event;
 
 /**
- * Created by Jyoti on 06/09/17.
+ * Created by amitshekhar on 25/08/17.
  */
 
-public class NYBusException extends RuntimeException {
+public class SimpleTarget {
 
+    public SimpleTarget() {
 
-    public NYBusException(String detailMessage) {
-        super(detailMessage);
     }
 
-    public NYBusException(Throwable throwable) {
-        super(throwable);
+    @Subscribe
+    public void onEventOne(Event event) {
+
     }
 
-    public NYBusException(String detailMessage, Throwable throwable) {
-        super(detailMessage, throwable);
+    @Subscribe
+    public void onEventTwo(Event event) {
+
     }
 
 }
-

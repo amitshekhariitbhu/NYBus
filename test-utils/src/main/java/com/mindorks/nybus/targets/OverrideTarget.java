@@ -16,7 +16,6 @@
 
 package com.mindorks.nybus.targets;
 
-import com.mindorks.nybus.NYBus;
 import com.mindorks.nybus.events.EventOne;
 import com.mindorks.nybus.annotation.Subscribe;
 import com.mindorks.nybus.events.EventTwo;
@@ -26,7 +25,7 @@ import com.mindorks.nybus.events.EventTwo;
  * Created by amitshekhar on 25/08/17.
  */
 
-public class OverrideTarget implements Target {
+public class OverrideTarget {
 
     public OverrideTarget() {
 
@@ -40,15 +39,5 @@ public class OverrideTarget implements Target {
     @Subscribe
     public void onEvent(EventTwo eventTwo) {
 
-    }
-
-    @Override
-    public void register(String ... channelID) {
-        NYBus.get().register(this);
-    }
-
-    @Override
-    public void unregister(String ... channelID) {
-        NYBus.get().unregister(this);
     }
 }

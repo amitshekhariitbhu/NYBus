@@ -14,31 +14,34 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.utils;
+package com.mindorks.nybus;
 
-import com.mindorks.nybus.event.Channel;
+import com.mindorks.nybus.logger.Logger;
+import com.mindorks.nybus.scheduler.SchedulerProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Jyoti on 04/09/17.
+ * Created by anandgaurav on 12-09-2017.
  */
 
-public class ListUtils {
+public interface Bus {
 
-    private ListUtils() {
-    }
+    void setSchedulerProvider(SchedulerProvider schedulerProvider);
 
-    public static List<String> convertVarargsToList(String... channelIDs) {
-        List<String> channelIDListForRegister;
-        if (channelIDs.length == 0) {
-            channelIDListForRegister = new ArrayList<>();
-            channelIDListForRegister.add(Channel.DEFAULT);
-        } else {
-            channelIDListForRegister = new ArrayList<>(Arrays.asList(channelIDs));
-        }
-        return channelIDListForRegister;
-    }
+    void setLogger(Logger logger);
+
+    void register(Object object, String... channelIDs);
+
+    void register(Object object, List<String> channelId);
+
+    void unregister(Object object, String... channelIDs);
+
+    void unregister(Object object, List<String> channelId);
+
+    void post(Object object);
+
+    void post(Object object, String channelId);
+
+    boolean isRegistered(Object object, String... channelIDs);
 }

@@ -14,24 +14,25 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+package com.mindorks.nybus;
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
+import com.mindorks.nybus.scheduler.TestSchedulerProvider;
+
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * Created by Jyoti on 16/08/17.
+ * Created by gaura on 12-09-2017.
  */
+@RunWith(MockitoJUnitRunner.class)
+public class NYBusJavaTest extends CommonTest{
 
-public class NYEvent {
-
-    public Object eventObject;
-    public Object targetObject;
-    public SubscriberHolder subscriberHolder;
-
-    public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {
-        this.eventObject = eventObject;
-        this.targetObject = targetObject;
-        this.subscriberHolder = subscribedMethod;
+    @Before
+    public void before() throws Exception {
+        bus = NYBus.get();
+        bus.setSchedulerProvider(new TestSchedulerProvider());
+        bus.setLogger(logger);
     }
 
 }

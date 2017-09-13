@@ -14,24 +14,14 @@
  *    limitations under the License.
  */
 
-package com.mindorks.nybus.event;
+apply plugin: 'java'
 
-import com.mindorks.nybus.subscriber.SubscriberHolder;
-
-/**
- * Created by Jyoti on 16/08/17.
- */
-
-public class NYEvent {
-
-    public Object eventObject;
-    public Object targetObject;
-    public SubscriberHolder subscriberHolder;
-
-    public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {
-        this.eventObject = eventObject;
-        this.targetObject = targetObject;
-        this.subscriberHolder = subscribedMethod;
-    }
-
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'junit:junit:4.12'
+    compile 'org.mockito:mockito-core:2.7.1'
+    compile project(':nybus-common')
 }
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
