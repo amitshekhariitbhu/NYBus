@@ -44,4 +44,6 @@ public interface Bus {
     void post(Object object, String channelId);
 
     boolean isRegistered(Object object, String... channelIDs);
+
+    void enableLogging();
 }

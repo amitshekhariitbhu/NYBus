@@ -41,6 +41,8 @@ abstract class BusDriver {
 
     Logger mLogger;
 
+    boolean log = false;
+
     ConcurrentHashMap<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>> mEventsToTargetsMap;
 
     final Object DELIVER_LOCK = new Object();

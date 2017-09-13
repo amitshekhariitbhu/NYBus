@@ -109,4 +109,9 @@ public class NYBus implements Bus {
     public boolean isRegistered(Object object, String... channelIDs) {
         return mNYBusDriver.isRegistered(object, ListUtils.convertVarargsToList(channelIDs));
     }
+
+    @Override
+    public void enableLogging() {
+        mNYBusDriver.enableLogging();
+    }
 }
