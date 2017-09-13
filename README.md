@@ -123,7 +123,8 @@ It will log: D/NYBus: No target found for the eventclass com.mindorks.Event
 [Check out Mindorks awesome open source projects here](https://mindorks.com/open-source-projects)
 
 ### License
-```   Copyright (C) 2017 MINDORKS NEXTGEN PRIVATE LIMITED
+```
+   Copyright (C) 2017 MINDORKS NEXTGEN PRIVATE LIMITED
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
