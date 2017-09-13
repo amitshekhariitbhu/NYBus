@@ -34,6 +34,7 @@ public class NYBusTest extends CommonTest {
         bus = NYBus.get();
         bus.setSchedulerProvider(new TestSchedulerProvider());
         bus.setLogger(logger);
+        bus.enableLogging();
     }
 
 }
