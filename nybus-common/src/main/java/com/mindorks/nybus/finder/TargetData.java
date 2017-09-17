@@ -25,10 +25,19 @@ import java.util.Set;
  * Created by amitshekhar on 07/09/17.
  */
 
+/**
+ * Holds all the subscribed methods detail.
+ */
 public class TargetData {
 
+    /**
+     * List of {@link SubscriberHolder}
+     */
     public List<SubscriberHolder> subscriberHolders;
 
+    /**
+     * Set of channel ids.
+     */
     public Set<String> methodChannelIDs;
 
 }

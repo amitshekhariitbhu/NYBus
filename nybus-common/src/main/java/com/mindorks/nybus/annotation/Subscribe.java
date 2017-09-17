@@ -28,13 +28,27 @@ import java.lang.annotation.Target;
  * Created by Jyoti on 16/08/17.
  */
 
+/**
+ * Indicates the method is subscribed for the event on the given channels and on the
+ * particular thread.{@link NYThread}.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Subscribe {
 
+    /**
+     * The channels on which the event is subscribed.
+     *
+     * @return the list of channel ids.
+     */
     String[] channelId() default "default";
 
+    /**
+     * The particular thread type for the event.
+     *
+     * @return the thread type.
+     */
     NYThread threadType() default NYThread.POSTING;
 
 }

@@ -25,6 +25,9 @@ import java.util.Map;
  * Created by amitshekhar on 30/08/17.
  */
 
+/**
+ * The implementation of {@link EventClassFinder}.
+ */
 public class NYEventClassFinder implements EventClassFinder {
 
     private final Map<Class<?>, List<Class<?>>> eventTypesCache;
@@ -33,6 +36,12 @@ public class NYEventClassFinder implements EventClassFinder {
         eventTypesCache = new HashMap<>();
     }
 
+    /**
+     * Get all interfaces and superclasses associated with the event class.
+     *
+     * @param eventClass the event class.
+     * @return list of class associated with event class.
+     */
     @Override
     public List<Class<?>> getAll(Class<?> eventClass) {
         synchronized (eventTypesCache) {
@@ -51,6 +60,12 @@ public class NYEventClassFinder implements EventClassFinder {
         }
     }
 
+    /**
+     * Add associated interfaces for the class.
+     *
+     * @param eventTypes list of events.
+     * @param interfaces the interface.
+     */
     private void addInterfaces(List<Class<?>> eventTypes, Class<?>[] interfaces) {
         for (Class<?> interfaceClass : interfaces) {
             if (!eventTypes.contains(interfaceClass)) {

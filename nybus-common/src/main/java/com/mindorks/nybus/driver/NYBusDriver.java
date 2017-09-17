@@ -42,6 +42,9 @@ import io.reactivex.functions.Consumer;
  * Created by Jyoti on 14/08/17.
  */
 
+/**
+ * The class responsible for posting, registering and un-registering.
+ */
 public class NYBusDriver extends BusDriver {
 
     public NYBusDriver(Publisher publisher,
@@ -51,6 +54,11 @@ public class NYBusDriver extends BusDriver {
         super(publisher, subscribeMethodFinder, eventClassFinder, logger);
     }
 
+    /**
+     * Initialize the publisher with scheduler provider.
+     *
+     * @param schedulerProvider the scheduler provider.
+     */
     public void initPublishers(SchedulerProvider schedulerProvider) {
         ConsumerProvider consumerProvider = new ConsumerProvider();
         consumerProvider.setPostingThreadConsumer(getConsumer());
@@ -63,14 +71,28 @@ public class NYBusDriver extends BusDriver {
         mPublisher.initPublishers(schedulerProvider, consumerProvider);
     }
 
+    /**
+     * Set the logger.
+     *
+     * @param logger the logger.
+     */
     public void setLogger(Logger logger) {
         this.mLogger = logger;
     }
 
+    /**
+     * Enable logging.
+     */
     public void enableLogging() {
         this.log = true;
     }
 
+    /**
+     * Register for the event.
+     *
+     * @param object           the object.
+     * @param targetChannelIds the target channel ids.
+     */
     public void register(Object object, List<String> targetChannelIds) {
         synchronized (this) {
             if (!isTargetRegistered(object, targetChannelIds)) {
@@ -108,6 +130,12 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Post the event.
+     *
+     * @param eventObject the event object.
+     * @param channelId   the channel ids.
+     */
     public void post(Object eventObject, String channelId) {
         boolean isAnyTargetRegistered = false;
         List<Class<?>> eventClasses = mEventClassFinder.getAll(eventObject.getClass());
@@ -122,6 +150,13 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Check if event registered.
+     *
+     * @param targetObject    the target object.
+     * @param targetChannelId the target channel id.
+     * @return is registered.
+     */
     public boolean isRegistered(Object targetObject, List<String> targetChannelId) {
         boolean isRegistered = false;
         for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>>
@@ -141,6 +176,13 @@ public class NYBusDriver extends BusDriver {
         return isRegistered;
     }
 
+    /**
+     * Is target registered.
+     *
+     * @param targetObject    the target object.
+     * @param targetChannelId the target channel id.
+     * @return is target registered.
+     */
     private boolean isTargetRegistered(Object targetObject, List<String> targetChannelId) {
         Set<String> currentlyRegisteredChannelId = new HashSet<>();
         for (Map.Entry<Class<?>, ConcurrentHashMap<Object, ConcurrentHashMap<String,
@@ -162,6 +204,12 @@ public class NYBusDriver extends BusDriver {
     }
 
 
+    /**
+     * Get method channel ids.
+     *
+     * @param mTargetMapEntry the target map entry.
+     * @return the set of string.
+     */
     private Set<String> getMethodChannelIds(Map.Entry<Object, ConcurrentHashMap<String, SubscriberHolder>>
                                                     mTargetMapEntry) {
         Set<String> methodChannelIDSet = new HashSet<>();
@@ -177,6 +225,12 @@ public class NYBusDriver extends BusDriver {
     }
 
 
+    /**
+     * Unregister from the event.
+     *
+     * @param targetObject    the target object.
+     * @param targetChannelId the target channel ids.
+     */
     public void unregister(Object targetObject, List<String> targetChannelId) {
         synchronized (this) {
             if (isTargetRegistered(targetObject, targetChannelId)) {
@@ -207,6 +261,14 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Post Single event.
+     *
+     * @param eventObject the event object.
+     * @param channelId   the chanel ids.
+     * @param eventClass  the event class.
+     * @return has delivered.
+     */
     private boolean postSingle(Object eventObject, String channelId, Class<?> eventClass) {
         boolean hasDelivered = false;
         ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
@@ -218,6 +280,11 @@ public class NYBusDriver extends BusDriver {
         return hasDelivered;
     }
 
+    /**
+     * Get consumer.
+     *
+     * @return the consumers.
+     */
     private Consumer<NYEvent> getConsumer() {
         return new Consumer<NYEvent>() {
             @Override
@@ -228,6 +295,11 @@ public class NYBusDriver extends BusDriver {
         };
     }
 
+    /**
+     * Determine thread and deliver event.
+     *
+     * @param event the event.
+     */
     private void determineThreadAndDeliverEvent(NYEvent event) {
         synchronized (DELIVER_LOCK) {
             final NYThread thread = event.subscriberHolder.subscribedThreadType;
@@ -260,6 +332,13 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Find the target and deliver.
+     *
+     * @param mTargetMap  the target map.
+     * @param eventObject the event object.
+     * @param channelId   the channel id.
+     */
     private void findTargetsAndDeliver(ConcurrentHashMap<Object,
             ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                        Object eventObject, String channelId) {
@@ -284,6 +363,11 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Deliver event to target method.
+     *
+     * @param event the event.
+     */
     private void deliverEventToTargetMethod(NYEvent event) {
         try {
             Method method = event.subscriberHolder.subscribedMethod;
@@ -296,6 +380,12 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Add to entries in target map.
+     *
+     * @param targetObject          the target object.
+     * @param subscribeMethodHolder the subscribeMethodHolder.
+     */
     private void addEntriesInTargetMap(Object targetObject,
                                        SubscriberHolder subscribeMethodHolder) {
         if (mEventsToTargetsMap.containsKey(subscribeMethodHolder.
@@ -306,6 +396,12 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Create new event in events to targets map.
+     *
+     * @param targetObject          the target object.
+     * @param subscribeMethodHolder the subscribeMethodHolder.
+     */
     private void createNewEventInEventsToTargetsMap(Object targetObject,
                                                     SubscriberHolder subscribeMethodHolder) {
         ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>>
@@ -317,6 +413,12 @@ public class NYBusDriver extends BusDriver {
                 valuesForEventsToTargetsMap);
     }
 
+    /**
+     * Add methods in target map.
+     *
+     * @param targetObject          the target object.
+     * @param subscribeMethodHolder the subscribeMethodHolder.
+     */
     private void addOrUpdateMethodsInTargetMap(Object targetObject,
                                                SubscriberHolder subscribeMethodHolder) {
         ConcurrentHashMap<Object, ConcurrentHashMap<String, SubscriberHolder>> mTargetMap =
@@ -331,23 +433,44 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Update methods in set.
+     *
+     * @param targetObject    the target object.
+     * @param subscribeMethod the subscribe method.
+     * @param mTargetMap      the target map.
+     */
     private void updateMethodInSet(Object targetObject,
                                    SubscriberHolder subscribeMethod,
                                    ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                            SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = mTargetMap.get(targetObject);
-        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(), subscribeMethod);
     }
 
+    /**
+     * Add entry in target map.
+     *
+     * @param targetObject    the target object.
+     * @param subscribeMethod the subscribe method.
+     * @param mTargetMap      the target map.
+     */
     private void addEntryInTargetMap(Object targetObject,
                                      SubscriberHolder subscribeMethod,
                                      ConcurrentHashMap<Object, ConcurrentHashMap<String,
                                              SubscriberHolder>> mTargetMap) {
         ConcurrentHashMap<String, SubscriberHolder> methodSet = new ConcurrentHashMap<>();
-        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(subscribeMethod), subscribeMethod);
+        methodSet.put(subscribeMethod.getKeyForSubscribeHolderMap(), subscribeMethod);
         mTargetMap.put(targetObject, methodSet);
     }
 
+    /**
+     * Remove method from methods map.
+     *
+     * @param mTargetMap      the target map.
+     * @param targetObject    the target object.
+     * @param targetChannelId the target channel ids.
+     */
     private void removeMethodFromMethodsMap(ConcurrentHashMap<Object,
             ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                             Object targetObject,
@@ -365,6 +488,13 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Remove the target.
+     *
+     * @param subscribedMethods the subscribed methods.
+     * @param mTargetMap        the target map.
+     * @param targetObject      the target object.
+     */
     private void removeTargetIfRequired(ConcurrentHashMap<String, SubscriberHolder> subscribedMethods,
                                         ConcurrentHashMap<Object,
                                                 ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
@@ -374,6 +504,12 @@ public class NYBusDriver extends BusDriver {
         }
     }
 
+    /**
+     * Remove the event.
+     *
+     * @param mTargetMap               the target map.
+     * @param mEventsToTargetsMapEntry the event to target map entry.
+     */
     private void removeEventIfRequired(ConcurrentHashMap<Object,
             ConcurrentHashMap<String, SubscriberHolder>> mTargetMap,
                                        Map.Entry<Class<?>, ConcurrentHashMap<Object,

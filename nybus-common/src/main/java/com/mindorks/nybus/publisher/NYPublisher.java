@@ -26,6 +26,9 @@ import io.reactivex.subjects.PublishSubject;
  * Created by amitshekhar on 28/08/17.
  */
 
+/**
+ * The implementation of {@link Publisher}.
+ */
 public class NYPublisher implements Publisher {
 
     private PublishSubject<NYEvent> postingThreadPublisher;
@@ -36,6 +39,12 @@ public class NYPublisher implements Publisher {
     private PublishSubject<NYEvent> executorThreadPublisher;
     private PublishSubject<NYEvent> newThreadPublisher;
 
+    /**
+     * Initialize the publisher with scheduler provider and consumer provider.
+     *
+     * @param schedulerProvider the {@link SchedulerProvider}
+     * @param consumerProvider  the {@link ConsumerProvider}
+     */
     @Override
     public void initPublishers(SchedulerProvider schedulerProvider,
                                ConsumerProvider consumerProvider) {
@@ -72,36 +81,71 @@ public class NYPublisher implements Publisher {
                 .subscribe(consumerProvider.getNewThreadConsumer());
     }
 
+    /**
+     * The publisher for  the posting thread.
+     *
+     * @return the publisher for the posting thread.
+     */
     @Override
     public PublishSubject<NYEvent> forPostingThread() {
         return postingThreadPublisher;
     }
 
+    /**
+     * The publisher for the main thread.
+     *
+     * @return the publisher for the main thread.
+     */
     @Override
     public PublishSubject<NYEvent> forMainThread() {
         return mainThreadPublisher;
     }
 
+    /**
+     * The publisher for the IO thread.
+     *
+     * @return the publisher for the IO thread.
+     */
     @Override
     public PublishSubject<NYEvent> forIOThread() {
         return iOThreadPublisher;
     }
 
+    /**
+     * The publisher for the computation thread.
+     *
+     * @return the publisher for the computation thread.
+     */
     @Override
     public PublishSubject<NYEvent> forComputationThread() {
         return computationThreadPublisher;
     }
 
+    /**
+     * The publisher for the trampoline thread.
+     *
+     * @return the publisher for the trampoline thread.
+     */
     @Override
     public PublishSubject<NYEvent> forTrampolineThread() {
         return trampolineThreadPublisher;
     }
 
+    /**
+     * The publisher for the executor thread.
+     *
+     * @return the publisher for the executor thread.
+     */
     @Override
     public PublishSubject<NYEvent> forExecutorThread() {
         return executorThreadPublisher;
     }
 
+    /**
+     * The publisher for the new thread.
+     *
+     * @return the publisher for the new thread.
+     */
     @Override
     public PublishSubject<NYEvent> forNewThread() {
         return newThreadPublisher;

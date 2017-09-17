@@ -26,23 +26,67 @@ import io.reactivex.subjects.PublishSubject;
  * Created by amitshekhar on 28/08/17.
  */
 
+/**
+ * Interface for providing publishers associated with the thread.
+ */
 public interface Publisher {
 
+    /**
+     * Init the publishers.
+     *
+     * @param schedulerProvider the {@link SchedulerProvider}
+     * @param consumerProvider  the {@link ConsumerProvider}
+     */
     void initPublishers(SchedulerProvider schedulerProvider,
                         ConsumerProvider consumerProvider);
 
+    /**
+     * The publisher for the posting thread.
+     *
+     * @return the publisher for the posting thread.
+     */
     PublishSubject<NYEvent> forPostingThread();
 
+    /**
+     * The publisher for the main thread.
+     *
+     * @return the publisher for the main thread.
+     */
     PublishSubject<NYEvent> forMainThread();
 
+    /**
+     * The publisher for the IO thread.
+     *
+     * @return the publisher for the IO thread.
+     */
     PublishSubject<NYEvent> forIOThread();
 
+    /**
+     * The publisher for the computation thread.
+     *
+     * @return the publisher for the computation thread.
+     */
     PublishSubject<NYEvent> forComputationThread();
 
+    /**
+     * The publisher for the trampoline thread.
+     *
+     * @return the publisher for the trampoline thread.
+     */
     PublishSubject<NYEvent> forTrampolineThread();
 
+    /**
+     * The publisher for the executor thread.
+     *
+     * @return the publisher for the executor thread.
+     */
     PublishSubject<NYEvent> forExecutorThread();
 
+    /**
+     * The publisher for the new thread.
+     *
+     * @return the publisher for the new thread.
+     */
     PublishSubject<NYEvent> forNewThread();
 
 }

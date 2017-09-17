@@ -20,8 +20,16 @@ package com.mindorks.nybus.logger;
  * Created by anandgaurav on 12-09-2017.
  */
 
+/**
+ * Interface for logging exceptions.
+ */
 public interface Logger {
 
+    /**
+     * Log the exceptions.
+     *
+     * @param value the logging data.
+     */
     void log(String value);
 
 }

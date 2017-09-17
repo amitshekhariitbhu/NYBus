@@ -25,33 +25,66 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Jyoti on 14/08/17.
  */
 
+/**
+ * The implementation of {@link SchedulerProvider}.
+ */
 public class SchedulerProviderImpl implements SchedulerProvider {
 
+    /**
+     * Provides the null value.
+     *
+     * @return null.
+     */
     @Override
     public Scheduler provideMainThreadScheduler() {
         return null;
     }
 
+    /**
+     * Provides the IO thread Scheduler.
+     *
+     * @return provides the IO thread Scheduler.
+     */
     @Override
     public Scheduler provideIOScheduler() {
         return Schedulers.io();
     }
 
+    /**
+     * Provides the computation thread Scheduler.
+     *
+     * @return provides the computation thread Scheduler.
+     */
     @Override
     public Scheduler provideComputationScheduler() {
         return Schedulers.computation();
     }
 
+    /**
+     * Provides the trampoline thread Scheduler.
+     *
+     * @return provides the trampoline thread Scheduler.
+     */
     @Override
     public Scheduler provideTrampolineScheduler() {
         return Schedulers.trampoline();
     }
 
+    /**
+     * Provides the executor thread Scheduler.
+     *
+     * @return provides the executor thread Scheduler.
+     */
     @Override
     public Scheduler provideExecutorScheduler() {
         return Schedulers.from(Executors.newCachedThreadPool());
     }
 
+    /**
+     * Provides the new thread Scheduler.
+     *
+     * @return provides the new thread Scheduler.
+     */
     @Override
     public Scheduler provideNewThreadScheduler() {
         return Schedulers.newThread();

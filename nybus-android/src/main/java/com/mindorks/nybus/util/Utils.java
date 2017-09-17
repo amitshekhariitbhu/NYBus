@@ -20,12 +20,20 @@ package com.mindorks.nybus.util;
  * Created by amitshekhar on 28/08/17.
  */
 
+/**
+ * The utility class.
+ */
 public class Utils {
 
     private Utils() {
         // no instance
     }
 
+    /**
+     * To check if is UnitTest.
+     *
+     * @return is unit test.
+     */
     public static boolean isUnitTest() {
         try {
             Class.forName("com.mindorks.nybus.UnitTest");

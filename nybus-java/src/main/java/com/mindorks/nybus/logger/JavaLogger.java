@@ -20,8 +20,16 @@ package com.mindorks.nybus.logger;
  * Created by anandgaurav on 12-09-2017.
  */
 
+/**
+ * The implementation of {@link Logger}.
+ */
 public class JavaLogger implements Logger {
 
+    /**
+     * The log.
+     *
+     * @param value the logging data.
+     */
     @Override
     public void log(String value) {
         System.out.println(value);

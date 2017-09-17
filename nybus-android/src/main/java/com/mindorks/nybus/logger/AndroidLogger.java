@@ -18,17 +18,23 @@ package com.mindorks.nybus.logger;
 
 import android.util.Log;
 
-import com.mindorks.nybus.BuildConfig;
-
 /**
  * Created by anandgaurav on 12-09-2017.
  */
 
+/**
+ * The implementation of {@link Logger}.
+ */
 public class AndroidLogger implements Logger {
 
+    /**
+     * The log.
+     *
+     * @param value the logging data.
+     */
     @Override
     public void log(String value) {
-            Log.d("NYBus", value);
+        Log.d("NYBus", value);
     }
 
 }

@@ -26,11 +26,21 @@ import java.util.List;
  * Created by Jyoti on 04/09/17.
  */
 
+/**
+ * The utility class for list conversion.
+ */
 public class ListUtils {
 
     private ListUtils() {
+        // no instance
     }
 
+    /**
+     * Convert the var args to list.
+     *
+     * @param channelIDs the var args of channel ids.
+     * @return the list of channel ids.
+     */
     public static List<String> convertVarargsToList(String... channelIDs) {
         List<String> channelIDListForRegister;
         if (channelIDs.length == 0) {

@@ -22,8 +22,17 @@ import java.util.List;
  * Created by amitshekhar on 31/08/17.
  */
 
+/**
+ * Interface for finding the interfaces and the superclasses for the particular event class.
+ */
 public interface EventClassFinder {
 
+    /**
+     * Get all interfaces and superclasses.
+     *
+     * @param eventClass the event class.
+     * @return the list consist of interfaces and superclasses.
+     */
     List<Class<?>> getAll(Class<?> eventClass);
 
 }

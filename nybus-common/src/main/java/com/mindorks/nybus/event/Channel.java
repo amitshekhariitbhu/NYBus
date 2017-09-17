@@ -20,6 +20,9 @@ package com.mindorks.nybus.event;
  * Created by Jyoti on 16/08/17.
  */
 
+/**
+ * Indicates the channel ids.
+ */
 public interface Channel {
 
     String DEFAULT = "default";

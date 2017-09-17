@@ -22,8 +22,18 @@ import java.util.List;
  * Created by amitshekhar on 31/08/17.
  */
 
+/**
+ * Interface for finding the subscribed methods on the list of channel ids for the given target.
+ */
 public interface SubscribeMethodFinder {
 
+    /**
+     * Get all the subscribed methods.
+     *
+     * @param object    the target object.
+     * @param channelId the list of channel ids.
+     * @return the {@link TargetData} which holds all the subscribed methods.
+     */
     TargetData getData(Object object, List<String> channelId);
 
 }

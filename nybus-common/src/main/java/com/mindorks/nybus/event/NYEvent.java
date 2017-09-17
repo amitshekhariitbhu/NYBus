@@ -22,10 +22,24 @@ import com.mindorks.nybus.subscriber.SubscriberHolder;
  * Created by Jyoti on 16/08/17.
  */
 
+/**
+ * Holds the data for delivering events.
+ */
 public class NYEvent {
 
+    /**
+     * The event object.
+     */
     public Object eventObject;
+
+    /**
+     * The target object.
+     */
     public Object targetObject;
+
+    /**
+     * {@link SubscriberHolder} The subscriber holder.
+     */
     public SubscriberHolder subscriberHolder;
 
     public NYEvent(Object eventObject, Object targetObject, SubscriberHolder subscribedMethod) {

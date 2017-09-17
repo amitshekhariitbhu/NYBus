@@ -23,18 +23,51 @@ import io.reactivex.Scheduler;
  * Created by Jyoti on 14/08/17.
  */
 
+/**
+ * Interface for providing Schedulers.
+ */
 public interface SchedulerProvider {
 
+    /**
+     * Provides the main thread Scheduler.
+     *
+     * @return the main thread Scheduler.
+     */
     Scheduler provideMainThreadScheduler();
 
+    /**
+     * Provides the IO thread Scheduler.
+     *
+     * @return the IO thread Scheduler.
+     */
     Scheduler provideIOScheduler();
 
+    /**
+     * Provide the computational Scheduler.
+     *
+     * @return the computational thread Scheduler.
+     */
     Scheduler provideComputationScheduler();
 
+    /**
+     * Provide the trampoline thread Scheduler.
+     *
+     * @return the trampoline thread Scheduler.
+     */
     Scheduler provideTrampolineScheduler();
 
+    /**
+     * Provide the executor thread Scheduler.
+     *
+     * @return the executor thread Scheduler.
+     */
     Scheduler provideExecutorScheduler();
 
+    /**
+     * Provide the new thread Scheduler.
+     *
+     * @return the new thread Scheduler.
+     */
     Scheduler provideNewThreadScheduler();
 
 }

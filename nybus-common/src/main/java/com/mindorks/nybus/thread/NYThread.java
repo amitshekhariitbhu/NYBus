@@ -20,20 +20,44 @@ package com.mindorks.nybus.thread;
  * Created by amitshekhar on 27/08/17.
  */
 
+/**
+ * Enumeration for various types of thread.
+ */
 public enum NYThread {
 
+    /**
+     * Post on the posting thread on which the event was posted.
+     */
     POSTING,
 
+    /**
+     * Post on the Android main thread.
+     */
     MAIN,
 
+    /**
+     * Post on the IO thread.
+     */
     IO,
 
+    /**
+     * Post on the new thread.
+     */
     NEW,
 
+    /**
+     * Post on the computation thread.
+     */
     COMPUTATION,
 
+    /**
+     * Post on the trampoline thread.
+     */
     TRAMPOLINE,
 
+    /**
+     * Post on the executor thread.
+     */
     EXECUTOR,
 
 }

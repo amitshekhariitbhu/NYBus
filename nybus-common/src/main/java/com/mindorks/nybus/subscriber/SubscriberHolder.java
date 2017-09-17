@@ -20,13 +20,15 @@ import com.mindorks.nybus.thread.NYThread;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Jyoti on 27/08/17.
  */
 
-public class SubscriberHolder{
+/**
+ * Holds the data for subscribers.
+ */
+public class SubscriberHolder {
     private static final String SEPARATOR = "_";
     public Method subscribedMethod;
     public List<String> subscribedChannelID;
@@ -40,11 +42,15 @@ public class SubscriberHolder{
         this.subscribedThreadType = subscribedThreadType;
     }
 
-
-    public String getKeyForSubscribeHolderMap(SubscriberHolder subscriberHolder) {
-        return subscriberHolder.subscribedMethod.getName()
+    /**
+     * Provides unique key for {@link SubscriberHolder}.
+     *
+     * @return the unique key.
+     */
+    public String getKeyForSubscribeHolderMap() {
+        return subscribedMethod.getName()
                 + SEPARATOR
-                + subscriberHolder.subscribedMethod.getParameterTypes()[0].toString();
+                + subscribedMethod.getParameterTypes()[0].toString();
     }
 
 
