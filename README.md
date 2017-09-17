@@ -20,11 +20,11 @@
 
 ## Android
 ```groovy
-compile 'com.mindorks.nybus:nybus-android:0.0.3'
+compile 'com.mindorks.nybus:nybus-android:1.0.0'
 ```
 ## Java
 ```groovy
-compile 'com.mindorks.nybus:nybus-java:0.0.3'
+compile 'com.mindorks.nybus:nybus-java:1.0.0'
 ```
 
 ## Simple Usage

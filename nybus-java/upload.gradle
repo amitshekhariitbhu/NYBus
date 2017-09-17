@@ -21,7 +21,7 @@ def siteUrl = 'https://github.com/MindorksOpenSource/NYBus'
 def gitUrl = 'https://github.com/MindorksOpenSource/NYBus.git'
 
 group = "com.mindorks.nybus"
-version = '0.0.3'
+version = '1.0.0'
 
 install {
     repositories.mavenInstaller {
