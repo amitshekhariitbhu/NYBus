@@ -2,21 +2,21 @@
 <img alt="NYBus" src=https://raw.githubusercontent.com/MindorksOpenSource/NYBus/master/assets/nybus.png />
 </p>
 
-# NYBus - A pub-sub library for Android and Java applications.
+# NYBus(RxBus) - A pub-sub library for Android and Java applications.
 
 [![Mindorks](https://img.shields.io/badge/mindorks-opensource-blue.svg)](https://mindorks.com/open-source-projects)
 [![Mindorks Community](https://img.shields.io/badge/join-community-blue.svg)](https://mindorks.com/join-community)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-### This pub-sub library NYBus uses RxJava(RxJava2) for creating RxBus(RxBus2). You must have used EventBus. NYBus is very similar to the EventBus. NYBus is implemented using RxJava(RxJava2).
+### This pub-sub library NYBus(RxBus) uses RxJava(RxJava2) for creating RxBus(RxBus2). You must have used EventBus. NYBus is very similar to the EventBus. NYBus is implemented using RxJava(RxJava2).
 
-### Overview of NYBus pub-sub library
+### Overview of NYBus(RxBus) pub-sub library
 * NYBus is used for posting any type of event to subscribe class in Android and Java applications.
 * NYBus also support channel to avoid the problem of event getting received at undesirable places.
 * NYBus also support thread customization(thread in which the event should be posted).
 * NYBus is built on RxJava(RxJava2).
 
-## Using NYBus Library in your application
+## Using NYBus(RxBus) Library in your application
 
 ## Android
 ```groovy
