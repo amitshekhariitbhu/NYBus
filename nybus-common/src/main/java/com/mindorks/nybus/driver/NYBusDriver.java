@@ -85,7 +85,7 @@ public class NYBusDriver extends BusDriver {
      */
     public void enableLogging() throws IllegalAccessException {
         if (this.mLogger == null) {
-            throw new IllegalAccessException("Call setLogger(Logger) before this");
+            throw new IllegalAccessException("Logger is null");
         }
 
         this.log = true;
