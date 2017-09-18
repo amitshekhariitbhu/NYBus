@@ -27,6 +27,11 @@ compile 'com.mindorks.nybus:nybus-android:1.0.0'
 compile 'com.mindorks.nybus:nybus-java:1.0.0'
 ```
 
+## To run all the test cases
+```groovy
+gradlew connectedAndroidtest test
+```
+
 ## Simple Usage
 
 ### Register on default channel
