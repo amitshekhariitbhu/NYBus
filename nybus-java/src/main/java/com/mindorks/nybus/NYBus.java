@@ -167,7 +167,11 @@ public class NYBus implements Bus {
      */
     @Override
     public void enableLogging() {
-        mNYBusDriver.enableLogging();
+        try {
+            mNYBusDriver.enableLogging();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 }
