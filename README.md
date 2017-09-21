@@ -29,7 +29,7 @@ compile 'com.mindorks.nybus:nybus-java:1.0.0'
 
 ## To run all the test cases
 ```groovy
-gradlew connectedAndroidtest test
+gradlew connectedAndroidTest test
 ```
 
 ## Simple Usage
