@@ -269,7 +269,7 @@ public class NYBusDriver extends BusDriver {
      * Post Single event.
      *
      * @param eventObject the event object.
-     * @param channelId   the chanel ids.
+     * @param channelId   the channel ids.
      * @param eventClass  the event class.
      * @return has delivered.
      */
