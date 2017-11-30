@@ -145,4 +145,5 @@ It will log: D/NYBus: No target found for the eventclass com.mindorks.Event
 ```
 
 ### Contributing to NYBus
-Just make pull request. You are in!
+All pull requests are welcome, make sure to follow the [contribution guidelines](CONTRIBUTING.md)
+when you submit pull request.
