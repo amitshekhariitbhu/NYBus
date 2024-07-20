@@ -4,7 +4,7 @@
 
 # NYBus(RxBus) - A pub-sub library for Android and Java applications.
 
-## [My Personal Blog - amitshekhar.me](https://amitshekhar.me/blog) - High-quality content to learn Android concepts.
+## [Outcome School Blog](https://outcomeschool.com/blog) - High-quality content to learn Android concepts.
 
 ### This pub-sub library NYBus(RxBus) uses RxJava(RxJava2) for creating RxBus(RxBus2). You must have used EventBus. NYBus is very similar to the EventBus. NYBus is implemented using RxJava(RxJava2).
 
@@ -130,7 +130,7 @@ You can connect with me on:
 - [GitHub](https://github.com/amitshekhariitbhu)
 - [Facebook](https://www.facebook.com/amit.shekhar.iitbhu)
 
-[**Read all of my blogs here.**](https://amitshekhar.me/blog)
+[**Read all of our blogs here.**](https://outcomeschool.com/blog)
 
 ### License
 ```
