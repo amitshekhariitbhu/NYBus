@@ -16,13 +16,36 @@
 
 ## Using NYBus(RxBus) Library in your application
 
-## Android
+Add this in your `settings.gradle`:
 ```groovy
-compile 'com.mindorks.nybus:nybus-android:1.0.0'
+maven { url 'https://jitpack.io' }
 ```
-## Java
+
+If you are using `settings.gradle.kts`, add the following:
+```kotlin
+maven { setUrl("https://jitpack.io") }
+```
+
+## Android
+Add this in your `build.gradle`
 ```groovy
-compile 'com.mindorks.nybus:nybus-java:1.0.0'
+implementation 'com.github.amitshekhariitbhu.NYBus:nybus-android:1.0.0'
+```
+
+If you are using `build.gradle.kts`, add the following:
+```kotlin
+implementation("com.github.amitshekhariitbhu.NYBus:nybus-android:1.0.0")
+```
+
+## Java
+Add this in your `build.gradle`
+```groovy
+implementation 'com.github.amitshekhariitbhu.NYBus:nybus-java:1.0.0'
+```
+
+If you are using `build.gradle.kts`, add the following:
+```kotlin
+implementation("com.github.amitshekhariitbhu.NYBus:nybus-java:1.0.0")
 ```
 
 ## To run all the test cases
@@ -134,7 +157,7 @@ You can connect with me on:
 
 ### License
 ```
-   Copyright (C) 2022 Amit Shekhar
+   Copyright (C) 2024 Amit Shekhar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

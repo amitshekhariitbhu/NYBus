@@ -17,14 +17,13 @@
 apply plugin: 'java'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.1'
-    testCompile project(':test-utils')
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
-    compile project(':nybus-common')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.7.1'
+    testImplementation project(':test-utils')
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+    implementation project(':nybus-common')
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
-//apply from: 'upload.gradle'

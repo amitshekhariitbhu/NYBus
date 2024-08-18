@@ -38,17 +38,17 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.1'
-    testCompile project(':test-utils')
-    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
-    androidTestCompile 'org.mockito:mockito-core:2.7.1'
-    androidTestCompile project(':test-utils')
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile project(':nybus-common')
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.7.1'
+    testImplementation project(':test-utils')
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
+    androidTestImplementation 'org.mockito:mockito-core:2.7.1'
+    androidTestImplementation project(':test-utils')
+    api 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    api project(':nybus-common')
 }
 //apply from: 'upload.gradle'
